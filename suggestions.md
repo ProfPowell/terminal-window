@@ -6,7 +6,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
 
 ### 🚀 Critical Performance & Architecture
 
-- [ ] **Optimize Output Rendering (Critical)**
+- [x] **Optimize Output Rendering (Critical)**
   - **Current State:** `_renderOutput()` completely rewrites `outputContainer.innerHTML` on every update. This is O(N) and causes performance degradation as output grows.
   - **Suggestion:** Refactor to append new lines to the DOM (`appendChild` or `insertAdjacentHTML`). Only clear/redraw when `clear()` is called or max lines are exceeded.
   
@@ -24,7 +24,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
 
 ### 🛠 Code Quality & Maintainability
 
-- [ ] **Add Unit Tests**
+- [x] **Add Unit Tests**
   - **Current State:** No automated tests found.
   - **Suggestion:** implement a testing framework (e.g., Web Test Runner, Jest, or Vitest).
     - Test `_parseAnsi` for correct HTML generation from ANSI codes.
@@ -57,7 +57,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
 
 ### 📦 Tooling & Build
 
-- [ ] **Add a Build Step (Optional but Recommended)**
+- [x] **Add a Build Step (Optional but Recommended)**
   - **Suggestion:** While "no-build" is nice, adding a lightweight build (Vite/Rollup) allows:
     - Minification.
     - Separate CSS/JS files during dev.

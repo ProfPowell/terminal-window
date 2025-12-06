@@ -37,6 +37,25 @@ class TerminalWindow extends HTMLElement {
     // Minimized state
     this.isMinimized = false;
 
+    // Track handlers and timeouts for cleanup
+    this._fullscreenEscHandler = null;
+    this._copyMenuCloseHandler = null;
+    this._copyFeedbackTimeout = null;
+    this._announceTimeout = null;
+
+    // Copy menu state
+    this._copyMenuOpen = false;
+    this._copyMenuFocusIndex = -1;
+
+    // Auto-scroll state (smart scroll behavior)
+    this._autoScroll = true;
+    this._scrollThreshold = 50; // pixels from bottom to consider "at bottom"
+
+    // Typing effect state
+    this._typingInProgress = false;
+    this._typingCancelled = false;
+    this._typingQueue = [];
+
     // Configuration with defaults
     this.config = {
       theme: 'dark',
@@ -57,6 +76,47 @@ class TerminalWindow extends HTMLElement {
       // Behavior options
       readonly: false,
       maxLines: 1000,
+    };
+
+    // Default i18n strings (can be overridden via setI18n)
+    this._i18n = {
+      // Button labels
+      copy: 'Copy',
+      close: 'Close',
+      minimize: 'Minimize',
+      maximize: 'Maximize',
+      exitFullscreen: 'Exit fullscreen',
+      toggleFullscreen: 'Toggle fullscreen',
+      toggleTheme: 'Toggle theme',
+      switchToLight: 'switch to light',
+      switchToDark: 'switch to dark',
+      // Copy menu
+      copyAll: 'Copy All',
+      copyCommandsOnly: 'Copy Commands Only',
+      copyOutputOnly: 'Copy Output Only',
+      copyOptions: 'Copy options',
+      copied: 'Copied!',
+      nothingToCopy: 'Nothing to copy',
+      noSelection: 'No selection',
+      // Announcements
+      terminalReady: 'Terminal ready',
+      terminalCleared: 'Terminal cleared',
+      terminalClosed: 'Terminal closed',
+      terminalMinimized: 'Terminal minimized',
+      terminalRestored: 'Terminal restored',
+      enteredFullscreen: 'Entered fullscreen mode',
+      exitedFullscreen: 'Exited fullscreen mode',
+      themeChangedTo: 'Theme changed to',
+      copiedToClipboard: 'copied to clipboard',
+      content: 'Content',
+      // Built-in commands
+      availableCommands: 'Available commands:',
+      noCommandsInHistory: 'No commands in history.',
+      commandNotFound: 'Command not found:',
+      typeHelpForCommands: "Type 'help' for available commands.",
+      // Input
+      terminalInputLabel: 'Terminal input. Type a command and press Enter.',
+      terminalOutput: 'Terminal output',
     };
 
     // Register built-in commands
@@ -429,8 +489,11 @@ class TerminalWindow extends HTMLElement {
       content: input
     };
     this.outputLines.push(line);
+    
+    // Efficiently append to DOM
+    this._appendLineToDom(line);
     this._trimOutputIfNeeded();
-    this._renderOutput();
+    this._scrollToBottom();
   }
 
   /**
@@ -447,16 +510,39 @@ class TerminalWindow extends HTMLElement {
         content: lineText
       };
       this.outputLines.push(line);
+
+      // Dispatch output event for each line
+      this.dispatchEvent(new CustomEvent('output', {
+        detail: { type, content: lineText },
+        bubbles: true,
+        composed: true
+      }));
+      
+      // Efficiently append to DOM (if not typing effect)
+      if (!this.config.typingEffect || type === 'command' || this._prefersReducedMotion()) {
+        this._appendLineToDom(line);
+      }
+    }
+    
+    // Check if typing effect should be used
+    const useTypingEffect = this.config.typingEffect &&
+                            type !== 'command' &&
+                            !this._prefersReducedMotion();
+
+    if (useTypingEffect) {
+      // Queue this print if typing is already in progress
+      if (this._typingInProgress) {
+        await new Promise(resolve => {
+          this._typingQueue.push({ lines, type, resolve });
+        });
+      } else {
+        await this._renderWithTypingEffect(lines, type);
+        // Process any queued prints
+        await this._processTypingQueue();
+      }
     }
 
     this._trimOutputIfNeeded();
-
-    if (this.config.typingEffect && type !== 'command') {
-      await this._renderWithTypingEffect(lines, type);
-    } else {
-      this._renderOutput();
-    }
-
     this._scrollToBottom();
 
     // Announce to screen readers for important output
@@ -466,11 +552,36 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
+   * Check if user prefers reduced motion
+   */
+  _prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * Process queued typing effect prints
+   */
+  async _processTypingQueue() {
+    while (this._typingQueue.length > 0) {
+      const { lines, type, resolve } = this._typingQueue.shift();
+      await this._renderWithTypingEffect(lines, type);
+      resolve();
+    }
+  }
+
+  /**
    * Trim output lines if exceeding max
    */
   _trimOutputIfNeeded() {
-    if (this.outputLines.length > this.config.maxLines) {
-      this.outputLines = this.outputLines.slice(-this.config.maxLines);
+    const outputContainer = this.shadowRoot.querySelector('.output');
+    
+    // Trim array
+    while (this.outputLines.length > this.config.maxLines) {
+      this.outputLines.shift();
+      // Remove corresponding element from DOM
+      if (outputContainer && outputContainer.firstElementChild) {
+        outputContainer.removeChild(outputContainer.firstElementChild);
+      }
     }
   }
 
@@ -478,6 +589,9 @@ class TerminalWindow extends HTMLElement {
    * Render output with typing effect
    */
   async _renderWithTypingEffect(lines, type) {
+    this._typingInProgress = true;
+    this._typingCancelled = false;
+
     const outputContainer = this.shadowRoot.querySelector('.output');
     const inputCursor = this.shadowRoot.querySelector('.input-line .cursor');
 
@@ -491,6 +605,17 @@ class TerminalWindow extends HTMLElement {
     typingCursor.className = 'typing-cursor';
 
     for (const lineText of lines) {
+      // Check if cancelled - if so, render remaining lines immediately
+      if (this._typingCancelled) {
+        // We need to render the remaining lines properly
+        // Find the index of current line in lines array and render the rest
+        const currentIndex = lines.indexOf(lineText);
+        for (let i = currentIndex; i < lines.length; i++) {
+            this._appendLineToDom({ type, content: lines[i] });
+        }
+        break;
+      }
+
       const lineEl = document.createElement('div');
       lineEl.className = `output-line line-${type}`;
       lineEl.setAttribute('role', 'listitem');
@@ -499,6 +624,13 @@ class TerminalWindow extends HTMLElement {
       // Build up the raw text character by character, then parse ANSI at each step
       let rawText = '';
       for (let i = 0; i < lineText.length; i++) {
+        // Check if cancelled mid-line
+        if (this._typingCancelled) {
+          // Complete this line immediately
+          lineEl.innerHTML = this._parseAnsi(lineText);
+          break;
+        }
+
         rawText += lineText[i];
         lineEl.innerHTML = this._parseAnsi(rawText);
         lineEl.appendChild(typingCursor);
@@ -515,6 +647,18 @@ class TerminalWindow extends HTMLElement {
     if (inputCursor) {
       inputCursor.style.visibility = 'visible';
     }
+
+    this._typingInProgress = false;
+    this._typingCancelled = false;
+  }
+
+  /**
+   * Cancel the current typing effect and show all remaining text immediately
+   */
+  skipTypingEffect() {
+    if (this._typingInProgress) {
+      this._typingCancelled = true;
+    }
   }
 
   /**
@@ -529,8 +673,11 @@ class TerminalWindow extends HTMLElement {
    */
   clear() {
     this.outputLines = [];
-    this._renderOutput();
-    this._announce('Terminal cleared');
+    const outputContainer = this.shadowRoot.querySelector('.output');
+    if (outputContainer) {
+      outputContainer.innerHTML = '';
+    }
+    this._announce(this._t('terminalCleared'));
   }
 
   /**
@@ -627,20 +774,40 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Render the output area
+   * Append a single line to the DOM
+   */
+  _appendLineToDom(line) {
+    const outputContainer = this.shadowRoot.querySelector('.output');
+    if (!outputContainer) return;
+
+    const div = document.createElement('div');
+    
+    if (line.type === 'command') {
+      div.className = 'output-line line-command';
+      div.setAttribute('role', 'listitem');
+      div.innerHTML = `<span class="line-prompt">${this._escapeHtml(line.prompt)}</span>${this._escapeHtml(line.content)}`;
+    } else {
+      div.className = `output-line line-${line.type}`;
+      div.setAttribute('role', 'listitem');
+      // Parse ANSI codes for non-command lines
+      div.innerHTML = this._parseAnsi(line.content);
+    }
+    
+    outputContainer.appendChild(div);
+  }
+
+  /**
+   * Render the output area (full re-render)
    */
   _renderOutput() {
     const outputContainer = this.shadowRoot.querySelector('.output');
     if (!outputContainer) return;
 
-    outputContainer.innerHTML = this.outputLines.map(line => {
-      if (line.type === 'command') {
-        return `<div class="output-line line-command" role="listitem"><span class="line-prompt">${this._escapeHtml(line.prompt)}</span>${this._escapeHtml(line.content)}</div>`;
-      }
-      // Parse ANSI codes for non-command lines
-      const content = this._parseAnsi(line.content);
-      return `<div class="output-line line-${line.type}" role="listitem">${content}</div>`;
-    }).join('');
+    outputContainer.innerHTML = '';
+    
+    this.outputLines.forEach(line => {
+      this._appendLineToDom(line);
+    });
 
     this._scrollToBottom();
   }
@@ -1136,6 +1303,64 @@ class TerminalWindow extends HTMLElement {
     this.config.readonly = readonly;
     this.setAttribute('readonly', String(readonly));
     this._updateReadonlyState();
+  }
+
+  /**
+   * Set i18n strings for localization
+   * @param {Object} strings - Object with string keys to override
+   */
+  setI18n(strings) {
+    if (strings && typeof strings === 'object') {
+      this._i18n = { ...this._i18n, ...strings };
+      // Re-render to apply new strings
+      this.render();
+      this._setupEventListeners();
+      this._applyAttributes();
+    }
+  }
+
+  /**
+   * Get current i18n strings
+   * @returns {Object} Current i18n configuration
+   */
+  getI18n() {
+    return { ...this._i18n };
+  }
+
+  /**
+   * Get a localized string
+   * @param {string} key - The i18n key
+   * @returns {string} The localized string
+   */
+  _t(key) {
+    return this._i18n[key] || key;
+  }
+
+  /**
+   * Get command history
+   * @returns {string[]} Array of previously executed commands
+   */
+  getHistory() {
+    return [...this.commandHistory];
+  }
+
+  /**
+   * Set command history
+   * @param {string[]} history - Array of commands to set as history
+   */
+  setHistory(history) {
+    if (Array.isArray(history)) {
+      this.commandHistory = history.map(cmd => String(cmd));
+      this.historyIndex = this.commandHistory.length;
+    }
+  }
+
+  /**
+   * Clear command history
+   */
+  clearHistory() {
+    this.commandHistory = [];
+    this.historyIndex = -1;
   }
 
   /**
