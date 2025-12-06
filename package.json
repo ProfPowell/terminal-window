@@ -1,0 +1,42 @@
+{
+  "name": "terminal-window",
+  "version": "2.0.0",
+  "description": "A vanilla web component useful for simulating terminal commands for teaching purposes.",
+  "type": "module",
+  "main": "./dist/terminal-window.umd.js",
+  "module": "./dist/terminal-window.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/terminal-window.es.js",
+      "require": "./dist/terminal-window.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProfPowell/terminal-window.git"
+  },
+  "keywords": [
+    "web-component",
+    "terminal",
+    "simulation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ProfPowell/terminal-window/issues"
+  },
+  "homepage": "https://github.com/ProfPowell/terminal-window#readme",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.15",
+    "jsdom": "^27.2.0",
+    "vite": "^7.2.6",
+    "vitest": "^4.0.15"
+  }
+}

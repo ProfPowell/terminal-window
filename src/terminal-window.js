@@ -1759,10 +1759,9 @@ class TerminalWindow extends HTMLElement {
 }
 
 // Register the custom element
-customElements.define('terminal-window', TerminalWindow);
-
-// Export for ES modules (when loaded as module)
-// For regular script usage, TerminalWindow is available globally via customElements
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = TerminalWindow;
+if (!customElements.get('terminal-window')) {
+  customElements.define('terminal-window', TerminalWindow);
 }
+
+export default TerminalWindow;
+
