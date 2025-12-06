@@ -7,20 +7,19 @@
  * @license MIT
  */
 
+import { AnsiParser } from './internals/ansi-parser.js';
+import { CommandRegistry } from './internals/command-registry.js';
+import { HistoryManager } from './internals/history-manager.js';
+
 class TerminalWindow extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
 
-    // Command registry - users can register functions that return strings
-    this.commands = new Map();
-
-    // Command aliases
-    this.aliases = new Map();
-
-    // Command history for up/down navigation
-    this.commandHistory = [];
-    this.historyIndex = -1;
+    // Initialize internal modules
+    this.ansiParser = new AnsiParser();
+    this.commandRegistry = new CommandRegistry();
+    this.historyManager = new HistoryManager();
 
     // Output lines for the terminal
     this.outputLines = [];
@@ -324,8 +323,8 @@ class TerminalWindow extends HTMLElement {
    */
   _registerBuiltInCommands() {
     this.registerCommand('help', () => {
-      const cmds = Array.from(this.commands.keys()).sort();
-      return `Available commands:\n${cmds.map(c => `  ${c}`).join('\n')}`;
+      const cmds = this.commandRegistry.getNames();
+      return `${this._t('availableCommands')}\n${cmds.map(c => `  ${c}`).join('\n')}`;
     });
 
     this.registerCommand('clear', () => {
@@ -338,10 +337,10 @@ class TerminalWindow extends HTMLElement {
     });
 
     this.registerCommand('history', () => {
-      if (this.commandHistory.length === 0) {
-        return 'No commands in history.';
+      if (this.historyManager.isEmpty()) {
+        return this._t('noCommandsInHistory');
       }
-      return this.commandHistory.map((cmd, i) => `  ${i + 1}  ${cmd}`).join('\n');
+      return this.historyManager.getFormattedHistory();
     });
 
     this.registerCommand('date', () => {
@@ -355,7 +354,7 @@ class TerminalWindow extends HTMLElement {
    * @param {Function} handler - Function that receives args array and returns string or null
    */
   registerCommand(name, handler) {
-    this.commands.set(name.toLowerCase(), handler);
+    this.commandRegistry.register(name, handler);
   }
 
   /**
@@ -363,7 +362,7 @@ class TerminalWindow extends HTMLElement {
    * @param {string} name - Command name
    */
   unregisterCommand(name) {
-    this.commands.delete(name.toLowerCase());
+    this.commandRegistry.unregister(name);
   }
 
   /**
@@ -372,7 +371,7 @@ class TerminalWindow extends HTMLElement {
    * @param {string} command - Command to execute
    */
   registerAlias(alias, command) {
-    this.aliases.set(alias.toLowerCase(), command);
+    this.commandRegistry.registerAlias(alias, command);
   }
 
   /**
@@ -386,27 +385,22 @@ class TerminalWindow extends HTMLElement {
 
     // Add to history
     if (addToHistory) {
-      this.commandHistory.push(trimmed);
-      this.historyIndex = this.commandHistory.length;
+      this.historyManager.add(trimmed);
     }
 
     // Print the command line
     this._printCommandLine(trimmed);
 
-    // Check for alias
-    let resolved = trimmed;
-    const firstWord = trimmed.split(' ')[0].toLowerCase();
-    if (this.aliases.has(firstWord)) {
-      resolved = this.aliases.get(firstWord) + trimmed.slice(firstWord.length);
-    }
+    // Resolve alias
+    const resolved = this.commandRegistry.resolveAlias(trimmed);
 
     // Parse command and arguments
-    const parts = this._parseCommand(resolved);
+    const parts = this.commandRegistry.parse(resolved);
     const cmdName = parts[0].toLowerCase();
     const args = parts.slice(1);
 
     // Find and execute command
-    const handler = this.commands.get(cmdName);
+    const handler = this.commandRegistry.get(cmdName);
 
     if (handler) {
       try {
@@ -414,14 +408,36 @@ class TerminalWindow extends HTMLElement {
         if (result !== null && result !== undefined) {
           await this.print(String(result));
         }
+
+        // Dispatch command-result event on success
+        this.dispatchEvent(new CustomEvent('command-result', {
+          detail: { command: cmdName, args, input: trimmed, result },
+          bubbles: true,
+          composed: true
+        }));
       } catch (error) {
         await this.print(`Error: ${error.message}`, 'error');
+
+        // Dispatch command-error event on failure
+        this.dispatchEvent(new CustomEvent('command-error', {
+          detail: { command: cmdName, args, input: trimmed, error },
+          bubbles: true,
+          composed: true
+        }));
       }
     } else {
-      await this.print(`Command not found: ${cmdName}. Type 'help' for available commands.`, 'error');
+      const errorMessage = `${this._t('commandNotFound')} ${cmdName}. ${this._t('typeHelpForCommands')}`;
+      await this.print(errorMessage, 'error');
+
+      // Dispatch command-error for unknown commands
+      this.dispatchEvent(new CustomEvent('command-error', {
+        detail: { command: cmdName, args, input: trimmed, error: new Error(errorMessage) },
+        bubbles: true,
+        composed: true
+      }));
     }
 
-    // Dispatch command event
+    // Dispatch command event (fired for all commands)
     this.dispatchEvent(new CustomEvent('command', {
       detail: { command: cmdName, args, input: trimmed },
       bubbles: true,
@@ -442,41 +458,6 @@ class TerminalWindow extends HTMLElement {
       await this.executeCommand(command, false);
       await this._delay(delay);
     }
-  }
-
-  /**
-   * Parse command string into parts (handles quotes)
-   */
-  _parseCommand(input) {
-    const parts = [];
-    let current = '';
-    let inQuote = false;
-    let quoteChar = '';
-
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i];
-
-      if (!inQuote && (char === '"' || char === "'")) {
-        inQuote = true;
-        quoteChar = char;
-      } else if (inQuote && char === quoteChar) {
-        inQuote = false;
-        quoteChar = '';
-      } else if (!inQuote && char === ' ') {
-        if (current) {
-          parts.push(current);
-          current = '';
-        }
-      } else {
-        current += char;
-      }
-    }
-
-    if (current) {
-      parts.push(current);
-    }
-
-    return parts;
   }
 
   /**
@@ -686,91 +667,7 @@ class TerminalWindow extends HTMLElement {
    * @returns {string} HTML string
    */
   _parseAnsi(text) {
-    // ANSI color code mappings
-    const ansiColors = {
-      '30': 'ansi-black',
-      '31': 'ansi-red',
-      '32': 'ansi-green',
-      '33': 'ansi-yellow',
-      '34': 'ansi-blue',
-      '35': 'ansi-magenta',
-      '36': 'ansi-cyan',
-      '37': 'ansi-white',
-      '90': 'ansi-bright-black',
-      '91': 'ansi-bright-red',
-      '92': 'ansi-bright-green',
-      '93': 'ansi-bright-yellow',
-      '94': 'ansi-bright-blue',
-      '95': 'ansi-bright-magenta',
-      '96': 'ansi-bright-cyan',
-      '97': 'ansi-bright-white',
-    };
-
-    const ansiBgColors = {
-      '40': 'ansi-bg-black',
-      '41': 'ansi-bg-red',
-      '42': 'ansi-bg-green',
-      '43': 'ansi-bg-yellow',
-      '44': 'ansi-bg-blue',
-      '45': 'ansi-bg-magenta',
-      '46': 'ansi-bg-cyan',
-      '47': 'ansi-bg-white',
-    };
-
-    // Match ANSI escape sequences
-    const ansiRegex = /\x1b\[([0-9;]+)m/g;
-    let result = '';
-    let lastIndex = 0;
-    let currentClasses = [];
-    let match;
-
-    while ((match = ansiRegex.exec(text)) !== null) {
-      // Add text before this match
-      if (match.index > lastIndex) {
-        const textBefore = this._escapeHtml(text.slice(lastIndex, match.index));
-        if (currentClasses.length > 0) {
-          result += `<span class="${currentClasses.join(' ')}">${textBefore}</span>`;
-        } else {
-          result += textBefore;
-        }
-      }
-
-      // Parse the codes
-      const codes = match[1].split(';');
-      for (const code of codes) {
-        if (code === '0') {
-          // Reset
-          currentClasses = [];
-        } else if (code === '1') {
-          currentClasses.push('ansi-bold');
-        } else if (code === '3') {
-          currentClasses.push('ansi-italic');
-        } else if (code === '4') {
-          currentClasses.push('ansi-underline');
-        } else if (ansiColors[code]) {
-          // Remove any existing color class
-          currentClasses = currentClasses.filter(c => !c.startsWith('ansi-') || c.startsWith('ansi-bg-') || c.startsWith('ansi-bold') || c.startsWith('ansi-italic') || c.startsWith('ansi-underline'));
-          currentClasses.push(ansiColors[code]);
-        } else if (ansiBgColors[code]) {
-          currentClasses = currentClasses.filter(c => !c.startsWith('ansi-bg-'));
-          currentClasses.push(ansiBgColors[code]);
-        }
-      }
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      const remaining = this._escapeHtml(text.slice(lastIndex));
-      if (currentClasses.length > 0) {
-        result += `<span class="${currentClasses.join(' ')}">${remaining}</span>`;
-      } else {
-        result += remaining;
-      }
-    }
-
-    return result || this._escapeHtml(text);
+    return this.ansiParser.parse(text, this._escapeHtml.bind(this));
   }
 
   /**
@@ -980,20 +877,13 @@ class TerminalWindow extends HTMLElement {
    * Navigate command history
    */
   _navigateHistory(direction) {
-    const newIndex = this.historyIndex + direction;
-
-    if (newIndex < 0) return;
-    if (newIndex >= this.commandHistory.length) {
-      this.historyIndex = this.commandHistory.length;
-      this.currentInput = '';
-    } else {
-      this.historyIndex = newIndex;
-      this.currentInput = this.commandHistory[this.historyIndex];
+    const result = this.historyManager.navigate(direction);
+    if (result !== null) {
+      this.currentInput = result;
+      const input = this.shadowRoot.querySelector('.hidden-input');
+      input.value = this.currentInput;
+      this._updateInputDisplay();
     }
-
-    const input = this.shadowRoot.querySelector('.hidden-input');
-    input.value = this.currentInput;
-    this._updateInputDisplay();
   }
 
   /**
@@ -1004,7 +894,7 @@ class TerminalWindow extends HTMLElement {
     const cmdPart = parts[0].toLowerCase();
 
     if (parts.length === 1 && cmdPart) {
-      const matches = Array.from(this.commands.keys())
+      const matches = this.commandRegistry.getNames()
         .filter(c => c.startsWith(cmdPart));
 
       if (matches.length === 1) {
@@ -1048,6 +938,31 @@ class TerminalWindow extends HTMLElement {
   setInputMask(masked) {
     this.inputMasked = masked;
     this._updateInputDisplay();
+  }
+
+// ... (copy methods)
+
+  /**
+   * Get command history
+   * @returns {string[]} Array of previously executed commands
+   */
+  getHistory() {
+    return this.historyManager.getHistory();
+  }
+
+  /**
+   * Set command history
+   * @param {string[]} history - Array of commands to set as history
+   */
+  setHistory(history) {
+    this.historyManager.setHistory(history);
+  }
+
+  /**
+   * Clear command history
+   */
+  clearHistory() {
+    this.historyManager.clear();
   }
 
   /**

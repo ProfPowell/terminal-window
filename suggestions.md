@@ -10,7 +10,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
   - **Current State:** `_renderOutput()` completely rewrites `outputContainer.innerHTML` on every update. This is O(N) and causes performance degradation as output grows.
   - **Suggestion:** Refactor to append new lines to the DOM (`appendChild` or `insertAdjacentHTML`). Only clear/redraw when `clear()` is called or max lines are exceeded.
   
-- [ ] **Refactor Monolithic Class**
+- [x] **Refactor Monolithic Class**
   - **Current State:** `TerminalWindow` handles everything: rendering, input, command parsing, history, and configuration (~2000 lines).
   - **Suggestion:** Extract logic into internal helper classes or modules:
     - `CommandRegistry`: Handle registration, aliasing, and lookup.
@@ -18,7 +18,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
     - `AnsiParser`: Isolate the ANSI escape code parsing logic.
     - `InputHandler`: Manage the hidden input and key events.
 
-- [ ] **Efficient ANSI Parsing**
+- [x] **Efficient ANSI Parsing**
   - **Current State:** `_parseAnsi` is regex-heavy and runs on every render.
   - **Suggestion:** If sticking to the current render method (not recommended), memoize parsed results. With the append-only fix, this becomes less critical but still good practice. Consider using a small, specialized library or a more robust state-machine parser if ANSI support expands.
 
