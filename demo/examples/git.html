@@ -352,10 +352,11 @@ git log -S "function"</pre>
   </main>
 
   <script type="module" src="../../src/terminal-window.js"></script>
-  <script src="commands/git-commands.js"></script>
-  <script>
+  <script type="module">
+    import { registerGitCommands } from './commands/git-commands.js';
+    
     const terminal = document.getElementById('terminal');
-    function run(cmd) { terminal.executeCommand(cmd); }
+    window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     // Register git commands
     window.addEventListener('DOMContentLoaded', () => {
