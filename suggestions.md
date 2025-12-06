@@ -43,10 +43,10 @@ This document outlines suggested improvements for the `terminal-window` web comp
 
 ### ✨ Features & Enhancements
 
-- [ ] **Virtual File System (VFS)**
+- [x] **Virtual File System (VFS)**
   - **Suggestion:** Implement a basic in-memory file system. Currently, commands like `ls` or `cd` would have to be "faked" by static returns. A VFS would allow stateful navigation.
 
-- [ ] **Persistent History**
+- [x] **Persistent History**
   - **Suggestion:** Add an option to save command history to `localStorage` so it survives page reloads.
 
 - [ ] **Improved Mobile Experience**

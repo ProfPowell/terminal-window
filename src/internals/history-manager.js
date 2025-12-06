@@ -6,6 +6,7 @@ export class HistoryManager {
   constructor() {
     this.history = [];
     this.index = -1;
+    this.storageKey = 'terminal-history';
   }
 
   /**
@@ -13,8 +14,14 @@ export class HistoryManager {
    * @param {string} command - Command to add
    */
   add(command) {
+    // Don't add empty or duplicate of last command
+    if (!command || (this.history.length > 0 && this.history[this.history.length - 1] === command)) {
+        this.index = this.history.length;
+        return;
+    }
     this.history.push(command);
     this.index = this.history.length;
+    this._persist();
   }
 
   /**
@@ -52,6 +59,7 @@ export class HistoryManager {
     if (Array.isArray(history)) {
       this.history = history.map(cmd => String(cmd));
       this.index = this.history.length;
+      this._persist();
     }
   }
 
@@ -61,6 +69,7 @@ export class HistoryManager {
   clear() {
     this.history = [];
     this.index = -1;
+    this._persist();
   }
 
   /**
@@ -77,5 +86,40 @@ export class HistoryManager {
    */
   isEmpty() {
     return this.history.length === 0;
+  }
+
+  /**
+   * Enable/Disable persistence
+   * @param {boolean} enabled 
+   */
+  setPersistence(enabled) {
+      this.persistenceEnabled = enabled;
+      if (enabled) {
+          this._load();
+      } else {
+          localStorage.removeItem(this.storageKey);
+      }
+  }
+
+  _persist() {
+      if (this.persistenceEnabled) {
+          try {
+              localStorage.setItem(this.storageKey, JSON.stringify(this.history));
+          } catch (e) {
+              console.warn('Failed to save history to localStorage', e);
+          }
+      }
+  }
+
+  _load() {
+      try {
+          const saved = localStorage.getItem(this.storageKey);
+          if (saved) {
+              this.history = JSON.parse(saved);
+              this.index = this.history.length;
+          }
+      } catch (e) {
+          console.warn('Failed to load history from localStorage', e);
+      }
   }
 }

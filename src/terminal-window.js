@@ -1,6 +1,7 @@
 import { AnsiParser } from './internals/ansi-parser.js';
 import { CommandRegistry } from './internals/command-registry.js';
 import { HistoryManager } from './internals/history-manager.js';
+import { VirtualFileSystem } from './internals/file-system.js';
 import { styles } from './styles.js';
 
 class TerminalWindow extends HTMLElement {
@@ -17,6 +18,7 @@ class TerminalWindow extends HTMLElement {
     this.ansiParser = new AnsiParser();
     this.commandRegistry = new CommandRegistry();
     this.historyManager = new HistoryManager();
+    this.fileSystem = new VirtualFileSystem();
 
     // Output lines for the terminal
     this.outputLines = [];
@@ -72,6 +74,9 @@ class TerminalWindow extends HTMLElement {
       // Behavior options
       readonly: false,
       maxLines: 1000,
+      // Features
+      enableVfs: false,
+      persistHistory: false,
     };
 
     // Default i18n strings (can be overridden via setI18n)
@@ -126,6 +131,10 @@ class TerminalWindow extends HTMLElement {
     this._applyAttributes();
     this._setupEventListeners();
 
+    if (this.config.enableVfs) {
+      this._registerVfsCommands();
+    }
+
     if (!this.config.readonly) {
       this._focusInput();
     }
@@ -170,7 +179,7 @@ class TerminalWindow extends HTMLElement {
       'font-family', 'font-size', 'line-height',
       'typing-effect', 'typing-speed',
       'show-header', 'title', 'show-controls', 'show-copy', 'show-theme-toggle',
-      'readonly', 'max-lines'
+      'readonly', 'max-lines', 'enable-vfs', 'persist-history'
     ];
   }
 
@@ -231,6 +240,16 @@ class TerminalWindow extends HTMLElement {
         break;
       case 'max-lines':
         this.config.maxLines = parseInt(newValue) || 1000;
+        break;
+      case 'enable-vfs':
+        this.config.enableVfs = newValue === 'true' || newValue === '';
+        if (this.config.enableVfs) {
+          this._registerVfsCommands();
+        }
+        break;
+      case 'persist-history':
+        this.config.persistHistory = newValue === 'true' || newValue === '';
+        this.historyManager.setPersistence(this.config.persistHistory);
         break;
     }
 
@@ -333,6 +352,59 @@ class TerminalWindow extends HTMLElement {
     if (inputLine) {
       inputLine.style.display = this.config.readonly ? 'none' : 'flex';
     }
+  }
+
+  /**
+   * Register VFS commands
+   */
+  _registerVfsCommands() {
+    // File system commands
+    this.registerCommand('ls', (args) => {
+      const result = this.fileSystem.ls(args[0]);
+      if (typeof result === 'string') return result;
+      
+      // Format directory listing
+      const items = result.map(item => {
+        const isDir = item.type === 'dir';
+        return isDir ? `\x1b[1;34m${item.name}/\x1b[0m` : item.name;
+      });
+      
+      return items.join('  ');
+    });
+
+    this.registerCommand('cd', (args) => {
+      const error = this.fileSystem.cd(args[0]);
+      if (error) return error;
+      this.setPrompt(`user@host:${this.fileSystem.getcwd()}$ `);
+      return null;
+    });
+
+    this.registerCommand('pwd', () => {
+      return this.fileSystem.getcwd();
+    });
+
+    this.registerCommand('mkdir', (args) => {
+      if (!args[0]) return 'mkdir: missing operand';
+      return this.fileSystem.mkdir(args[0]);
+    });
+
+    this.registerCommand('touch', (args) => {
+      if (!args[0]) return 'touch: missing operand';
+      return this.fileSystem.touch(args[0]);
+    });
+
+    this.registerCommand('rm', (args) => {
+      if (!args[0]) return 'rm: missing operand';
+      const recursive = args.includes('-r') || args.includes('-rf');
+      const path = args.find(a => !a.startsWith('-'));
+      if (!path) return 'rm: missing operand';
+      return this.fileSystem.rm(path, recursive);
+    });
+
+    this.registerCommand('cat', (args) => {
+      if (!args[0]) return 'cat: missing operand';
+      return this.fileSystem.readFile(args[0]);
+    });
   }
 
   /**
@@ -1433,7 +1505,7 @@ class TerminalWindow extends HTMLElement {
    * @returns {string[]} Array of previously executed commands
    */
   getHistory() {
-    return [...this.commandHistory];
+    return this.historyManager.getHistory();
   }
 
   /**
@@ -1441,18 +1513,14 @@ class TerminalWindow extends HTMLElement {
    * @param {string[]} history - Array of commands to set as history
    */
   setHistory(history) {
-    if (Array.isArray(history)) {
-      this.commandHistory = history.map(cmd => String(cmd));
-      this.historyIndex = this.commandHistory.length;
-    }
+    this.historyManager.setHistory(history);
   }
 
   /**
    * Clear command history
    */
   clearHistory() {
-    this.commandHistory = [];
-    this.historyIndex = -1;
+    this.historyManager.clear();
   }
 
   /**
