@@ -3,7 +3,7 @@
  * Simulated git commands for educational purposes
  */
 
-function registerGitCommands(terminal) {
+export function registerGitCommands(terminal) {
   // Simulated repository state
   const repo = {
     branch: 'main',

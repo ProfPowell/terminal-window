@@ -311,14 +311,17 @@ ServerSignature Off</pre>
     </section>
   </main>
 
-  <script src="../../src/terminal-window.js"></script>
-  <script src="commands/apache-commands.js"></script>
-  <script>
+  <script type="module" src="../../src/terminal-window.js"></script>
+  <script type="module">
+    import { registerApacheCommands } from './commands/apache-commands.js';
+    
     const terminal = document.getElementById('terminal');
-    function run(cmd) { terminal.executeCommand(cmd); }
+    window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     // Register Apache commands
-    registerApacheCommands(terminal);
+    window.addEventListener('DOMContentLoaded', () => {
+      registerApacheCommands(terminal);
+    });
   </script>
 </body>
 </html>

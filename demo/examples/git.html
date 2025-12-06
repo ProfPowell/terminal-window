@@ -351,14 +351,16 @@ git log -S "function"</pre>
     </section>
   </main>
 
-  <script src="../../src/terminal-window.js"></script>
+  <script type="module" src="../../src/terminal-window.js"></script>
   <script src="commands/git-commands.js"></script>
   <script>
     const terminal = document.getElementById('terminal');
     function run(cmd) { terminal.executeCommand(cmd); }
 
     // Register git commands
-    registerGitCommands(terminal);
+    window.addEventListener('DOMContentLoaded', () => {
+      registerGitCommands(terminal);
+    });
   </script>
 </body>
 </html>

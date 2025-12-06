@@ -306,14 +306,17 @@
     </section>
   </main>
 
-  <script src="terminal-window.js"></script>
-  <script src="commands/curl-commands.js"></script>
-  <script>
+  <script type="module" src="../../src/terminal-window.js"></script>
+  <script type="module">
+    import { registerCurlCommands } from './commands/curl-commands.js';
+    
     const terminal = document.getElementById('terminal');
-    function run(cmd) { terminal.executeCommand(cmd); }
+    window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     // Register curl commands
-    registerCurlCommands(terminal);
+    window.addEventListener('DOMContentLoaded', () => {
+      registerCurlCommands(terminal);
+    });
   </script>
 </body>
 </html>

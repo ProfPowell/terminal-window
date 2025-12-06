@@ -3,7 +3,7 @@
  * Simulated Apache commands for educational purposes
  */
 
-function registerApacheCommands(terminal) {
+export function registerApacheCommands(terminal) {
   // Apache state simulation
   const apache = {
     running: true,

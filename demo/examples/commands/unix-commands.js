@@ -3,7 +3,7 @@
  * Simulated Unix commands for educational purposes
  */
 
-function registerUnixCommands(terminal) {
+export function registerUnixCommands(terminal) {
   // Simulated file system
   const fs = {
     '/': { type: 'dir', children: ['home', 'var', 'etc', 'usr', 'tmp', 'bin'] },

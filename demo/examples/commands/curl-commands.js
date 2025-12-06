@@ -3,7 +3,7 @@
  * Simulated curl commands for educational purposes
  */
 
-function registerCurlCommands(terminal) {
+export function registerCurlCommands(terminal) {
   // Simulated API responses
   const apiResponses = {
     'api.example.com': {

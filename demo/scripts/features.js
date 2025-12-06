@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => {
 const terminal = document.getElementById('terminal');
 
 // File system simulation
@@ -158,8 +159,8 @@ terminal.registerCommand('figlet', (args) => {
 terminal.addEventListener('command', (e) => console.log('Command executed:', e.detail));
 terminal.addEventListener('copy', (e) => console.log('Content copied:', e.detail.text.substring(0, 50) + '...'));
 
-// Demo sequence for presentation mode
-async function runDemo() {
+// Make runDemo available globally
+window.runDemo = async function() {
   terminal.clear();
   terminal.setTypingEffect(true, 25);
   await terminal.executeSequence([
@@ -170,4 +171,6 @@ async function runDemo() {
     { command: 'cowsay "Demo complete!"', delay: 1000 },
   ]);
   terminal.setTypingEffect(false);
-}
+};
+
+});
