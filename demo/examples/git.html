@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn Git Commands - Interactive Terminal</title>
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/git.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">Terminal Window</span>
+      <span class="site-header__tagline">A vanilla JS web component for terminal simulation</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="../index.html">Features</a>
+      <a href="../syntax.html">Syntax</a>
+      <a href="apache.html">Apache</a>
+      <a href="curl.html">Curl</a>
+      <a href="git.html" class="active">Git</a>
+      <a href="unix.html">Unix</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <figure class="page-header__icon">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </figure>
+      <div class="page-header__content">
+        <h1>Learn Git Commands</h1>
+        <p>Master version control with Git. From basics to advanced workflows.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <nav class="panel panel--sidebar" aria-label="Git reference">
+        <h2 class="panel__title">Git Command Reference</h2>
+
+        <details open>
+          <summary>Getting Started</summary>
+          <section>
+            <p class="desc">Initialize a repository or clone an existing one.</p>
+            <pre class="example">git init
+git clone https://github.com/user/repo.git</pre>
+            <menu>
+              <li><button onclick="run('git init')">git init</button></li>
+              <li><button onclick="run('git clone https://github.com/user/repo.git')">git clone</button></li>
+              <li><button onclick="run('git clone --depth 1 https://github.com/user/repo.git')">shallow clone</button></li>
+              <li><button onclick="run('git config --global user.name &quot;Your Name&quot;')">set name</button></li>
+              <li><button onclick="run('git config --global user.email &quot;you@example.com&quot;')">set email</button></li>
+              <li><button onclick="run('git config --list')">list config</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Basic Workflow</summary>
+          <section>
+            <p class="desc">The essential daily Git workflow: stage, commit, push.</p>
+            <pre class="example">git add .
+git commit -m "Your message"
+git push</pre>
+            <menu>
+              <li><button onclick="run('git status')">git status</button></li>
+              <li><button onclick="run('git add .')">git add .</button></li>
+              <li><button onclick="run('git add -A')">git add -A</button></li>
+              <li><button onclick="run('git add -p')">git add -p</button></li>
+              <li><button onclick="run('git commit -m &quot;Add new feature&quot;')">git commit</button></li>
+              <li><button onclick="run('git commit -am &quot;Quick fix&quot;')">commit -am</button></li>
+              <li><button onclick="run('git push')">git push</button></li>
+              <li><button onclick="run('git push -u origin main')">push upstream</button></li>
+            </menu>
+            <aside class="tip">
+              <strong>Tip:</strong> Use <code>git add -p</code> to interactively stage hunks of changes.
+            </aside>
+          </section>
+        </details>
+
+        <details>
+          <summary>Viewing Changes</summary>
+          <section>
+            <p class="desc">Inspect the state of your repository and view differences.</p>
+            <pre class="example">git diff
+git log --oneline</pre>
+            <menu>
+              <li><button onclick="run('git diff')">git diff</button></li>
+              <li><button onclick="run('git diff --staged')">diff staged</button></li>
+              <li><button onclick="run('git diff HEAD~3')">diff last 3</button></li>
+              <li><button onclick="run('git log')">git log</button></li>
+              <li><button onclick="run('git log --oneline')">log oneline</button></li>
+              <li><button onclick="run('git log --oneline --graph')">log graph</button></li>
+              <li><button onclick="run('git log --oneline -10')">last 10</button></li>
+              <li><button onclick="run('git log --author=&quot;John&quot;')">by author</button></li>
+              <li><button onclick="run('git show HEAD')">git show</button></li>
+              <li><button onclick="run('git blame README.md')">git blame</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Branching</summary>
+          <section>
+            <p class="desc">Create and manage branches for parallel development.</p>
+            <pre class="example">git branch feature
+git checkout feature
+git checkout -b feature</pre>
+            <menu>
+              <li><button onclick="run('git branch')">list branches</button></li>
+              <li><button onclick="run('git branch -a')">all branches</button></li>
+              <li><button onclick="run('git branch feature')">create branch</button></li>
+              <li><button onclick="run('git checkout feature')">switch branch</button></li>
+              <li><button onclick="run('git checkout -b feature')">create & switch</button></li>
+              <li><button onclick="run('git switch main')">git switch</button></li>
+              <li><button onclick="run('git switch -c feature')">switch -c</button></li>
+              <li><button onclick="run('git branch -d feature')">delete branch</button></li>
+              <li><button onclick="run('git branch -D feature')">force delete</button></li>
+              <li><button onclick="run('git branch -m oldname newname')">rename branch</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Merging</summary>
+          <section>
+            <p class="desc">Combine branches together.</p>
+            <pre class="example">git checkout main
+git merge feature</pre>
+            <menu>
+              <li><button onclick="run('git merge feature')">git merge</button></li>
+              <li><button onclick="run('git merge --no-ff feature')">merge no-ff</button></li>
+              <li><button onclick="run('git merge --squash feature')">merge squash</button></li>
+              <li><button onclick="run('git merge --abort')">abort merge</button></li>
+              <li><button onclick="run('git mergetool')">mergetool</button></li>
+            </menu>
+            <aside class="tip">
+              <strong>Tip:</strong> Use <code>--no-ff</code> to always create a merge commit, even for fast-forwards.
+            </aside>
+          </section>
+        </details>
+
+        <details>
+          <summary>Rebasing</summary>
+          <section>
+            <p class="desc">Reapply commits on top of another base.</p>
+            <pre class="example">git rebase main
+git rebase -i HEAD~3</pre>
+            <menu>
+              <li><button onclick="run('git rebase main')">git rebase</button></li>
+              <li><button onclick="run('git rebase -i HEAD~3')">interactive</button></li>
+              <li><button onclick="run('git rebase --continue')">continue</button></li>
+              <li><button onclick="run('git rebase --abort')">abort</button></li>
+              <li><button onclick="run('git rebase --skip')">skip</button></li>
+              <li><button onclick="run('git pull --rebase')">pull rebase</button></li>
+            </menu>
+            <aside class="warning">
+              <strong>Warning:</strong> Never rebase commits that have been pushed to a shared branch!
+            </aside>
+          </section>
+        </details>
+
+        <details>
+          <summary>Remote Repositories</summary>
+          <section>
+            <p class="desc">Work with remote repositories like GitHub, GitLab.</p>
+            <pre class="example">git remote add origin https://github.com/user/repo.git
+git fetch origin</pre>
+            <menu>
+              <li><button onclick="run('git remote -v')">list remotes</button></li>
+              <li><button onclick="run('git remote add origin https://github.com/user/repo.git')">add remote</button></li>
+              <li><button onclick="run('git remote remove origin')">remove remote</button></li>
+              <li><button onclick="run('git fetch')">git fetch</button></li>
+              <li><button onclick="run('git fetch --all')">fetch all</button></li>
+              <li><button onclick="run('git pull')">git pull</button></li>
+              <li><button onclick="run('git pull origin main')">pull specific</button></li>
+              <li><button onclick="run('git push')">git push</button></li>
+              <li><button onclick="run('git push --force')">force push</button></li>
+              <li><button onclick="run('git push --force-with-lease')">safe force</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Stashing</summary>
+          <section>
+            <p class="desc">Temporarily save changes without committing.</p>
+            <pre class="example">git stash
+git stash pop</pre>
+            <menu>
+              <li><button onclick="run('git stash')">git stash</button></li>
+              <li><button onclick="run('git stash push -m &quot;WIP feature&quot;')">stash message</button></li>
+              <li><button onclick="run('git stash list')">list stashes</button></li>
+              <li><button onclick="run('git stash pop')">stash pop</button></li>
+              <li><button onclick="run('git stash apply')">stash apply</button></li>
+              <li><button onclick="run('git stash drop')">drop stash</button></li>
+              <li><button onclick="run('git stash clear')">clear all</button></li>
+              <li><button onclick="run('git stash show -p')">show stash</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Undoing Changes</summary>
+          <section>
+            <p class="desc">Undo commits, unstage files, and restore changes.</p>
+            <pre class="example">git reset HEAD~1
+git checkout -- file.txt</pre>
+            <menu>
+              <li><button onclick="run('git checkout -- file.txt')">discard changes</button></li>
+              <li><button onclick="run('git restore file.txt')">git restore</button></li>
+              <li><button onclick="run('git restore --staged file.txt')">unstage file</button></li>
+              <li><button onclick="run('git reset HEAD~1')">soft reset</button></li>
+              <li><button onclick="run('git reset --hard HEAD~1')">hard reset</button></li>
+              <li><button onclick="run('git reset --mixed HEAD~1')">mixed reset</button></li>
+              <li><button onclick="run('git revert HEAD')">git revert</button></li>
+              <li><button onclick="run('git commit --amend')">amend commit</button></li>
+              <li><button onclick="run('git clean -fd')">clean untracked</button></li>
+            </menu>
+            <aside class="warning">
+              <strong>Warning:</strong> <code>git reset --hard</code> permanently discards changes!
+            </aside>
+          </section>
+        </details>
+
+        <details>
+          <summary>Tags</summary>
+          <section>
+            <p class="desc">Mark specific points in history as important (releases).</p>
+            <pre class="example">git tag v1.0.0
+git push origin v1.0.0</pre>
+            <menu>
+              <li><button onclick="run('git tag')">list tags</button></li>
+              <li><button onclick="run('git tag v1.0.0')">create tag</button></li>
+              <li><button onclick="run('git tag -a v1.0.0 -m &quot;Release 1.0&quot;')">annotated tag</button></li>
+              <li><button onclick="run('git tag -d v1.0.0')">delete tag</button></li>
+              <li><button onclick="run('git push origin v1.0.0')">push tag</button></li>
+              <li><button onclick="run('git push origin --tags')">push all tags</button></li>
+              <li><button onclick="run('git show v1.0.0')">show tag</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Cherry-Pick</summary>
+          <section>
+            <p class="desc">Apply specific commits from another branch.</p>
+            <pre class="example">git cherry-pick abc1234</pre>
+            <menu>
+              <li><button onclick="run('git cherry-pick abc1234')">cherry-pick</button></li>
+              <li><button onclick="run('git cherry-pick abc1234..def5678')">range</button></li>
+              <li><button onclick="run('git cherry-pick --no-commit abc1234')">no commit</button></li>
+              <li><button onclick="run('git cherry-pick --abort')">abort</button></li>
+              <li><button onclick="run('git cherry-pick --continue')">continue</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Git Bisect</summary>
+          <section>
+            <p class="desc">Binary search to find the commit that introduced a bug.</p>
+            <pre class="example">git bisect start
+git bisect bad
+git bisect good v1.0.0</pre>
+            <menu>
+              <li><button onclick="run('git bisect start')">bisect start</button></li>
+              <li><button onclick="run('git bisect bad')">mark bad</button></li>
+              <li><button onclick="run('git bisect good')">mark good</button></li>
+              <li><button onclick="run('git bisect reset')">bisect reset</button></li>
+              <li><button onclick="run('git bisect skip')">bisect skip</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Git Reflog</summary>
+          <section>
+            <p class="desc">View history of HEAD changes to recover lost commits.</p>
+            <pre class="example">git reflog
+git checkout HEAD@{2}</pre>
+            <menu>
+              <li><button onclick="run('git reflog')">git reflog</button></li>
+              <li><button onclick="run('git reflog show main')">reflog branch</button></li>
+              <li><button onclick="run('git checkout HEAD@{2}')">checkout ref</button></li>
+              <li><button onclick="run('git reset --hard HEAD@{1}')">reset to ref</button></li>
+            </menu>
+            <aside class="tip">
+              <strong>Lifesaver:</strong> Reflog can recover commits after accidental reset!
+            </aside>
+          </section>
+        </details>
+
+        <details>
+          <summary>Submodules</summary>
+          <section>
+            <p class="desc">Include other Git repositories within yours.</p>
+            <pre class="example">git submodule add https://github.com/user/lib.git</pre>
+            <menu>
+              <li><button onclick="run('git submodule add https://github.com/user/lib.git')">add submodule</button></li>
+              <li><button onclick="run('git submodule init')">init</button></li>
+              <li><button onclick="run('git submodule update')">update</button></li>
+              <li><button onclick="run('git submodule update --init --recursive')">init recursive</button></li>
+              <li><button onclick="run('git submodule status')">status</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Worktrees</summary>
+          <section>
+            <p class="desc">Work with multiple branches simultaneously.</p>
+            <pre class="example">git worktree add ../feature-branch feature</pre>
+            <menu>
+              <li><button onclick="run('git worktree list')">list worktrees</button></li>
+              <li><button onclick="run('git worktree add ../hotfix hotfix')">add worktree</button></li>
+              <li><button onclick="run('git worktree remove ../hotfix')">remove worktree</button></li>
+              <li><button onclick="run('git worktree prune')">prune</button></li>
+            </menu>
+          </section>
+        </details>
+
+        <details>
+          <summary>Searching</summary>
+          <section>
+            <p class="desc">Search through code and commit history.</p>
+            <pre class="example">git grep "TODO"
+git log -S "function"</pre>
+            <menu>
+              <li><button onclick="run('git grep &quot;TODO&quot;')">git grep</button></li>
+              <li><button onclick="run('git grep -n &quot;function&quot;')">grep line numbers</button></li>
+              <li><button onclick="run('git log -S &quot;functionName&quot;')">pickaxe search</button></li>
+              <li><button onclick="run('git log --grep=&quot;bug fix&quot;')">search commits</button></li>
+              <li><button onclick="run('git log --all --oneline -- path/to/file')">file history</button></li>
+            </menu>
+          </section>
+        </details>
+      </nav>
+
+      <article class="panel">
+        <h2 class="panel__title">Interactive Terminal</h2>
+        <terminal-window
+          id="terminal"
+          theme="dark"
+          prompt="~/project (main) $ "
+          cursor-style="block"
+          cursor-blink="true"
+          welcome="Welcome to Git Tutorial! Type 'help' for available commands, or click examples in the sidebar."
+        ></terminal-window>
+      </article>
+    </section>
+  </main>
+
+  <script src="../../src/terminal-window.js"></script>
+  <script src="commands/git-commands.js"></script>
+  <script>
+    const terminal = document.getElementById('terminal');
+    function run(cmd) { terminal.executeCommand(cmd); }
+
+    // Register git commands
+    registerGitCommands(terminal);
+  </script>
+</body>
+</html>

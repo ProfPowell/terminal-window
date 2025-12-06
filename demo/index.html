@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Window - Vanilla JS Web Component Demo</title>
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">Terminal Window</span>
+      <span class="site-header__tagline">A vanilla JS web component for terminal simulation</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="index.html" class="active">Features</a>
+      <a href="syntax.html">Syntax</a>
+      <a href="examples/apache.html">Apache</a>
+      <a href="examples/curl.html">Curl</a>
+      <a href="examples/git.html">Git</a>
+      <a href="examples/unix.html">Unix</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="content">
+      <aside class="panel panel--sidebar" aria-label="Configuration panel">
+        <h2 class="panel__title">Configuration</h2>
+        <form onsubmit="return false;">
+          <fieldset>
+            <legend>Theme</legend>
+            <menu>
+              <li><button type="button" onclick="terminal.setTheme('dark')">Dark</button></li>
+              <li><button type="button" onclick="terminal.setTheme('light')">Light</button></li>
+            </menu>
+          </fieldset>
+
+          <fieldset>
+            <legend>Cursor Style</legend>
+            <menu>
+              <li><button type="button" onclick="terminal.setCursorStyle('block')">Block</button></li>
+              <li><button type="button" onclick="terminal.setCursorStyle('underline')">Underline</button></li>
+              <li><button type="button" onclick="terminal.setCursorStyle('bar')">Bar</button></li>
+            </menu>
+          </fieldset>
+
+          <fieldset>
+            <legend>Cursor Blink</legend>
+            <label>
+              <input type="checkbox" checked onchange="terminal.setCursorBlink(this.checked)">
+              Enable blinking cursor
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Prompt</legend>
+            <select aria-label="Select prompt style" onchange="terminal.setPrompt(this.value)">
+              <option value="$ ">$ (Default)</option>
+              <option value="> ">&gt; (Arrow)</option>
+              <option value="~ ">~ (Home)</option>
+              <option value="user@host:~$ ">user@host:~$</option>
+              <option value="root# ">root#</option>
+              <option value=">>> ">&gt;&gt;&gt; (Python)</option>
+            </select>
+          </fieldset>
+
+          <fieldset>
+            <legend>Typing Effect</legend>
+            <label>
+              <input type="checkbox" onchange="terminal.setTypingEffect(this.checked, 30)">
+              Enable typing animation
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Test Commands</legend>
+            <menu>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('help')">help</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('ls')">ls</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('pwd')">pwd</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('whoami')">whoami</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('date')">date</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('fortune')">fortune</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('neofetch')">neofetch</button></li>
+            </menu>
+          </fieldset>
+
+          <fieldset>
+            <legend>Read-Only Mode</legend>
+            <label>
+              <input type="checkbox" onchange="terminal.setReadonly(this.checked)">
+              Enable read-only mode
+            </label>
+            <menu>
+              <li><button type="button" data-variant="secondary" onclick="runDemo()">Run Demo Sequence</button></li>
+            </menu>
+          </fieldset>
+
+          <fieldset>
+            <legend>Actions</legend>
+            <menu>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('colors')">Show ANSI Colors</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.clear()">Clear Terminal</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.copyContent()">Copy Content</button></li>
+            </menu>
+          </fieldset>
+        </form>
+
+        <details class="info-section" open>
+          <summary>Features (v2.0.0)</summary>
+          <ul>
+            <li>Light &amp; dark themes via CSS variables</li>
+            <li>Customizable prompt and cursor styles</li>
+            <li>Blinking cursor with configurable speed</li>
+            <li>Typing effect for output</li>
+            <li>Command history (up/down arrows)</li>
+            <li>Tab autocomplete</li>
+            <li>Ctrl+C to cancel, Ctrl+L to clear</li>
+            <li>Copy content to clipboard</li>
+            <li>Custom command registration</li>
+            <li>ANSI color code support (16 colors)</li>
+            <li>Read-only/presentation mode</li>
+            <li>Accessibility (ARIA, screen readers)</li>
+            <li>Configurable header options</li>
+            <li>ES Module export support</li>
+            <li>Zero dependencies - pure vanilla JS</li>
+          </ul>
+          <p style="margin-top: 0.75rem;"><a href="syntax.html" style="color: var(--accent);">View full API documentation &rarr;</a></p>
+        </details>
+      </aside>
+
+      <article class="panel">
+        <h2 class="panel__title">Terminal</h2>
+        <terminal-window
+          id="terminal"
+          theme="dark"
+          prompt="$ "
+          cursor-style="block"
+          cursor-blink="true"
+          welcome="Welcome to Terminal Window! Type 'help' for available commands."
+        ></terminal-window>
+      </article>
+    </section>
+  </main>
+
+  <script src="../src/terminal-window.js"></script>
+  <script src="scripts/features.js"></script>
+</body>
+</html>

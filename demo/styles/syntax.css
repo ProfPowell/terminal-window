@@ -1,0 +1,269 @@
+/*
+ * Syntax / API Reference page styles
+ * Terminal Window Web Component
+ */
+
+:root {
+  --accent: #8be9fd;
+  --accent-hover: #a4ffff;
+}
+
+/* Full-width layout for documentation */
+.content {
+  grid-template-columns: 1fr;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Documentation panel */
+.panel--docs {
+  padding: 2rem 3rem;
+}
+
+.panel--docs h1 {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel--docs > p {
+  color: #bbb;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Table of Contents */
+.toc {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.toc h4 {
+  margin: 0 0 1rem 0;
+  color: var(--accent);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem 2rem;
+}
+
+.toc li {
+  margin: 0;
+}
+
+.toc a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  transition: color 0.2s;
+}
+
+.toc a:hover {
+  color: var(--accent);
+}
+
+/* Sections */
+.syntax-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.syntax-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.syntax-section h2 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+.syntax-section h3 {
+  color: var(--accent);
+  font-size: 1.125rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(139, 233, 253, 0.2);
+}
+
+.syntax-section p {
+  color: #ccc;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.syntax-section ul,
+.syntax-section ol {
+  color: #ccc;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.syntax-section li {
+  margin-bottom: 0.375rem;
+}
+
+.syntax-section li strong {
+  color: #fff;
+}
+
+/* Inline code */
+.syntax-section code {
+  background: rgba(139, 233, 253, 0.15);
+  color: #8be9fd;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875em;
+}
+
+/* Code blocks */
+.code-block {
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0 1.5rem;
+  overflow-x: auto;
+}
+
+.code-block code {
+  background: transparent;
+  color: #e6edf3;
+  padding: 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre;
+  display: block;
+}
+
+/* Tables */
+.attr-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.9375rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.attr-table th,
+.attr-table td {
+  text-align: left;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.attr-table tr:last-child td {
+  border-bottom: none;
+}
+
+.attr-table th {
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.attr-table td {
+  color: #ccc;
+}
+
+.attr-table td:first-child {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  color: #8be9fd;
+  font-size: 0.875rem;
+}
+
+.attr-table td:nth-child(3) {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.attr-table code {
+  background: rgba(139, 233, 253, 0.1);
+  padding: 0.125rem 0.375rem;
+  font-size: 0.8125rem;
+}
+
+/* Method signatures */
+.method-signature {
+  background: rgba(139, 233, 253, 0.1);
+  border: 1px solid rgba(139, 233, 253, 0.2);
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.375rem;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9375rem;
+  color: #8be9fd;
+  display: inline-block;
+  margin: 0.5rem 0;
+}
+
+/* Event names */
+.event-name {
+  background: rgba(241, 250, 140, 0.1);
+  border: 1px solid rgba(241, 250, 140, 0.2);
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.375rem;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9375rem;
+  color: #f1fa8c;
+  display: inline-block;
+  margin: 0.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .panel--docs {
+    padding: 1.5rem;
+  }
+
+  .panel--docs h1 {
+    font-size: 1.5rem;
+  }
+
+  .toc ul {
+    grid-template-columns: 1fr;
+  }
+
+  .attr-table {
+    font-size: 0.8125rem;
+  }
+
+  .attr-table th,
+  .attr-table td {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .code-block {
+    padding: 0.875rem 1rem;
+  }
+
+  .code-block code {
+    font-size: 0.8125rem;
+  }
+}
