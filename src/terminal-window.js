@@ -1,20 +1,17 @@
-/**
- * TerminalWindow Web Component
- * A vanilla JavaScript web component that simulates a terminal console
- * with customizable commands, themes, cursor styles, and typing effects.
- *
- * @version 2.0.0
- * @license MIT
- */
-
 import { AnsiParser } from './internals/ansi-parser.js';
 import { CommandRegistry } from './internals/command-registry.js';
 import { HistoryManager } from './internals/history-manager.js';
+import { styles } from './styles.js';
 
 class TerminalWindow extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+
+    // Adopt styles
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(styles);
+    this.shadowRoot.adoptedStyleSheets = [sheet];
 
     // Initialize internal modules
     this.ansiParser = new AnsiParser();
@@ -140,11 +137,31 @@ class TerminalWindow extends HTMLElement {
     }
 
     // Announce to screen readers
-    this._announce('Terminal ready');
+    this._announce(this._t('terminalReady'));
   }
 
   disconnectedCallback() {
-    // Cleanup if needed
+    // Remove document-level event listeners
+    if (this._fullscreenEscHandler) {
+      document.removeEventListener('keydown', this._fullscreenEscHandler);
+      this._fullscreenEscHandler = null;
+    }
+
+    if (this._copyMenuCloseHandler) {
+      document.removeEventListener('click', this._copyMenuCloseHandler);
+      this._copyMenuCloseHandler = null;
+    }
+
+    // Clear any pending timeouts
+    if (this._copyFeedbackTimeout) {
+      clearTimeout(this._copyFeedbackTimeout);
+      this._copyFeedbackTimeout = null;
+    }
+
+    if (this._announceTimeout) {
+      clearTimeout(this._announceTimeout);
+      this._announceTimeout = null;
+    }
   }
 
   static get observedAttributes() {
@@ -694,7 +711,7 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Render the output area (full re-render)
+   * Render the output area
    */
   _renderOutput() {
     const outputContainer = this.shadowRoot.querySelector('.output');
@@ -710,9 +727,40 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Scroll to bottom of terminal
+   * Check if terminal is scrolled near the bottom
+   */
+  _isNearBottom() {
+    const terminal = this.shadowRoot.querySelector('.terminal-body');
+    if (!terminal) return true;
+    const distanceFromBottom = terminal.scrollHeight - terminal.scrollTop - terminal.clientHeight;
+    return distanceFromBottom <= this._scrollThreshold;
+  }
+
+  /**
+   * Handle scroll events for smart auto-scroll
+   */
+  _handleScroll() {
+    // Re-enable auto-scroll if user scrolls to bottom
+    this._autoScroll = this._isNearBottom();
+  }
+
+  /**
+   * Scroll to bottom of terminal (respects auto-scroll setting)
    */
   _scrollToBottom() {
+    if (!this._autoScroll) return;
+
+    const terminal = this.shadowRoot.querySelector('.terminal-body');
+    if (terminal) {
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+  }
+
+  /**
+   * Force scroll to bottom (ignores auto-scroll setting)
+   */
+  scrollToBottom() {
+    this._autoScroll = true;
     const terminal = this.shadowRoot.querySelector('.terminal-body');
     if (terminal) {
       terminal.scrollTop = terminal.scrollHeight;
@@ -736,8 +784,12 @@ class TerminalWindow extends HTMLElement {
     if (announcer) {
       announcer.textContent = message;
       // Clear after announcement
-      setTimeout(() => {
+      if (this._announceTimeout) {
+        clearTimeout(this._announceTimeout);
+      }
+      this._announceTimeout = setTimeout(() => {
         announcer.textContent = '';
+        this._announceTimeout = null;
       }, 1000);
     }
   }
@@ -748,9 +800,19 @@ class TerminalWindow extends HTMLElement {
   _setupEventListeners() {
     const input = this.shadowRoot.querySelector('.hidden-input');
     const terminal = this.shadowRoot.querySelector('.terminal');
+    const terminalBody = this.shadowRoot.querySelector('.terminal-body');
+
+    // Smart scroll: track when user scrolls away from bottom
+    if (terminalBody) {
+      terminalBody.addEventListener('scroll', () => this._handleScroll());
+    }
 
     // Focus input when clicking anywhere in terminal
+    // Also skip typing effect if in progress
     terminal.addEventListener('click', () => {
+      if (this._typingInProgress) {
+        this.skipTypingEffect();
+      }
       if (!this.config.readonly) {
         this._focusInput();
       }
@@ -794,10 +856,15 @@ class TerminalWindow extends HTMLElement {
         case 'c':
           if (e.ctrlKey) {
             e.preventDefault();
-            this._printCommandLine(this.currentInput + '^C');
-            this.currentInput = '';
-            input.value = '';
-            this._updateInputDisplay();
+            // Skip typing effect if in progress
+            if (this._typingInProgress) {
+              this.skipTypingEffect();
+            } else {
+              this._printCommandLine(this.currentInput + '^C');
+              this.currentInput = '';
+              input.value = '';
+              this._updateInputDisplay();
+            }
             this.dispatchEvent(new CustomEvent('interrupt', { bubbles: true, composed: true }));
           }
           break;
@@ -829,13 +896,36 @@ class TerminalWindow extends HTMLElement {
         this._toggleCopyMenu();
       });
 
+      // Keyboard support for copy button - Enter/Space opens menu
+      copyBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          // Allow default click behavior for single action
+          // But ArrowDown opens the menu
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          this._openCopyMenu();
+        }
+      });
+
       // Handle menu items
       copyMenu.querySelectorAll('.copy-menu-item').forEach(item => {
         item.addEventListener('click', (e) => {
           e.stopPropagation();
           const mode = item.dataset.copyMode;
           this.copyContent(mode);
-          copyMenu.style.display = 'none';
+          this._closeCopyMenu();
+        });
+
+        // Keyboard support for menu items
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const mode = item.dataset.copyMode;
+            this.copyContent(mode);
+            this._closeCopyMenu();
+          } else {
+            this._handleCopyMenuKeydown(e);
+          }
         });
       });
     }
@@ -940,31 +1030,6 @@ class TerminalWindow extends HTMLElement {
     this._updateInputDisplay();
   }
 
-// ... (copy methods)
-
-  /**
-   * Get command history
-   * @returns {string[]} Array of previously executed commands
-   */
-  getHistory() {
-    return this.historyManager.getHistory();
-  }
-
-  /**
-   * Set command history
-   * @param {string[]} history - Array of commands to set as history
-   */
-  setHistory(history) {
-    this.historyManager.setHistory(history);
-  }
-
-  /**
-   * Clear command history
-   */
-  clearHistory() {
-    this.historyManager.clear();
-  }
-
   /**
    * Copy terminal content to clipboard
    * @param {string} mode - Copy mode: 'all', 'commands', 'output', 'selection'
@@ -994,7 +1059,7 @@ class TerminalWindow extends HTMLElement {
           window.getSelection();
         text = selection ? selection.toString() : '';
         if (!text) {
-          this._showCopyFeedback('No selection');
+          this._showCopyFeedback(this._t('noSelection'));
           return;
         }
         break;
@@ -1010,7 +1075,7 @@ class TerminalWindow extends HTMLElement {
     }
 
     if (!text) {
-      this._showCopyFeedback('Nothing to copy');
+      this._showCopyFeedback(this._t('nothingToCopy'));
       return;
     }
 
@@ -1021,10 +1086,13 @@ class TerminalWindow extends HTMLElement {
    * Internal method to copy text to clipboard
    */
   async _copyToClipboard(text, mode = 'all') {
+    const modeLabel = mode === 'all' ? this._t('content') : mode.charAt(0).toUpperCase() + mode.slice(1);
+    const announcement = `${modeLabel} ${this._t('copiedToClipboard')}`;
+
     try {
       await navigator.clipboard.writeText(text);
-      this._showCopyFeedback('Copied!');
-      this._announce(`${mode === 'all' ? 'Content' : mode.charAt(0).toUpperCase() + mode.slice(1)} copied to clipboard`);
+      this._showCopyFeedback(this._t('copied'));
+      this._announce(announcement);
     } catch (err) {
       // Fallback for older browsers
       const textarea = document.createElement('textarea');
@@ -1035,8 +1103,8 @@ class TerminalWindow extends HTMLElement {
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      this._showCopyFeedback('Copied!');
-      this._announce(`${mode === 'all' ? 'Content' : mode.charAt(0).toUpperCase() + mode.slice(1)} copied to clipboard`);
+      this._showCopyFeedback(this._t('copied'));
+      this._announce(announcement);
     }
 
     this.dispatchEvent(new CustomEvent('copy', {
@@ -1050,21 +1118,116 @@ class TerminalWindow extends HTMLElement {
    * Toggle copy menu visibility
    */
   _toggleCopyMenu() {
-    const menu = this.shadowRoot.querySelector('.copy-menu');
-    if (menu) {
-      const isVisible = menu.style.display === 'block';
-      menu.style.display = isVisible ? 'none' : 'block';
+    if (this._copyMenuOpen) {
+      this._closeCopyMenu();
+    } else {
+      this._openCopyMenu();
+    }
+  }
 
-      // Close menu when clicking outside
-      if (!isVisible) {
-        const closeHandler = (e) => {
-          if (!e.composedPath().includes(menu) && !e.composedPath().includes(this.shadowRoot.querySelector('.copy-btn'))) {
-            menu.style.display = 'none';
-            document.removeEventListener('click', closeHandler);
-          }
-        };
-        setTimeout(() => document.addEventListener('click', closeHandler), 0);
+  /**
+   * Open the copy menu with keyboard support
+   */
+  _openCopyMenu() {
+    const menu = this.shadowRoot.querySelector('.copy-menu');
+    const copyBtn = this.shadowRoot.querySelector('.copy-btn');
+    if (!menu) return;
+
+    menu.style.display = 'block';
+    this._copyMenuOpen = true;
+    this._copyMenuFocusIndex = 0;
+
+    // Update ARIA state
+    if (copyBtn) {
+      copyBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    // Focus first menu item
+    const items = menu.querySelectorAll('.copy-menu-item');
+    if (items.length > 0) {
+      items[0].focus();
+    }
+
+    // Close menu when clicking outside
+    this._copyMenuCloseHandler = (e) => {
+      if (!e.composedPath().includes(menu) && !e.composedPath().includes(copyBtn)) {
+        this._closeCopyMenu();
       }
+    };
+    setTimeout(() => document.addEventListener('click', this._copyMenuCloseHandler), 0);
+  }
+
+  /**
+   * Close the copy menu and return focus
+   */
+  _closeCopyMenu() {
+    const menu = this.shadowRoot.querySelector('.copy-menu');
+    const copyBtn = this.shadowRoot.querySelector('.copy-btn');
+
+    if (menu) {
+      menu.style.display = 'none';
+    }
+
+    this._copyMenuOpen = false;
+    this._copyMenuFocusIndex = -1;
+
+    // Update ARIA state
+    if (copyBtn) {
+      copyBtn.setAttribute('aria-expanded', 'false');
+      copyBtn.focus();
+    }
+
+    // Remove click handler
+    if (this._copyMenuCloseHandler) {
+      document.removeEventListener('click', this._copyMenuCloseHandler);
+      this._copyMenuCloseHandler = null;
+    }
+  }
+
+  /**
+   * Handle keyboard navigation in copy menu
+   */
+  _handleCopyMenuKeydown(e) {
+    const menu = this.shadowRoot.querySelector('.copy-menu');
+    if (!menu || !this._copyMenuOpen) return;
+
+    const items = menu.querySelectorAll('.copy-menu-item');
+    if (items.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this._copyMenuFocusIndex = (this._copyMenuFocusIndex + 1) % items.length;
+        items[this._copyMenuFocusIndex].focus();
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        this._copyMenuFocusIndex = (this._copyMenuFocusIndex - 1 + items.length) % items.length;
+        items[this._copyMenuFocusIndex].focus();
+        break;
+
+      case 'Escape':
+        e.preventDefault();
+        this._closeCopyMenu();
+        break;
+
+      case 'Tab':
+        // Close menu on tab out
+        this._closeCopyMenu();
+        break;
+
+      case 'Home':
+        e.preventDefault();
+        this._copyMenuFocusIndex = 0;
+        items[0].focus();
+        break;
+
+      case 'End':
+        e.preventDefault();
+        this._copyMenuFocusIndex = items.length - 1;
+        items[items.length - 1].focus();
+        break;
     }
   }
 
@@ -1077,9 +1240,14 @@ class TerminalWindow extends HTMLElement {
     const originalText = copyBtn.textContent;
     copyBtn.textContent = message;
     copyBtn.classList.add('copy-success');
-    setTimeout(() => {
+    if (this._copyFeedbackTimeout) {
+      clearTimeout(this._copyFeedbackTimeout);
+    }
+    this._copyFeedbackTimeout = setTimeout(() => {
       copyBtn.textContent = originalText;
       copyBtn.classList.remove('copy-success');
+      this._copyFeedbackTimeout = null;
+      this._focusInput();
     }, 1500);
   }
 
@@ -1090,7 +1258,8 @@ class TerminalWindow extends HTMLElement {
     this.config.theme = this.config.theme === 'dark' ? 'light' : 'dark';
     this.setAttribute('theme', this.config.theme);
     this._updateStyles();
-    this._announce(`Theme changed to ${this.config.theme}`);
+    this._announce(`${this._t('themeChangedTo')} ${this.config.theme}`);
+    this._focusInput();
   }
 
   /**
@@ -1098,7 +1267,7 @@ class TerminalWindow extends HTMLElement {
    */
   close() {
     this.style.display = 'none';
-    this._announce('Terminal closed');
+    this._announce(this._t('terminalClosed'));
 
     this.dispatchEvent(new CustomEvent('close', {
       bubbles: true,
@@ -1117,13 +1286,18 @@ class TerminalWindow extends HTMLElement {
       terminalBody.style.display = this.isMinimized ? 'none' : 'block';
     }
 
-    this._announce(this.isMinimized ? 'Terminal minimized' : 'Terminal restored');
+    this._announce(this.isMinimized ? this._t('terminalMinimized') : this._t('terminalRestored'));
 
     this.dispatchEvent(new CustomEvent('minimize', {
       detail: { minimized: this.isMinimized },
       bubbles: true,
       composed: true
     }));
+
+    // Return focus to input when restoring from minimized state
+    if (!this.isMinimized) {
+      this._focusInput();
+    }
   }
 
   /**
@@ -1139,8 +1313,9 @@ class TerminalWindow extends HTMLElement {
     }
 
     if (maximizeBtn) {
-      maximizeBtn.title = this.isFullscreen ? 'Exit fullscreen' : 'Maximize';
-      maximizeBtn.setAttribute('aria-label', this.isFullscreen ? 'Exit fullscreen' : 'Toggle fullscreen');
+      maximizeBtn.title = this.isFullscreen ? this._t('exitFullscreen') : this._t('maximize');
+      maximizeBtn.setAttribute('aria-label', this.isFullscreen ? this._t('exitFullscreen') : this._t('toggleFullscreen'));
+      maximizeBtn.setAttribute('aria-pressed', this.isFullscreen ? 'true' : 'false');
     }
 
     // Handle escape key to exit fullscreen
@@ -1156,13 +1331,15 @@ class TerminalWindow extends HTMLElement {
       this._fullscreenEscHandler = null;
     }
 
-    this._announce(this.isFullscreen ? 'Entered fullscreen mode' : 'Exited fullscreen mode');
+    this._announce(this.isFullscreen ? this._t('enteredFullscreen') : this._t('exitedFullscreen'));
 
     this.dispatchEvent(new CustomEvent('fullscreen', {
       detail: { fullscreen: this.isFullscreen },
       bubbles: true,
       composed: true
     }));
+
+    this._focusInput();
   }
 
   /**
@@ -1302,7 +1479,6 @@ class TerminalWindow extends HTMLElement {
    */
   render() {
     this.shadowRoot.innerHTML = `
-      <style>${this.getStyles()}</style>
       <div class="terminal"
            data-theme="${this.config.theme}"
            data-cursor-style="${this.config.cursorStyle}"
@@ -1316,33 +1492,38 @@ class TerminalWindow extends HTMLElement {
 
         <div class="terminal-header" style="${this.config.showHeader ? '' : 'display: none'}">
           <div class="window-controls" style="${this.config.showControls ? '' : 'display: none'}">
-            <button class="control close" title="Close" aria-label="Close terminal"></button>
-            <button class="control minimize" title="Minimize" aria-label="Minimize terminal"></button>
-            <button class="control maximize" title="Maximize" aria-label="Toggle fullscreen"></button>
+            <button class="control close" title="${this._t('close')}" aria-label="${this._t('close')} terminal"></button>
+            <button class="control minimize" title="${this._t('minimize')}" aria-label="${this._t('minimize')} terminal"></button>
+            <button class="control maximize" title="${this._t('maximize')}" aria-label="${this._t('toggleFullscreen')}" aria-pressed="false"></button>
           </div>
-          <div class="terminal-title">${this._escapeHtml(this.config.title)}</div>
+          <div class="terminal-title">
+            <slot name="title">${this._escapeHtml(this.config.title)}</slot>
+          </div>
           <div class="terminal-actions">
+            <slot name="actions"></slot>
             <button class="theme-btn"
-                    title="Toggle theme (${this.config.theme === 'dark' ? 'switch to light' : 'switch to dark'})"
-                    aria-label="Toggle theme"
+                    title="${this._t('toggleTheme')} (${this.config.theme === 'dark' ? this._t('switchToLight') : this._t('switchToDark')})"
+                    aria-label="${this._t('toggleTheme')}"
                     style="${this.config.showThemeToggle ? '' : 'display: none'}">
               <span class="theme-icon"></span>
             </button>
             <div class="copy-wrapper" style="${this.config.showCopy ? '' : 'display: none'}">
               <button class="copy-btn"
-                      title="Copy terminal content (click for options)"
-                      aria-label="Copy terminal content"
-                      aria-haspopup="menu">Copy</button>
-              <div class="copy-menu" role="menu" aria-label="Copy options">
-                <button class="copy-menu-item" data-copy-mode="all" role="menuitem">Copy All</button>
-                <button class="copy-menu-item" data-copy-mode="commands" role="menuitem">Copy Commands Only</button>
-                <button class="copy-menu-item" data-copy-mode="output" role="menuitem">Copy Output Only</button>
+                      title="${this._t('copy')} (right-click for options)"
+                      aria-label="${this._t('copy')} terminal content"
+                      aria-haspopup="menu"
+                      aria-expanded="false">${this._t('copy')}</button>
+              <div class="copy-menu" role="menu" aria-label="${this._t('copyOptions')}">
+                <button class="copy-menu-item" data-copy-mode="all" role="menuitem" tabindex="-1">${this._t('copyAll')}</button>
+                <button class="copy-menu-item" data-copy-mode="commands" role="menuitem" tabindex="-1">${this._t('copyCommandsOnly')}</button>
+                <button class="copy-menu-item" data-copy-mode="output" role="menuitem" tabindex="-1">${this._t('copyOutputOnly')}</button>
               </div>
             </div>
           </div>
         </div>
         <div class="terminal-body" role="log" aria-live="polite" aria-relevant="additions">
-          <div class="output" role="list" aria-label="Terminal output"></div>
+          <slot name="before-output"></slot>
+          <div class="output" role="list" aria-label="${this._t('terminalOutput')}"></div>
           <div class="input-line" style="${this.config.readonly ? 'display: none' : ''}">
             <span class="input-prompt" aria-hidden="true">${this._escapeHtml(this.config.prompt)}</span>
             <span class="input-display">
@@ -1355,545 +1536,11 @@ class TerminalWindow extends HTMLElement {
                    autocorrect="off"
                    autocapitalize="off"
                    spellcheck="false"
-                   aria-label="Terminal input. Type a command and press Enter."
+                   aria-label="${this._t('terminalInputLabel')}"
                    role="textbox" />
           </div>
         </div>
       </div>
-    `;
-  }
-
-  /**
-   * Get component styles
-   */
-  getStyles() {
-    return `
-      :host {
-        display: block;
-        height: 100%;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      /* Screen reader only content */
-      .sr-announcer {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      /* ===== CSS Custom Properties (User Customizable) ===== */
-      .terminal {
-        /* Font settings */
-        --font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        --font-size: 14px;
-        --line-height: 1.4;
-
-        /* Cursor settings */
-        --cursor-width: 8px;
-        --cursor-height: 1.2em;
-        --cursor-blink-speed: 1s;
-      }
-
-      /* ===== DARK THEME ===== */
-      .terminal[data-theme="dark"] {
-        --bg-primary: #1a1a2e;
-        --bg-secondary: #16213e;
-        --bg-header: #0f0f23;
-        --border-color: #2a2a4a;
-        --text-primary: #e0e0e0;
-        --text-secondary: #888;
-        --text-muted: #666;
-
-        --prompt-color: #50fa7b;
-        --cursor-color: #50fa7b;
-        --command-color: #f8f8f2;
-        --output-color: #e0e0e0;
-        --error-color: #ff5555;
-        --info-color: #8be9fd;
-        --success-color: #50fa7b;
-
-        --selection-bg: rgba(80, 250, 123, 0.3);
-
-        --btn-bg: #2a2a4a;
-        --btn-hover: #3a3a5a;
-        --btn-text: #e0e0e0;
-
-        --scrollbar-track: #1a1a2e;
-        --scrollbar-thumb: #3a3a5a;
-        --scrollbar-thumb-hover: #4a4a6a;
-
-        --control-close: #ff5f56;
-        --control-minimize: #ffbd2e;
-        --control-maximize: #27c93f;
-
-        --theme-icon: "\\263E"; /* Moon */
-
-        /* ANSI colors */
-        --ansi-black: #21222c;
-        --ansi-red: #ff5555;
-        --ansi-green: #50fa7b;
-        --ansi-yellow: #f1fa8c;
-        --ansi-blue: #bd93f9;
-        --ansi-magenta: #ff79c6;
-        --ansi-cyan: #8be9fd;
-        --ansi-white: #f8f8f2;
-        --ansi-bright-black: #6272a4;
-        --ansi-bright-red: #ff6e6e;
-        --ansi-bright-green: #69ff94;
-        --ansi-bright-yellow: #ffffa5;
-        --ansi-bright-blue: #d6acff;
-        --ansi-bright-magenta: #ff92df;
-        --ansi-bright-cyan: #a4ffff;
-        --ansi-bright-white: #ffffff;
-      }
-
-      /* ===== LIGHT THEME ===== */
-      .terminal[data-theme="light"] {
-        --bg-primary: #fafafa;
-        --bg-secondary: #f0f0f0;
-        --bg-header: #e8e8e8;
-        --border-color: #d0d0d0;
-        --text-primary: #333;
-        --text-secondary: #666;
-        --text-muted: #999;
-
-        --prompt-color: #16a34a;
-        --cursor-color: #16a34a;
-        --command-color: #1a1a1a;
-        --output-color: #333;
-        --error-color: #dc2626;
-        --info-color: #0284c7;
-        --success-color: #16a34a;
-
-        --selection-bg: rgba(22, 163, 74, 0.2);
-
-        --btn-bg: #e0e0e0;
-        --btn-hover: #d0d0d0;
-        --btn-text: #333;
-
-        --scrollbar-track: #f0f0f0;
-        --scrollbar-thumb: #c0c0c0;
-        --scrollbar-thumb-hover: #a0a0a0;
-
-        --control-close: #ff5f56;
-        --control-minimize: #ffbd2e;
-        --control-maximize: #27c93f;
-
-        --theme-icon: "\\2600"; /* Sun */
-
-        /* ANSI colors (adjusted for light theme) */
-        --ansi-black: #000000;
-        --ansi-red: #c41a16;
-        --ansi-green: #007400;
-        --ansi-yellow: #826b28;
-        --ansi-blue: #0000ff;
-        --ansi-magenta: #a90d91;
-        --ansi-cyan: #318495;
-        --ansi-white: #666666;
-        --ansi-bright-black: #666666;
-        --ansi-bright-red: #eb3223;
-        --ansi-bright-green: #1cdc23;
-        --ansi-bright-yellow: #cdcd00;
-        --ansi-bright-blue: #5c5cff;
-        --ansi-bright-magenta: #eb3eb3;
-        --ansi-bright-cyan: #23cece;
-        --ansi-bright-white: #c7c7c7;
-      }
-
-      /* ANSI color classes */
-      .ansi-black { color: var(--ansi-black); }
-      .ansi-red { color: var(--ansi-red); }
-      .ansi-green { color: var(--ansi-green); }
-      .ansi-yellow { color: var(--ansi-yellow); }
-      .ansi-blue { color: var(--ansi-blue); }
-      .ansi-magenta { color: var(--ansi-magenta); }
-      .ansi-cyan { color: var(--ansi-cyan); }
-      .ansi-white { color: var(--ansi-white); }
-      .ansi-bright-black { color: var(--ansi-bright-black); }
-      .ansi-bright-red { color: var(--ansi-bright-red); }
-      .ansi-bright-green { color: var(--ansi-bright-green); }
-      .ansi-bright-yellow { color: var(--ansi-bright-yellow); }
-      .ansi-bright-blue { color: var(--ansi-bright-blue); }
-      .ansi-bright-magenta { color: var(--ansi-bright-magenta); }
-      .ansi-bright-cyan { color: var(--ansi-bright-cyan); }
-      .ansi-bright-white { color: var(--ansi-bright-white); }
-      .ansi-bold { font-weight: bold; }
-      .ansi-italic { font-style: italic; }
-      .ansi-underline { text-decoration: underline; }
-      .ansi-bg-black { background-color: var(--ansi-black); }
-      .ansi-bg-red { background-color: var(--ansi-red); }
-      .ansi-bg-green { background-color: var(--ansi-green); }
-      .ansi-bg-yellow { background-color: var(--ansi-yellow); }
-      .ansi-bg-blue { background-color: var(--ansi-blue); }
-      .ansi-bg-magenta { background-color: var(--ansi-magenta); }
-      .ansi-bg-cyan { background-color: var(--ansi-cyan); }
-      .ansi-bg-white { background-color: var(--ansi-white); }
-
-      /* ===== Terminal Container ===== */
-      .terminal {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background: var(--bg-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        overflow: hidden;
-        font-family: var(--font-family);
-        font-size: var(--font-size);
-        line-height: var(--line-height);
-        color: var(--text-primary);
-      }
-
-      /* Focus outline for accessibility */
-      .terminal:focus-within {
-        outline: 2px solid var(--prompt-color);
-        outline-offset: 2px;
-      }
-
-      /* ===== Terminal Header ===== */
-      .terminal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 16px;
-        background: var(--bg-header);
-        border-bottom: 1px solid var(--border-color);
-        user-select: none;
-      }
-
-      .window-controls {
-        display: flex;
-        gap: 8px;
-      }
-
-      .control {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-      }
-
-      .control:hover {
-        opacity: 0.8;
-        transform: scale(1.1);
-      }
-
-      .control:active {
-        transform: scale(0.95);
-      }
-
-      .control.close {
-        background: var(--control-close);
-      }
-
-      .control.minimize {
-        background: var(--control-minimize);
-      }
-
-      .control.maximize {
-        background: var(--control-maximize);
-      }
-
-      .terminal-title {
-        color: var(--text-secondary);
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      .terminal-actions {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .theme-btn,
-      .copy-btn {
-        padding: 4px 10px;
-        background: var(--btn-bg);
-        color: var(--btn-text);
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        font-family: inherit;
-        transition: background 0.2s;
-      }
-
-      .theme-btn {
-        padding: 4px 8px;
-        font-size: 14px;
-      }
-
-      .theme-btn::before {
-        content: var(--theme-icon);
-      }
-
-      .theme-btn:hover,
-      .copy-btn:hover {
-        background: var(--btn-hover);
-      }
-
-      .theme-btn:focus,
-      .copy-btn:focus {
-        outline: 2px solid var(--prompt-color);
-        outline-offset: 2px;
-      }
-
-      /* Copy button success state */
-      .copy-btn.copy-success {
-        background: var(--success-color, #50fa7b);
-        color: var(--bg-primary);
-      }
-
-      /* Copy menu wrapper and dropdown */
-      .copy-wrapper {
-        position: relative;
-      }
-
-      .copy-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        right: 0;
-        margin-top: 4px;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        min-width: 160px;
-        overflow: hidden;
-      }
-
-      .copy-menu-item {
-        display: block;
-        width: 100%;
-        padding: 8px 12px;
-        background: transparent;
-        border: none;
-        color: var(--text-primary);
-        font-size: 12px;
-        font-family: inherit;
-        text-align: left;
-        cursor: pointer;
-        transition: background 0.15s;
-      }
-
-      .copy-menu-item:hover {
-        background: var(--btn-hover);
-      }
-
-      .copy-menu-item:focus {
-        background: var(--btn-hover);
-        outline: none;
-      }
-
-      /* ===== Terminal Body ===== */
-      .terminal-body {
-        flex: 1;
-        padding: 16px;
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-
-      .terminal-body::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .terminal-body::-webkit-scrollbar-track {
-        background: var(--scrollbar-track);
-      }
-
-      .terminal-body::-webkit-scrollbar-thumb {
-        background: var(--scrollbar-thumb);
-        border-radius: 4px;
-      }
-
-      .terminal-body::-webkit-scrollbar-thumb:hover {
-        background: var(--scrollbar-thumb-hover);
-      }
-
-      /* ===== Output ===== */
-      .output {
-        margin-bottom: 4px;
-      }
-
-      .output-line {
-        padding: 2px 0;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .output-line::selection,
-      .output-line *::selection {
-        background: var(--selection-bg);
-      }
-
-      .line-command {
-        color: var(--command-color);
-      }
-
-      .line-command .line-prompt {
-        color: var(--prompt-color);
-        font-weight: bold;
-      }
-
-      .line-output {
-        color: var(--output-color);
-      }
-
-      .line-error {
-        color: var(--error-color);
-      }
-
-      .line-info {
-        color: var(--info-color);
-      }
-
-      .line-success {
-        color: var(--success-color);
-      }
-
-      /* ===== Input Line ===== */
-      .input-line {
-        display: flex;
-        align-items: center;
-      }
-
-      .terminal[data-readonly="true"] .input-line {
-        display: none;
-      }
-
-      .input-prompt {
-        color: var(--prompt-color);
-        font-weight: bold;
-        flex-shrink: 0;
-        white-space: pre;
-      }
-
-      .input-display {
-        display: flex;
-        align-items: center;
-        flex: 1;
-        min-height: 1.4em;
-      }
-
-      .input-text {
-        color: var(--command-color);
-        white-space: pre;
-      }
-
-      .hidden-input {
-        position: absolute;
-        left: -9999px;
-        opacity: 0;
-        width: 1px;
-        height: 1px;
-      }
-
-      /* ===== Cursor Styles ===== */
-      .cursor {
-        display: inline-block;
-        background: var(--cursor-color);
-        margin-left: 1px;
-      }
-
-      /* Block cursor */
-      .terminal[data-cursor-style="block"] .cursor {
-        width: var(--cursor-width);
-        height: var(--cursor-height);
-      }
-
-      /* Underline cursor */
-      .terminal[data-cursor-style="underline"] .cursor {
-        width: var(--cursor-width);
-        height: 2px;
-        align-self: flex-end;
-        margin-bottom: 3px;
-      }
-
-      /* Bar cursor */
-      .terminal[data-cursor-style="bar"] .cursor {
-        width: 2px;
-        height: var(--cursor-height);
-      }
-
-      /* Blinking cursor animation */
-      @keyframes blink {
-        0%, 49% {
-          opacity: 1;
-        }
-        50%, 100% {
-          opacity: 0;
-        }
-      }
-
-      .terminal[data-cursor-blink="true"] .cursor {
-        animation: blink var(--cursor-blink-speed) step-start infinite;
-      }
-
-      /* Typing cursor (shown during typing effect) */
-      .typing-cursor {
-        display: inline-block;
-        width: var(--cursor-width);
-        height: var(--cursor-height);
-        background: var(--cursor-color);
-        margin-left: 1px;
-        animation: blink var(--cursor-blink-speed) step-start infinite;
-      }
-
-      /* High contrast mode support */
-      @media (prefers-contrast: high) {
-        .terminal {
-          border-width: 2px;
-        }
-        .terminal:focus-within {
-          outline-width: 3px;
-        }
-      }
-
-      /* Reduced motion support */
-      @media (prefers-reduced-motion: reduce) {
-        .terminal[data-cursor-blink="true"] .cursor {
-          animation: none;
-          opacity: 1;
-        }
-        .theme-btn,
-        .copy-btn,
-        .control {
-          transition: none;
-        }
-      }
-
-      /* ===== Fullscreen Mode ===== */
-      .terminal.fullscreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 99999;
-        border-radius: 0;
-        border: none;
-      }
-
-      .terminal.fullscreen .terminal-header {
-        border-radius: 0;
-      }
     `;
   }
 }
@@ -1904,4 +1551,3 @@ if (!customElements.get('terminal-window')) {
 }
 
 export default TerminalWindow;
-

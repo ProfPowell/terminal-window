@@ -35,7 +35,7 @@ This document outlines suggested improvements for the `terminal-window` web comp
   - **Current State:** Plain JavaScript.
   - **Suggestion:** Port to TypeScript or generate a `index.d.ts` file to provide type safety and IntelliSense for consumers.
 
-- [ ] **Styles Management**
+- [x] **Styles Management**
   - **Current State:** Styles are injected via a massive template string in `getStyles()`.
   - **Suggestion:**
     - **Option A (Modern):** Use [Constructable Stylesheets](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet) (`adoptedStyleSheets`) for better performance and memory usage.
