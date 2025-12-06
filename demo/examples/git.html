@@ -359,7 +359,8 @@ git log -S "function"</pre>
     window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     // Register git commands
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
+      await customElements.whenDefined('terminal-window');
       registerGitCommands(terminal);
     });
   </script>

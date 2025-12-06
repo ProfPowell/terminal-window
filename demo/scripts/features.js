@@ -1,7 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
-const terminal = document.getElementById('terminal');
+document.addEventListener('DOMContentLoaded', async () => {
+  await customElements.whenDefined('terminal-window');
+  const terminal = document.getElementById('terminal');
 
-// File system simulation
+  // File system simulation
 terminal.registerCommand('ls', (args) => {
   const files = [
     'drwxr-xr-x  Documents/',

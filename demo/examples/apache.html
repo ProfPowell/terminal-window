@@ -319,7 +319,8 @@ ServerSignature Off</pre>
     window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     // Register Apache commands
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
+      await customElements.whenDefined('terminal-window');
       registerApacheCommands(terminal);
     });
   </script>
