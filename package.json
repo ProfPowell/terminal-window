@@ -19,6 +19,7 @@
     "dist",
     "src/terminal-window.js",
     "custom-elements.json",
+    "web-types.json",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
@@ -26,9 +27,10 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run build:types && npm run build:cem",
+    "build": "vite build && npm run build:types && npm run build:cem && npm run build:web-types",
     "build:types": "node scripts/generate-types.js",
     "build:cem": "custom-elements-manifest analyze",
+    "build:web-types": "node scripts/generate-web-types.js",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
@@ -83,5 +85,6 @@
     "vite": "^7.2.6",
     "vitest": "^4.0.15"
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "web-types": "web-types.json"
 }

@@ -22,7 +22,7 @@ This document tracks the work needed to make `terminal-window` production-ready 
 
 - [x] **Custom Elements Manifest** - Generate `custom-elements.json` using CEM analyzer
 - [x] **VS Code support** - Enable autocomplete in HTML via manifest
-- [ ] **JetBrains support** - web-types.json for WebStorm/IntelliJ
+- [x] **JetBrains support** - web-types.json for WebStorm/IntelliJ
 - [ ] **Lit Analyzer compatibility** - Ensure manifest works with lit-plugin
 
 ## Testing
