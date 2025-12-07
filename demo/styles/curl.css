@@ -1,36 +1,6 @@
 /*
  * cURL demo page specific styles
  * Terminal Window Web Component
+ *
+ * Uses default theme from base.css
  */
-
-:root {
-  --accent: #ff79c6;
-  --accent-hover: #ff92d0;
-  --bg-dark: #282a36;
-  --bg-gradient-end: #1a1b26;
-  --text-primary: #f8f8f2;
-  --text-muted: #6272a4;
-  --btn-secondary: #44475a;
-  --btn-secondary-hover: #5a5d70;
-}
-
-/* cURL uses wider sidebar */
-.content {
-  grid-template-columns: 420px 1fr;
-}
-
-/* Code examples in cURL use cyan */
-pre.example {
-  color: #8be9fd;
-  word-break: break-all;
-}
-
-/* cURL tip boxes */
-aside.tip {
-  background: rgba(139, 233, 253, 0.1);
-  border-left-color: #8be9fd;
-}
-
-aside.tip strong {
-  color: #8be9fd;
-}

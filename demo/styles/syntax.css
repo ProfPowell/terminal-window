@@ -8,16 +8,28 @@
   --accent-hover: #a4ffff;
 }
 
-/* Full-width layout for documentation */
+/* Documentation main layout - override base.css grid to single column */
+.docs-main {
+  display: block;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Content wrapper - removed max-width to allow panel to fill */
 .content {
-  grid-template-columns: 1fr;
-  max-width: 1100px;
-  margin: 0 auto;
+  height: 100%;
 }
 
 /* Documentation panel */
 .panel--docs {
   padding: 2rem 3rem;
+  overflow-y: auto;
+}
+
+/* Constrain content width for readability */
+.panel--docs > * {
+  max-width: 1000px;
 }
 
 .panel--docs h1 {
@@ -144,6 +156,7 @@
   padding: 1rem 1.25rem;
   margin: 1rem 0 1.5rem;
   overflow-x: auto;
+  position: relative;
 }
 
 .code-block code {
@@ -155,6 +168,107 @@
   line-height: 1.6;
   white-space: pre;
   display: block;
+}
+
+/* Language label */
+.code-block[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0 0.5rem 0 0.375rem;
+}
+
+/* ============================================
+   SYNTAX HIGHLIGHTING (Dracula-inspired)
+   ============================================ */
+
+/* Keywords: const, let, var, if, else, return, async, await, function, class, etc. */
+.code-block .kw {
+  color: #ff79c6;
+}
+
+/* Strings */
+.code-block .str {
+  color: #f1fa8c;
+}
+
+/* Numbers */
+.code-block .num {
+  color: #bd93f9;
+}
+
+/* Comments */
+.code-block .cmt {
+  color: #6272a4;
+  font-style: italic;
+}
+
+/* Functions/Methods */
+.code-block .fn {
+  color: #50fa7b;
+}
+
+/* Properties */
+.code-block .prop {
+  color: #8be9fd;
+}
+
+/* Operators */
+.code-block .op {
+  color: #ff79c6;
+}
+
+/* Punctuation: brackets, parens, etc. */
+.code-block .punc {
+  color: #f8f8f2;
+}
+
+/* HTML Tags */
+.code-block .tag {
+  color: #ff79c6;
+}
+
+/* HTML Attributes */
+.code-block .attr {
+  color: #50fa7b;
+}
+
+/* HTML Attribute Values */
+.code-block .val {
+  color: #f1fa8c;
+}
+
+/* CSS Selectors */
+.code-block .sel {
+  color: #50fa7b;
+}
+
+/* CSS Properties */
+.code-block .css-prop {
+  color: #8be9fd;
+}
+
+/* CSS Values */
+.code-block .css-val {
+  color: #f1fa8c;
+}
+
+/* Template literals */
+.code-block .tpl {
+  color: #f1fa8c;
+}
+
+/* Variable interpolation in template literals */
+.code-block .tpl-var {
+  color: #50fa7b;
 }
 
 /* Tables */

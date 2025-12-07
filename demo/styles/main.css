@@ -1,11 +1,13 @@
 /*
- * Base styles shared across all demo pages
- * Terminal Window Web Component
+ * Terminal Window Demo - Main Stylesheet
+ * Layout: Header, Sidebar, Main, Footer (viewport-fitting)
  */
 
-/* CSS Custom Properties - Default theme (can be overridden per page) */
+/* ============================================
+   CSS CUSTOM PROPERTIES
+   ============================================ */
 :root {
-  /* Accent colors - override these per page */
+  /* Accent colors */
   --accent: #50fa7b;
   --accent-hover: #69ff94;
 
@@ -24,67 +26,79 @@
   /* Button colors */
   --btn-secondary: #3a3a5a;
   --btn-secondary-hover: #4a4a6a;
+
+  /* Layout dimensions */
+  --header-height: 60px;
+  --footer-height: 48px;
+  --sidebar-width: 320px;
 }
 
-/* Reset */
+/* ============================================
+   RESET & BASE
+   ============================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-gradient-end) 100%);
-  min-height: 100vh;
-  padding: 1.25rem;
-  max-width: 1600px;
-  margin: 0 auto;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 /* ============================================
-   SITE HEADER (Navigation bar)
+   SITE HEADER
    ============================================ */
 .site-header {
+  height: var(--header-height);
+  min-height: var(--header-height);
   background: var(--bg-panel);
   backdrop-filter: blur(10px);
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  margin-bottom: 1.25rem;
-  border: 1px solid var(--border-subtle);
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1000;
 }
 
 .site-header__brand {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
 }
 
 .site-header__title {
-  color: var(--text-primary);
-  font-size: 1.25rem;
+  color: var(--accent);
+  font-size: 1.125rem;
   font-weight: 600;
+  font-family: 'Consolas', 'Monaco', monospace;
 }
 
 .site-header__tagline {
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 /* Navigation */
 .site-header__nav {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.site-header__nav a {
+.site-header__nav > a {
   padding: 0.5rem 1rem;
   color: var(--text-muted);
   text-decoration: none;
@@ -94,170 +108,245 @@ body {
   transition: all 0.2s ease;
 }
 
-.site-header__nav a:hover {
+.site-header__nav > a:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.05);
 }
 
-.site-header__nav a.active {
+.site-header__nav > a.active {
   color: var(--bg-dark);
   background: var(--accent);
 }
 
-/* ============================================
-   MAIN CONTENT
-   ============================================ */
-main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
+/* Nav Dropdown */
+.nav-dropdown {
+  position: relative;
 }
 
-/* Page header section */
-.page-header {
+.nav-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-dropdown__trigger:hover,
+.nav-dropdown.open .nav-dropdown__trigger {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-dropdown__trigger svg {
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown.open .nav-dropdown__trigger svg {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.25rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-width: 140px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.nav-dropdown.open .nav-dropdown__menu {
+  display: block;
+}
+
+.nav-dropdown__menu a {
+  display: block;
+  padding: 0.625rem 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+.nav-dropdown__menu a:hover,
+.nav-dropdown__menu a:focus {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+.nav-dropdown__menu a.active {
+  color: var(--accent);
+  background: rgba(80, 250, 123, 0.1);
+}
+
+/* ============================================
+   LAYOUT (Sidebar + Main)
+   ============================================ */
+.layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
   background: var(--bg-panel);
   backdrop-filter: blur(10px);
-  padding: 1.5rem 2rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.page-header__icon {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 70%, black) 100%);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
+  border-right: 1px solid var(--border-subtle);
+  padding: 1rem;
+  overflow-y: auto;
   flex-shrink: 0;
 }
 
-.page-header__icon svg {
-  width: 32px;
-  height: 32px;
-  fill: white;
-}
-
-.page-header__content h1 {
+.sidebar__title {
   color: var(--text-primary);
-  font-size: 1.75rem;
-  margin-bottom: 0.25rem;
-}
-
-.page-header__content h1 code {
-  color: var(--accent);
-  font-family: 'Consolas', 'Monaco', monospace;
-}
-
-.page-header__content p {
-  color: var(--text-muted);
-}
-
-/* Content section (replaces old main) */
-.content {
-  display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 1.25rem;
-}
-
-/* Panels (sidebar and article) */
-.panel {
-  background: var(--bg-panel);
-  backdrop-filter: blur(10px);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  border: 1px solid var(--border-subtle);
-}
-
-.panel--sidebar {
-  max-height: calc(100vh - 280px);
-  overflow-y: auto;
-}
-
-.panel__title {
-  color: var(--text-primary);
-  font-size: 1.125rem;
+  font-size: 1rem;
   padding-bottom: 0.75rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Scrollbar styling */
-.panel--sidebar::-webkit-scrollbar {
+/* Sidebar scrollbar */
+.sidebar::-webkit-scrollbar {
   width: 6px;
 }
 
-.panel--sidebar::-webkit-scrollbar-track {
+.sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.panel--sidebar::-webkit-scrollbar-thumb {
+.sidebar::-webkit-scrollbar-thumb {
   background: var(--btn-secondary);
   border-radius: 3px;
 }
 
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--btn-secondary-hover);
+}
+
 /* ============================================
-   ACCORDION (details/summary)
+   MAIN CONTENT
    ============================================ */
-details {
-  margin-bottom: 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 0.5rem;
+.main-content {
+  flex: 1;
+  padding: 1rem;
   overflow: hidden;
+  min-width: 0;
 }
 
-summary {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-weight: 600;
+.main-content terminal-window {
+  display: block;
+  height: 100%;
+}
+
+/* ============================================
+   SITE FOOTER
+   ============================================ */
+.site-footer {
+  height: var(--footer-height);
+  min-height: var(--footer-height);
+  background: var(--bg-panel);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.site-footer a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.site-footer a:hover {
   color: var(--accent);
-  user-select: none;
-  list-style: none;
 }
 
-summary::-webkit-details-marker {
-  display: none;
+.site-footer svg {
+  flex-shrink: 0;
 }
 
-summary::before {
-  content: '+ ';
-  font-family: monospace;
+/* ============================================
+   FORM CONTROLS
+   ============================================ */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-details[open] summary::before {
-  content: '- ';
+fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-details > section {
-  padding: 0.5rem 1rem 1rem;
-}
-
-/* Description text */
-.desc {
+legend {
+  font-weight: 500;
   color: #aaa;
-  font-size: 0.8rem;
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.375rem;
 }
 
-/* Code examples */
-pre.example {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 0.75rem;
+select {
+  padding: 0.5rem 0.625rem;
+  background: #2a2a4a;
+  color: var(--text-primary);
+  border: 1px solid var(--btn-secondary);
   border-radius: 0.375rem;
-  font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 0.75rem;
-  color: var(--accent);
-  margin-bottom: 0.75rem;
-  overflow-x: auto;
-  white-space: pre-wrap;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  width: 100%;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
 }
 
 /* ============================================
@@ -266,18 +355,18 @@ pre.example {
 menu {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.375rem;
   list-style: none;
 }
 
 button {
-  padding: 0.5rem 0.75rem;
+  padding: 0.375rem 0.625rem;
   background: var(--btn-secondary);
   color: var(--text-primary);
   border: none;
   border-radius: 0.375rem;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-family: 'Consolas', 'Monaco', monospace;
   transition: all 0.2s;
 }
@@ -297,221 +386,97 @@ button[data-primary]:hover {
 }
 
 /* ============================================
-   TIP & WARNING BOXES
+   MISC ELEMENTS
    ============================================ */
-aside.tip {
-  background: rgba(139, 233, 253, 0.1);
-  border-left: 3px solid #8be9fd;
-  padding: 0.75rem;
-  margin-top: 0.75rem;
-  border-radius: 0 0.375rem 0.375rem 0;
-  font-size: 0.8rem;
-  color: #bbb;
-  line-height: 1.5;
-}
-
-aside.tip strong {
-  color: #8be9fd;
-}
-
-aside.warning {
-  background: rgba(255, 85, 85, 0.1);
-  border-left: 3px solid #ff5555;
-  padding: 0.75rem;
-  margin-top: 0.75rem;
-  border-radius: 0 0.375rem 0.375rem 0;
-  font-size: 0.8rem;
-  color: #bbb;
-  line-height: 1.5;
-}
-
-aside.warning strong {
-  color: #ff5555;
-}
-
-/* ============================================
-   TERMINAL COMPONENT
-   ============================================ */
-terminal-window {
-  display: block;
-  height: calc(100vh - 280px);
-  min-height: 500px;
-}
-
-/* ============================================
-   FORM CONTROLS (for features page)
-   ============================================ */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-fieldset {
-  border: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-legend {
-  font-weight: 500;
-  color: #aaa;
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-}
-
-select {
-  padding: 0.625rem 0.75rem;
-  background: #2a2a4a;
-  color: var(--text-primary);
-  border: 1px solid var(--btn-secondary);
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-family: inherit;
-  width: 100%;
-}
-
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-label:has(input[type="checkbox"]) {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-input[type="checkbox"] {
-  width: 1.125rem;
-  height: 1.125rem;
-  accent-color: var(--accent);
-}
-
-/* Info sections (details on features page) */
-.info-section {
-  background: rgba(80, 250, 123, 0.1);
-  border-left: 3px solid var(--accent);
-  padding: 0.9375rem;
-  margin-top: 1.25rem;
-  border-radius: 0 0.375rem 0.375rem 0;
-}
-
-.info-section[data-variant="info"] {
-  background: rgba(139, 233, 253, 0.1);
-  border-left-color: #8be9fd;
-}
-
-.info-section summary {
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  user-select: none;
-  padding: 0;
-  background: transparent;
-}
-
-.info-section summary::before {
-  content: none;
-}
-
-.info-section[data-variant="info"] summary {
-  color: #8be9fd;
-}
-
-.info-section p {
-  color: #aaa;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  margin-top: 0.5rem;
-}
-
-.info-section ul {
-  color: #aaa;
-  font-size: 0.8125rem;
-  line-height: 1.8;
-  margin-top: 0.5rem;
-  padding-left: 1.25rem;
-}
-
 code {
   background: rgba(255, 255, 255, 0.1);
   padding: 0.125rem 0.375rem;
   border-radius: 0.1875rem;
   font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.75rem;
   color: #ff79c6;
+}
+
+fieldset p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+/* Reduced motion notice */
+.reduced-motion-notice {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0.625rem;
+  background: rgba(255, 189, 46, 0.15);
+  border-left: 3px solid #ffbd2e;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.reduced-motion-notice small {
+  display: block;
+  color: #ffbd2e;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  margin-bottom: 0.375rem;
+}
+
+.reduced-motion-notice label {
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reduced-motion-notice {
+    display: block;
+  }
 }
 
 /* ============================================
    RESPONSIVE
    ============================================ */
-@media (max-width: 1024px) {
-  .content {
-    grid-template-columns: 1fr;
-  }
-
-  .panel--sidebar {
-    max-height: 400px;
-  }
-
-  terminal-window {
-    height: 500px;
+@media (max-width: 900px) {
+  :root {
+    --sidebar-width: 280px;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .main-content {
+    flex: 1;
+    min-height: 50vh;
+  }
+
   .site-header {
     flex-direction: column;
-    align-items: flex-start;
+    height: auto;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
   }
 
-  .page-header {
+  .site-header__nav {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-footer {
     flex-direction: column;
+    height: auto;
+    padding: 0.75rem;
+    gap: 0.5rem;
     text-align: center;
-  }
-}
-
-/*
- * Features page specific styles
- * Terminal Window Web Component
- */
-
-:root {
-  --accent: #50fa7b;
-  --accent-hover: #69ff94;
-  --bg-dark: #1a1a2e;
-  --bg-gradient-end: #16213e;
-}
-
-/* Features page uses a narrower sidebar */
-.content {
-  grid-template-columns: 350px 1fr;
-}
-
-/* Button variants for features page */
-button[data-variant="secondary"] {
-  background: var(--btn-secondary);
-  color: var(--text-primary);
-}
-
-button[data-variant="secondary"]:hover {
-  background: var(--btn-secondary-hover);
-}
-
-/* Features page terminal is taller */
-terminal-window {
-  height: 600px;
-}
-
-@media (max-width: 1024px) {
-  terminal-window {
-    height: 500px;
   }
 }

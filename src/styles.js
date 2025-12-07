@@ -355,6 +355,7 @@ export const styles = `
   /* ===== Terminal Body ===== */
   .terminal-body {
     flex: 1;
+    min-height: 0; /* Critical: allows flex item to shrink below content size */
     padding: 16px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -483,7 +484,7 @@ export const styles = `
   }
 
   /* Blinking cursor animation */
-  @keyframes blink {
+  @keyframes terminal-blink {
     0%, 49% {
       opacity: 1;
     }
@@ -493,7 +494,7 @@ export const styles = `
   }
 
   .terminal[data-cursor-blink="true"] .cursor {
-    animation: blink var(--cursor-blink-speed) step-start infinite;
+    animation: terminal-blink var(--cursor-blink-speed) step-start infinite;
   }
 
   /* Typing cursor (shown during typing effect) */
@@ -503,7 +504,7 @@ export const styles = `
     height: var(--cursor-height);
     background: var(--cursor-color);
     margin-left: 1px;
-    animation: blink var(--cursor-blink-speed) step-start infinite;
+    animation: terminal-blink var(--cursor-blink-speed) step-start infinite;
   }
 
   /* High contrast mode support */

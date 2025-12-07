@@ -1,22 +1,45 @@
 {
   "name": "terminal-window",
   "version": "2.0.0",
-  "description": "A vanilla web component useful for simulating terminal commands for teaching purposes.",
+  "description": "A vanilla JavaScript web component for simulating terminal consoles with customizable commands, themes, and typing effects. Perfect for tutorials, documentation, and interactive demos.",
   "type": "module",
   "main": "./dist/terminal-window.umd.js",
   "module": "./dist/terminal-window.es.js",
+  "types": "./dist/terminal-window.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/terminal-window.d.ts",
       "import": "./dist/terminal-window.es.js",
       "require": "./dist/terminal-window.umd.js"
     }
   },
+  "unpkg": "./dist/terminal-window.umd.js",
+  "jsdelivr": "./dist/terminal-window.umd.js",
+  "files": [
+    "dist",
+    "src/terminal-window.js",
+    "custom-elements.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:types && npm run build:cem",
+    "build:types": "node scripts/generate-types.js",
+    "build:cem": "custom-elements-manifest analyze",
     "preview": "vite preview",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint src/**/*.js test/**/*.js e2e/**/*.js",
+    "lint:fix": "eslint src/**/*.js test/**/*.js e2e/**/*.js --fix",
+    "format": "prettier --write src/**/*.js test/**/*.js e2e/**/*.js",
+    "format:check": "prettier --check src/**/*.js test/**/*.js e2e/**/*.js",
+    "docs": "node scripts/generate-docs.js",
+    "prepublishOnly": "npm run lint && npm run build && npm run test:run"
   },
   "repository": {
     "type": "git",
@@ -24,19 +47,41 @@
   },
   "keywords": [
     "web-component",
+    "web-components",
+    "custom-element",
     "terminal",
-    "simulation"
+    "console",
+    "simulation",
+    "cli",
+    "command-line",
+    "shell",
+    "tutorial",
+    "demo",
+    "vanilla-js",
+    "no-dependencies"
   ],
-  "author": "",
+  "author": "Thomas A. Powell",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ProfPowell/terminal-window/issues"
   },
   "homepage": "https://github.com/ProfPowell/terminal-window#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.57.0",
     "@vitest/coverage-v8": "^4.0.15",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
     "jsdom": "^27.2.0",
+    "prettier": "^3.7.4",
+    "terser": "^5.44.1",
     "vite": "^7.2.6",
     "vitest": "^4.0.15"
-  }
+  },
+  "customElements": "custom-elements.json"
 }

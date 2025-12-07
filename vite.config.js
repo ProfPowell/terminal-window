@@ -9,10 +9,23 @@ export default defineConfig({
       name: 'TerminalWindow',
       fileName: (format) => `terminal-window.${format}.js`,
     },
+    sourcemap: true,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: false,
+        drop_debugger: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
     rollupOptions: {
       output: {
         // Provide global variables to use in the UMD build
         globals: {},
+        // Ensure clean exports
+        exports: 'named',
       },
     },
   },
@@ -22,6 +35,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      thresholds: {
+        statements: 70,
+        branches: 55,
+        functions: 70,
+        lines: 70,
+      },
     },
   },
 });

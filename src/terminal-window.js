@@ -4,6 +4,105 @@ import { HistoryManager } from './internals/history-manager.js';
 import { VirtualFileSystem } from './internals/file-system.js';
 import { styles } from './styles.js';
 
+/**
+ * A vanilla JavaScript web component that simulates a terminal console with
+ * customizable commands, themes, cursor styles, and typing effects.
+ *
+ * @element terminal-window
+ * @tagname terminal-window
+ *
+ * @attr {string} [theme=dark] - Color theme: "dark" or "light"
+ * @attr {string} [prompt="$ "] - The command prompt text
+ * @attr {string} [title=Terminal] - Title displayed in the header bar
+ * @attr {string} [cursor-style=block] - Cursor shape: "block", "underline", or "bar"
+ * @attr {boolean} [cursor-blink=true] - Enable cursor blinking
+ * @attr {string} [font-family='Consolas', 'Monaco', monospace] - Font family for terminal text
+ * @attr {string} [font-size=14px] - Font size (e.g., "14px", "1rem")
+ * @attr {string} [line-height=1.4] - Line height multiplier
+ * @attr {boolean} [typing-effect=false] - Enable typewriter animation for output
+ * @attr {number} [typing-speed=30] - Milliseconds per character when typing effect is enabled
+ * @attr {boolean} [show-header=true] - Show the terminal header bar
+ * @attr {boolean} [show-controls=true] - Show window control buttons (close, minimize, maximize)
+ * @attr {boolean} [show-copy=true] - Show the copy button in the header
+ * @attr {boolean} [show-theme-toggle=true] - Show the theme toggle button
+ * @attr {boolean} [readonly=false] - Disable user input (presentation mode)
+ * @attr {number} [max-lines=1000] - Maximum number of output lines to keep in buffer
+ * @attr {string} [welcome] - Welcome message displayed when terminal loads
+ * @attr {boolean} [enable-vfs=false] - Enable virtual file system with built-in commands (ls, cd, pwd, mkdir, touch, rm, cat)
+ * @attr {boolean} [persist-history=false] - Persist command history to localStorage across sessions
+ * @attr {boolean} [force-animations=false] - Force typing animations even when user has prefers-reduced-motion set
+ *
+ * @fires {CustomEvent} command - Fired when a command is executed. Detail: { command, args, input }
+ * @fires {CustomEvent} command-result - Fired after a command executes successfully. Detail: { command, args, result }
+ * @fires {CustomEvent} command-error - Fired when a command fails or is not found. Detail: { command, error }
+ * @fires {CustomEvent} output - Fired when a line is printed to the terminal. Detail: { type, content }
+ * @fires {CustomEvent} copy - Fired when content is copied to clipboard. Detail: { text, mode }
+ * @fires {CustomEvent} close - Fired when the terminal is closed via the close button
+ * @fires {CustomEvent} minimize - Fired when the terminal is minimized/restored. Detail: { minimized }
+ * @fires {CustomEvent} fullscreen - Fired when fullscreen mode is toggled. Detail: { fullscreen }
+ * @fires {CustomEvent} interrupt - Fired when user presses Ctrl+C
+ *
+ * @csspart terminal - Main terminal container
+ * @csspart header - Terminal header bar
+ * @csspart controls - Window controls container (close, minimize, maximize)
+ * @csspart control-close - Close button
+ * @csspart control-minimize - Minimize button
+ * @csspart control-maximize - Maximize button
+ * @csspart title - Terminal title text
+ * @csspart actions - Actions container (theme toggle, copy)
+ * @csspart theme-button - Theme toggle button
+ * @csspart copy-button - Copy button
+ * @csspart copy-menu - Copy dropdown menu
+ * @csspart copy-menu-item - Copy menu items
+ * @csspart body - Terminal body (scrollable area)
+ * @csspart output - Output container
+ * @csspart input-line - Input line container
+ * @csspart prompt - Command prompt text
+ * @csspart input-text - User input text
+ * @csspart cursor - Cursor element
+ *
+ * @slot title - Custom content for the terminal title in the header
+ * @slot actions - Custom buttons/actions before the theme and copy buttons
+ * @slot before-output - Content inserted before the output area in the terminal body
+ *
+ * @cssprop [--bg-primary=#1a1a2e] - Primary background color
+ * @cssprop [--bg-secondary=#16213e] - Secondary background color
+ * @cssprop [--bg-header=#0f0f23] - Header background color
+ * @cssprop [--border-color=#2a2a4a] - Border color
+ * @cssprop [--text-primary=#e0e0e0] - Primary text color
+ * @cssprop [--text-secondary=#888] - Secondary text color
+ * @cssprop [--prompt-color=#50fa7b] - Prompt color
+ * @cssprop [--cursor-color=#50fa7b] - Cursor color
+ * @cssprop [--command-color=#f8f8f2] - Command text color
+ * @cssprop [--output-color=#e0e0e0] - Output text color
+ * @cssprop [--error-color=#ff5555] - Error text color
+ * @cssprop [--info-color=#8be9fd] - Info text color
+ * @cssprop [--success-color=#50fa7b] - Success text color
+ * @cssprop [--cursor-width=8px] - Cursor width
+ * @cssprop [--cursor-height=1.2em] - Cursor height
+ * @cssprop [--cursor-blink-speed=1s] - Cursor blink animation speed
+ * @cssprop [--btn-bg=#2a2a4a] - Button background color
+ * @cssprop [--btn-hover=#3a3a5a] - Button hover background color
+ * @cssprop [--btn-text=#e0e0e0] - Button text color
+ * @cssprop [--control-close=#ff5f56] - Close button color
+ * @cssprop [--control-minimize=#ffbd2e] - Minimize button color
+ * @cssprop [--control-maximize=#27c93f] - Maximize button color
+ *
+ * @example
+ * <terminal-window
+ *   theme="dark"
+ *   prompt="$ "
+ *   title="My Terminal"
+ *   welcome="Welcome! Type 'help' for commands."
+ * ></terminal-window>
+ *
+ * @example
+ * // JavaScript API usage
+ * const terminal = document.querySelector('terminal-window');
+ * terminal.print('Hello, World!');
+ * terminal.executeCommand('help');
+ * terminal.registerCommand('greet', (args) => `Hello, ${args[0] || 'stranger'}!`);
+ */
 class TerminalWindow extends HTMLElement {
   constructor() {
     super();
@@ -77,6 +176,8 @@ class TerminalWindow extends HTMLElement {
       // Features
       enableVfs: false,
       persistHistory: false,
+      // Accessibility
+      forceAnimations: false, // Override prefers-reduced-motion (for testing only)
     };
 
     // Default i18n strings (can be overridden via setI18n)
@@ -179,7 +280,7 @@ class TerminalWindow extends HTMLElement {
       'font-family', 'font-size', 'line-height',
       'typing-effect', 'typing-speed',
       'show-header', 'title', 'show-controls', 'show-copy', 'show-theme-toggle',
-      'readonly', 'max-lines', 'enable-vfs', 'persist-history'
+      'readonly', 'max-lines', 'enable-vfs', 'persist-history', 'force-animations'
     ];
   }
 
@@ -250,6 +351,9 @@ class TerminalWindow extends HTMLElement {
       case 'persist-history':
         this.config.persistHistory = newValue === 'true' || newValue === '';
         this.historyManager.setPersistence(this.config.persistHistory);
+        break;
+      case 'force-animations':
+        this.config.forceAnimations = newValue === 'true' || newValue === '';
         break;
     }
 
@@ -438,35 +542,76 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Register a command handler
-   * @param {string} name - Command name
-   * @param {Function} handler - Function that receives args array and returns string or null
+   * Register a custom command handler.
+   * The handler receives an array of arguments and the terminal instance,
+   * and can return a string to print, null to suppress output, or a Promise for async commands.
+   *
+   * @method registerCommand
+   * @param {string} name - Command name (case-insensitive)
+   * @param {Function} handler - Function that receives (args: string[], terminal: TerminalWindow) and returns string|null|Promise
+   * @example
+   * // Simple command
+   * terminal.registerCommand('hello', () => 'Hello, World!');
+   *
+   * // Command with arguments
+   * terminal.registerCommand('greet', (args) => `Hello, ${args[0] || 'stranger'}!`);
+   *
+   * // Async command
+   * terminal.registerCommand('fetch-data', async (args) => {
+   *   const response = await fetch('/api/data');
+   *   const data = await response.json();
+   *   return JSON.stringify(data, null, 2);
+   * });
+   *
+   * // Command using terminal instance
+   * terminal.registerCommand('countdown', async (args, term) => {
+   *   for (let i = 3; i > 0; i--) {
+   *     await term.print(`${i}...`);
+   *     await new Promise(r => setTimeout(r, 1000));
+   *   }
+   *   return 'Blast off!';
+   * });
    */
   registerCommand(name, handler) {
     this.commandRegistry.register(name, handler);
   }
 
   /**
-   * Unregister a command
-   * @param {string} name - Command name
+   * Remove a registered command.
+   *
+   * @method unregisterCommand
+   * @param {string} name - Command name to remove
+   * @example
+   * terminal.unregisterCommand('greet');
    */
   unregisterCommand(name) {
     this.commandRegistry.unregister(name);
   }
 
   /**
-   * Register a command alias
+   * Create an alias for a command.
+   *
+   * @method registerAlias
    * @param {string} alias - Alias name
-   * @param {string} command - Command to execute
+   * @param {string} command - Full command string to execute when alias is used
+   * @example
+   * terminal.registerAlias('ll', 'ls -la');
+   * terminal.registerAlias('cls', 'clear');
    */
   registerAlias(alias, command) {
     this.commandRegistry.registerAlias(alias, command);
   }
 
   /**
-   * Execute a command
+   * Execute a command string programmatically.
+   *
+   * @method executeCommand
    * @param {string} input - Full command string
-   * @param {boolean} addToHistory - Whether to add to history (default true)
+   * @param {boolean} [addToHistory=true] - Whether to add to command history
+   * @returns {Promise<void>}
+   * @example
+   * terminal.executeCommand('ls -la');
+   * terminal.executeCommand('help', false); // Don't add to history
    */
   async executeCommand(input, addToHistory = true) {
     const trimmed = input.trim();
@@ -535,9 +680,23 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Execute multiple commands with delays (for demos/presentations)
-   * @param {Array} commands - Array of {command, delay} objects or strings
-   * @param {number} defaultDelay - Default delay between commands in ms
+   * Execute multiple commands with delays between them.
+   * Useful for demos, presentations, or scripted terminal sequences.
+   *
+   * @method executeSequence
+   * @param {Array<string|{command: string, delay?: number}>} commands - Array of command strings or objects with command and optional delay
+   * @param {number} [defaultDelay=1000] - Default delay between commands in milliseconds
+   * @returns {Promise<void>}
+   * @example
+   * // Simple array of command strings
+   * await terminal.executeSequence(['pwd', 'ls', 'whoami'], 1000);
+   *
+   * // With custom delays per command
+   * await terminal.executeSequence([
+   *   { command: 'cd /home', delay: 500 },
+   *   { command: 'ls -la', delay: 1500 },
+   *   'pwd' // Uses default delay
+   * ], 1000);
    */
   async executeSequence(commands, defaultDelay = 1000) {
     for (const item of commands) {
@@ -567,9 +726,20 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Print text to the terminal
-   * @param {string} text - Text to print
-   * @param {string} type - Line type (output, error, info, success)
+   * Print text to the terminal.
+   * Supports multiple lines (splits on \n) and ANSI color codes.
+   *
+   * @method print
+   * @param {string} text - Text to print (can contain newlines)
+   * @param {string} [type=output] - Line type for styling: "output" (default), "error" (red), "info" (cyan), "success" (green)
+   * @returns {Promise<void>}
+   * @example
+   * terminal.print('Operation complete!', 'success');
+   * terminal.print('Something went wrong', 'error');
+   * terminal.print('Processing...', 'info');
+   *
+   * // With ANSI colors
+   * terminal.print('\x1b[31mRed text\x1b[0m');
    */
   async print(text, type = 'output') {
     const lines = text.split('\n');
@@ -623,8 +793,12 @@ class TerminalWindow extends HTMLElement {
 
   /**
    * Check if user prefers reduced motion
+   * Can be overridden with forceAnimations config for testing
    */
   _prefersReducedMotion() {
+    if (this.config.forceAnimations) {
+      return false; // Override: allow animations regardless of system preference
+    }
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
@@ -723,7 +897,12 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Cancel the current typing effect and show all remaining text immediately
+   * Skip the current typing animation and show all remaining output immediately.
+   * This is also triggered when the user presses Ctrl+C or clicks the terminal during a typing effect.
+   *
+   * @method skipTypingEffect
+   * @example
+   * terminal.skipTypingEffect();
    */
   skipTypingEffect() {
     if (this._typingInProgress) {
@@ -733,13 +912,18 @@ class TerminalWindow extends HTMLElement {
 
   /**
    * Delay helper for typing effect
+   * @private
    */
   _delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
-   * Clear the terminal
+   * Clear all terminal output.
+   *
+   * @method clear
+   * @example
+   * terminal.clear();
    */
   clear() {
     this.outputLines = [];
@@ -829,7 +1013,14 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Force scroll to bottom (ignores auto-scroll setting)
+   * Force scroll to the bottom of the terminal.
+   * The terminal uses smart auto-scroll: it automatically scrolls when new output appears,
+   * but stops if the user scrolls up to read previous content. This method forces a scroll
+   * and re-enables auto-scroll.
+   *
+   * @method scrollToBottom
+   * @example
+   * terminal.scrollToBottom();
    */
   scrollToBottom() {
     this._autoScroll = true;
@@ -881,12 +1072,21 @@ class TerminalWindow extends HTMLElement {
 
     // Focus input when clicking anywhere in terminal
     // Also skip typing effect if in progress
+    // But don't steal focus if user is selecting text
     terminal.addEventListener('click', () => {
       if (this._typingInProgress) {
         this.skipTypingEffect();
       }
       if (!this.config.readonly) {
-        this._focusInput();
+        // Check if user has selected text - if so, don't steal focus
+        const selection = this.shadowRoot.getSelection ?
+          this.shadowRoot.getSelection() :
+          window.getSelection();
+        const hasSelection = selection && selection.toString().length > 0;
+
+        if (!hasSelection) {
+          this._focusInput();
+        }
       }
     });
 
@@ -1095,7 +1295,14 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set input masking (for password prompts)
+   * Enable or disable input masking for password prompts.
+   * When masked, input is displayed as asterisks (***) instead of the actual characters.
+   *
+   * @method setInputMask
+   * @param {boolean} masked - Whether to mask input
+   * @example
+   * terminal.setInputMask(true);  // Shows *** instead of text
+   * terminal.setInputMask(false); // Shows normal text
    */
   setInputMask(masked) {
     this.inputMasked = masked;
@@ -1103,8 +1310,15 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Copy terminal content to clipboard
-   * @param {string} mode - Copy mode: 'all', 'commands', 'output', 'selection'
+   * Copy terminal content to clipboard.
+   *
+   * @method copyContent
+   * @param {string} [mode=all] - Copy mode: "all" (everything with prompts), "commands" (only commands entered), "output" (only output, no commands), "selection" (current text selection)
+   * @returns {Promise<void>}
+   * @example
+   * terminal.copyContent('commands'); // Copy only commands entered
+   * terminal.copyContent('output');   // Copy only output
+   * terminal.copyContent('all');      // Copy everything
    */
   async copyContent(mode = 'all') {
     let text;
@@ -1324,7 +1538,13 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Toggle between light and dark theme
+   * Toggle between light and dark theme.
+   * Announces the theme change to screen readers and fires no events (use attribute observation for reactivity).
+   *
+   * @method toggleTheme
+   * @returns {void}
+   * @example
+   * terminal.toggleTheme(); // Switches from dark to light or vice versa
    */
   toggleTheme() {
     this.config.theme = this.config.theme === 'dark' ? 'light' : 'dark';
@@ -1335,7 +1555,20 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Close the terminal (hide it)
+   * Close the terminal by hiding it.
+   * Sets `display: none` on the element and dispatches a `close` event.
+   * The terminal can be shown again by setting `display: block` or removing the style.
+   *
+   * @method close
+   * @returns {void}
+   * @fires close
+   * @example
+   * terminal.close();
+   *
+   * // Listen for close event
+   * terminal.addEventListener('close', () => {
+   *   console.log('Terminal was closed');
+   * });
    */
   close() {
     this.style.display = 'none';
@@ -1348,7 +1581,20 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Minimize the terminal
+   * Toggle the minimized state of the terminal.
+   * When minimized, only the header is visible. Dispatches a `minimize` event with the new state.
+   *
+   * @method minimize
+   * @returns {void}
+   * @fires minimize
+   * @example
+   * terminal.minimize(); // Minimize the terminal
+   * terminal.minimize(); // Restore the terminal
+   *
+   * // Listen for minimize event
+   * terminal.addEventListener('minimize', (e) => {
+   *   console.log('Minimized:', e.detail.minimized);
+   * });
    */
   minimize() {
     this.isMinimized = !this.isMinimized;
@@ -1373,7 +1619,21 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Toggle fullscreen mode (maximize)
+   * Toggle fullscreen mode (maximize).
+   * When fullscreen, the terminal fills the entire viewport. Press Escape to exit.
+   * Dispatches a `fullscreen` event with the new state.
+   *
+   * @method toggleFullscreen
+   * @returns {void}
+   * @fires fullscreen
+   * @example
+   * terminal.toggleFullscreen(); // Enter fullscreen
+   * terminal.toggleFullscreen(); // Exit fullscreen
+   *
+   * // Listen for fullscreen event
+   * terminal.addEventListener('fullscreen', (e) => {
+   *   console.log('Fullscreen:', e.detail.fullscreen);
+   * });
    */
   toggleFullscreen() {
     this.isFullscreen = !this.isFullscreen;
@@ -1415,7 +1675,14 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set theme programmatically
+   * Set the color theme programmatically.
+   *
+   * @method setTheme
+   * @param {('dark'|'light')} theme - The theme to apply
+   * @returns {void}
+   * @example
+   * terminal.setTheme('light');
+   * terminal.setTheme('dark');
    */
   setTheme(theme) {
     this.config.theme = theme;
@@ -1424,7 +1691,14 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set prompt programmatically
+   * Set the command prompt text programmatically.
+   *
+   * @method setPrompt
+   * @param {string} prompt - The prompt text to display (e.g., "$ ", "> ", "user@host:~$ ")
+   * @returns {void}
+   * @example
+   * terminal.setPrompt('> ');
+   * terminal.setPrompt('user@localhost:~$ ');
    */
   setPrompt(prompt) {
     this.config.prompt = prompt;
@@ -1433,7 +1707,15 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set cursor style programmatically
+   * Set the cursor style programmatically.
+   *
+   * @method setCursorStyle
+   * @param {('block'|'underline'|'bar')} style - The cursor style to apply
+   * @returns {void}
+   * @example
+   * terminal.setCursorStyle('block');     // █ (default)
+   * terminal.setCursorStyle('underline'); // _
+   * terminal.setCursorStyle('bar');       // |
    */
   setCursorStyle(style) {
     this.config.cursorStyle = style;
@@ -1442,7 +1724,14 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set cursor blink programmatically
+   * Enable or disable cursor blinking programmatically.
+   *
+   * @method setCursorBlink
+   * @param {boolean} blink - Whether the cursor should blink
+   * @returns {void}
+   * @example
+   * terminal.setCursorBlink(true);  // Enable blinking
+   * terminal.setCursorBlink(false); // Disable blinking (solid cursor)
    */
   setCursorBlink(blink) {
     this.config.cursorBlink = blink;
@@ -1451,7 +1740,19 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Enable/disable typing effect
+   * Enable or disable the typing effect for output.
+   * When enabled, printed text appears character by character like a typewriter.
+   * Respects `prefers-reduced-motion` unless `force-animations` is set.
+   *
+   * @method setTypingEffect
+   * @param {boolean} enabled - Whether to enable the typing effect
+   * @param {number} [speed=30] - Milliseconds per character (lower = faster)
+   * @returns {void}
+   * @example
+   * terminal.setTypingEffect(true);        // Enable with default speed (30ms)
+   * terminal.setTypingEffect(true, 10);    // Enable with fast typing (10ms)
+   * terminal.setTypingEffect(true, 100);   // Enable with slow typing (100ms)
+   * terminal.setTypingEffect(false);       // Disable typing effect
    */
   setTypingEffect(enabled, speed = 30) {
     this.config.typingEffect = enabled;
@@ -1461,7 +1762,16 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set readonly mode
+   * Enable or disable readonly mode.
+   * When readonly, the input line is hidden and users cannot type commands.
+   * Useful for presentation or demonstration purposes.
+   *
+   * @method setReadonly
+   * @param {boolean} readonly - Whether to enable readonly mode
+   * @returns {void}
+   * @example
+   * terminal.setReadonly(true);  // Disable input
+   * terminal.setReadonly(false); // Enable input
    */
   setReadonly(readonly) {
     this.config.readonly = readonly;
@@ -1470,8 +1780,61 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Set i18n strings for localization
-   * @param {Object} strings - Object with string keys to override
+   * Override the user's `prefers-reduced-motion` system preference.
+   * When forced, typing animations will run even if the user has reduced motion enabled.
+   * Use sparingly and only for testing or when the animation is essential to the experience.
+   *
+   * @method setForceAnimations
+   * @param {boolean} force - If true, animations will run regardless of system preference
+   * @returns {void}
+   * @example
+   * terminal.setForceAnimations(true);  // Force animations on
+   * terminal.setForceAnimations(false); // Respect system preference
+   */
+  setForceAnimations(force) {
+    this.config.forceAnimations = force;
+    this.setAttribute('force-animations', String(force));
+  }
+
+  /**
+   * Check if the user has enabled `prefers-reduced-motion` in their system settings.
+   * When true, the terminal will skip typing animations unless `force-animations` is set.
+   *
+   * @method hasReducedMotion
+   * @returns {boolean} True if the user prefers reduced motion
+   * @example
+   * if (terminal.hasReducedMotion()) {
+   *   console.log('User prefers reduced motion');
+   * }
+   */
+  hasReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * Set internationalization (i18n) strings for localization.
+   * Merges the provided strings with the existing defaults.
+   * Triggers a re-render to apply the new strings.
+   *
+   * @method setI18n
+   * @param {Object} strings - Object containing string keys to override
+   * @param {string} [strings.copy] - "Copy" button text
+   * @param {string} [strings.close] - "Close" button tooltip
+   * @param {string} [strings.minimize] - "Minimize" button tooltip
+   * @param {string} [strings.maximize] - "Maximize" button tooltip
+   * @param {string} [strings.toggleTheme] - "Toggle theme" button tooltip
+   * @param {string} [strings.copyAll] - "Copy All" menu item
+   * @param {string} [strings.copyCommandsOnly] - "Copy Commands Only" menu item
+   * @param {string} [strings.copyOutputOnly] - "Copy Output Only" menu item
+   * @param {string} [strings.copied] - "Copied!" feedback message
+   * @param {string} [strings.commandNotFound] - "Command not found" error message
+   * @returns {void}
+   * @example
+   * terminal.setI18n({
+   *   copy: 'Copiar',
+   *   copied: '¡Copiado!',
+   *   commandNotFound: 'Comando no encontrado'
+   * });
    */
   setI18n(strings) {
     if (strings && typeof strings === 'object') {
@@ -1484,8 +1847,13 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Get current i18n strings
-   * @returns {Object} Current i18n configuration
+   * Get a copy of the current i18n strings configuration.
+   *
+   * @method getI18n
+   * @returns {Object} Current i18n configuration object
+   * @example
+   * const strings = terminal.getI18n();
+   * console.log(strings.copy); // "Copy"
    */
   getI18n() {
     return { ...this._i18n };
@@ -1501,30 +1869,59 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Get command history
-   * @returns {string[]} Array of previously executed commands
+   * Get the command history array.
+   * Returns a copy of the history, not a reference to the internal array.
+   *
+   * @method getHistory
+   * @returns {string[]} Array of previously executed commands (newest last)
+   * @example
+   * const history = terminal.getHistory();
+   * console.log(history); // ['ls', 'cd /home', 'cat file.txt']
    */
   getHistory() {
     return this.historyManager.getHistory();
   }
 
   /**
-   * Set command history
+   * Replace the command history with a new array.
+   * Useful for restoring history from storage or initializing with predefined commands.
+   *
+   * @method setHistory
    * @param {string[]} history - Array of commands to set as history
+   * @returns {void}
+   * @example
+   * terminal.setHistory(['ls', 'pwd', 'whoami']);
    */
   setHistory(history) {
     this.historyManager.setHistory(history);
   }
 
   /**
-   * Clear command history
+   * Clear all command history.
+   * If `persist-history` is enabled, also clears the localStorage entry.
+   *
+   * @method clearHistory
+   * @returns {void}
+   * @example
+   * terminal.clearHistory();
    */
   clearHistory() {
     this.historyManager.clear();
   }
 
   /**
-   * Get all output as text
+   * Get all terminal output as plain text.
+   * Includes both commands (with prompts) and output lines.
+   *
+   * @method getContent
+   * @returns {string} All terminal content as newline-separated text
+   * @example
+   * const content = terminal.getContent();
+   * console.log(content);
+   * // $ ls
+   * // file1.txt file2.txt
+   * // $ pwd
+   * // /home/user
    */
   getContent() {
     return this.outputLines.map(line => {
@@ -1536,7 +1933,13 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Focus the terminal
+   * Focus the terminal's input field.
+   * Useful after programmatically interacting with the terminal.
+   *
+   * @method focus
+   * @returns {void}
+   * @example
+   * terminal.focus();
    */
   focus() {
     this._focusInput();

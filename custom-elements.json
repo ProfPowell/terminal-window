@@ -1,0 +1,1381 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/terminal-window.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A vanilla JavaScript web component that simulates a terminal console with\ncustomizable commands, themes, cursor styles, and typing effects.",
+          "name": "TerminalWindow",
+          "cssProperties": [
+            {
+              "description": "Primary background color",
+              "name": "--bg-primary",
+              "default": "#1a1a2e"
+            },
+            {
+              "description": "Secondary background color",
+              "name": "--bg-secondary",
+              "default": "#16213e"
+            },
+            {
+              "description": "Header background color",
+              "name": "--bg-header",
+              "default": "#0f0f23"
+            },
+            {
+              "description": "Border color",
+              "name": "--border-color",
+              "default": "#2a2a4a"
+            },
+            {
+              "description": "Primary text color",
+              "name": "--text-primary",
+              "default": "#e0e0e0"
+            },
+            {
+              "description": "Secondary text color",
+              "name": "--text-secondary",
+              "default": "#888"
+            },
+            {
+              "description": "Prompt color",
+              "name": "--prompt-color",
+              "default": "#50fa7b"
+            },
+            {
+              "description": "Cursor color",
+              "name": "--cursor-color",
+              "default": "#50fa7b"
+            },
+            {
+              "description": "Command text color",
+              "name": "--command-color",
+              "default": "#f8f8f2"
+            },
+            {
+              "description": "Output text color",
+              "name": "--output-color",
+              "default": "#e0e0e0"
+            },
+            {
+              "description": "Error text color",
+              "name": "--error-color",
+              "default": "#ff5555"
+            },
+            {
+              "description": "Info text color",
+              "name": "--info-color",
+              "default": "#8be9fd"
+            },
+            {
+              "description": "Success text color",
+              "name": "--success-color",
+              "default": "#50fa7b"
+            },
+            {
+              "description": "Cursor width",
+              "name": "--cursor-width",
+              "default": "8px"
+            },
+            {
+              "description": "Cursor height",
+              "name": "--cursor-height",
+              "default": "1.2em"
+            },
+            {
+              "description": "Cursor blink animation speed",
+              "name": "--cursor-blink-speed",
+              "default": "1s"
+            },
+            {
+              "description": "Button background color",
+              "name": "--btn-bg",
+              "default": "#2a2a4a"
+            },
+            {
+              "description": "Button hover background color",
+              "name": "--btn-hover",
+              "default": "#3a3a5a"
+            },
+            {
+              "description": "Button text color",
+              "name": "--btn-text",
+              "default": "#e0e0e0"
+            },
+            {
+              "description": "Close button color",
+              "name": "--control-close",
+              "default": "#ff5f56"
+            },
+            {
+              "description": "Minimize button color",
+              "name": "--control-minimize",
+              "default": "#ffbd2e"
+            },
+            {
+              "description": "Maximize button color",
+              "name": "--control-maximize",
+              "default": "#27c93f"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "Main terminal container",
+              "name": "terminal"
+            },
+            {
+              "description": "Terminal header bar",
+              "name": "header"
+            },
+            {
+              "description": "Window controls container (close, minimize, maximize)",
+              "name": "controls"
+            },
+            {
+              "description": "Close button",
+              "name": "control-close"
+            },
+            {
+              "description": "Minimize button",
+              "name": "control-minimize"
+            },
+            {
+              "description": "Maximize button",
+              "name": "control-maximize"
+            },
+            {
+              "description": "Terminal title text",
+              "name": "title"
+            },
+            {
+              "description": "Actions container (theme toggle, copy)",
+              "name": "actions"
+            },
+            {
+              "description": "Theme toggle button",
+              "name": "theme-button"
+            },
+            {
+              "description": "Copy button",
+              "name": "copy-button"
+            },
+            {
+              "description": "Copy dropdown menu",
+              "name": "copy-menu"
+            },
+            {
+              "description": "Copy menu items",
+              "name": "copy-menu-item"
+            },
+            {
+              "description": "Terminal body (scrollable area)",
+              "name": "body"
+            },
+            {
+              "description": "Output container",
+              "name": "output"
+            },
+            {
+              "description": "Input line container",
+              "name": "input-line"
+            },
+            {
+              "description": "Command prompt text",
+              "name": "prompt"
+            },
+            {
+              "description": "User input text",
+              "name": "input-text"
+            },
+            {
+              "description": "Cursor element",
+              "name": "cursor"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Custom content for the terminal title in the header",
+              "name": "title"
+            },
+            {
+              "description": "Custom buttons/actions before the theme and copy buttons",
+              "name": "actions"
+            },
+            {
+              "description": "Content inserted before the output area in the terminal body",
+              "name": "before-output"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "_applyAttributes",
+              "description": "Apply initial attributes"
+            },
+            {
+              "kind": "method",
+              "name": "_updateStyles",
+              "description": "Update dynamic styles"
+            },
+            {
+              "kind": "method",
+              "name": "_updateHeaderVisibility",
+              "description": "Update header visibility"
+            },
+            {
+              "kind": "method",
+              "name": "_updateTitle",
+              "description": "Update title"
+            },
+            {
+              "kind": "method",
+              "name": "_updateControlsVisibility",
+              "description": "Update window controls visibility"
+            },
+            {
+              "kind": "method",
+              "name": "_updateCopyVisibility",
+              "description": "Update copy button visibility"
+            },
+            {
+              "kind": "method",
+              "name": "_updateThemeToggleVisibility",
+              "description": "Update theme toggle visibility"
+            },
+            {
+              "kind": "method",
+              "name": "_updateReadonlyState",
+              "description": "Update readonly state"
+            },
+            {
+              "kind": "method",
+              "name": "_registerVfsCommands",
+              "description": "Register VFS commands"
+            },
+            {
+              "kind": "method",
+              "name": "_registerBuiltInCommands",
+              "description": "Register built-in commands"
+            },
+            {
+              "kind": "method",
+              "name": "registerCommand",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "Command name (case-insensitive)",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "handler",
+                  "description": "Function that receives (args: string[], terminal: TerminalWindow) and returns string|null|Promise",
+                  "type": {
+                    "text": "Function"
+                  }
+                }
+              ],
+              "description": "Register a custom command handler.\nThe handler receives an array of arguments and the terminal instance,\nand can return a string to print, null to suppress output, or a Promise for async commands."
+            },
+            {
+              "kind": "method",
+              "name": "unregisterCommand",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "Command name to remove",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Remove a registered command."
+            },
+            {
+              "kind": "method",
+              "name": "registerAlias",
+              "parameters": [
+                {
+                  "name": "alias",
+                  "description": "Alias name",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "command",
+                  "description": "Full command string to execute when alias is used",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Create an alias for a command."
+            },
+            {
+              "kind": "method",
+              "name": "executeCommand",
+              "parameters": [
+                {
+                  "name": "input",
+                  "description": "Full command string",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "addToHistory",
+                  "default": "true",
+                  "description": "Whether to add to command history",
+                  "optional": true,
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Execute a command string programmatically.",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "executeSequence",
+              "parameters": [
+                {
+                  "name": "commands",
+                  "description": "Array of command strings or objects with command and optional delay",
+                  "type": {
+                    "text": "Array<string|{command: string, delay?: number}>"
+                  }
+                },
+                {
+                  "name": "defaultDelay",
+                  "default": "1000",
+                  "description": "Default delay between commands in milliseconds",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Execute multiple commands with delays between them.\nUseful for demos, presentations, or scripted terminal sequences.",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_printCommandLine",
+              "parameters": [
+                {
+                  "name": "input"
+                }
+              ],
+              "description": "Print command line to output"
+            },
+            {
+              "kind": "method",
+              "name": "print",
+              "parameters": [
+                {
+                  "name": "text",
+                  "description": "Text to print (can contain newlines)",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "type",
+                  "default": "'output'",
+                  "description": "Line type for styling: \"output\" (default), \"error\" (red), \"info\" (cyan), \"success\" (green)",
+                  "optional": true,
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Print text to the terminal.\nSupports multiple lines (splits on \\n) and ANSI color codes.",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_prefersReducedMotion",
+              "description": "Check if user prefers reduced motion\nCan be overridden with forceAnimations config for testing"
+            },
+            {
+              "kind": "method",
+              "name": "_processTypingQueue",
+              "description": "Process queued typing effect prints"
+            },
+            {
+              "kind": "method",
+              "name": "_trimOutputIfNeeded",
+              "description": "Trim output lines if exceeding max"
+            },
+            {
+              "kind": "method",
+              "name": "_renderWithTypingEffect",
+              "parameters": [
+                {
+                  "name": "lines"
+                },
+                {
+                  "name": "type"
+                }
+              ],
+              "description": "Render output with typing effect"
+            },
+            {
+              "kind": "method",
+              "name": "skipTypingEffect",
+              "description": "Skip the current typing animation and show all remaining output immediately.\nThis is also triggered when the user presses Ctrl+C or clicks the terminal during a typing effect."
+            },
+            {
+              "kind": "method",
+              "name": "_delay",
+              "parameters": [
+                {
+                  "name": "ms"
+                }
+              ],
+              "description": "Delay helper for typing effect",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "clear",
+              "description": "Clear all terminal output."
+            },
+            {
+              "kind": "method",
+              "name": "_parseAnsi",
+              "parameters": [
+                {
+                  "name": "text",
+                  "description": "Text with ANSI codes",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Parse ANSI escape codes and convert to HTML",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_appendLineToDom",
+              "parameters": [
+                {
+                  "name": "line"
+                }
+              ],
+              "description": "Append a single line to the DOM"
+            },
+            {
+              "kind": "method",
+              "name": "_renderOutput",
+              "description": "Render the output area"
+            },
+            {
+              "kind": "method",
+              "name": "_isNearBottom",
+              "description": "Check if terminal is scrolled near the bottom"
+            },
+            {
+              "kind": "method",
+              "name": "_handleScroll",
+              "description": "Handle scroll events for smart auto-scroll"
+            },
+            {
+              "kind": "method",
+              "name": "_scrollToBottom",
+              "description": "Scroll to bottom of terminal (respects auto-scroll setting)"
+            },
+            {
+              "kind": "method",
+              "name": "scrollToBottom",
+              "description": "Force scroll to the bottom of the terminal.\nThe terminal uses smart auto-scroll: it automatically scrolls when new output appears,\nbut stops if the user scrolls up to read previous content. This method forces a scroll\nand re-enables auto-scroll."
+            },
+            {
+              "kind": "method",
+              "name": "_escapeHtml",
+              "parameters": [
+                {
+                  "name": "text"
+                }
+              ],
+              "description": "Escape HTML for safe display"
+            },
+            {
+              "kind": "method",
+              "name": "_announce",
+              "parameters": [
+                {
+                  "name": "message"
+                }
+              ],
+              "description": "Announce message to screen readers"
+            },
+            {
+              "kind": "method",
+              "name": "_setupEventListeners",
+              "description": "Setup event listeners"
+            },
+            {
+              "kind": "method",
+              "name": "_navigateHistory",
+              "parameters": [
+                {
+                  "name": "direction"
+                }
+              ],
+              "description": "Navigate command history"
+            },
+            {
+              "kind": "method",
+              "name": "_autocomplete",
+              "description": "Autocomplete command"
+            },
+            {
+              "kind": "method",
+              "name": "_updateInputDisplay",
+              "description": "Update the visible input display"
+            },
+            {
+              "kind": "method",
+              "name": "_focusInput",
+              "description": "Focus the hidden input"
+            },
+            {
+              "kind": "method",
+              "name": "setInputMask",
+              "parameters": [
+                {
+                  "name": "masked",
+                  "description": "Whether to mask input",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Enable or disable input masking for password prompts.\nWhen masked, input is displayed as asterisks (***) instead of the actual characters."
+            },
+            {
+              "kind": "method",
+              "name": "copyContent",
+              "parameters": [
+                {
+                  "name": "mode",
+                  "default": "'all'",
+                  "description": "Copy mode: \"all\" (everything with prompts), \"commands\" (only commands entered), \"output\" (only output, no commands), \"selection\" (current text selection)",
+                  "optional": true,
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Copy terminal content to clipboard.",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_copyToClipboard",
+              "parameters": [
+                {
+                  "name": "text"
+                },
+                {
+                  "name": "mode",
+                  "default": "'all'"
+                }
+              ],
+              "description": "Internal method to copy text to clipboard"
+            },
+            {
+              "kind": "method",
+              "name": "_toggleCopyMenu",
+              "description": "Toggle copy menu visibility"
+            },
+            {
+              "kind": "method",
+              "name": "_openCopyMenu",
+              "description": "Open the copy menu with keyboard support"
+            },
+            {
+              "kind": "method",
+              "name": "_closeCopyMenu",
+              "description": "Close the copy menu and return focus"
+            },
+            {
+              "kind": "method",
+              "name": "_handleCopyMenuKeydown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "Handle keyboard navigation in copy menu"
+            },
+            {
+              "kind": "method",
+              "name": "_showCopyFeedback",
+              "parameters": [
+                {
+                  "name": "message"
+                }
+              ],
+              "description": "Show copy feedback"
+            },
+            {
+              "kind": "method",
+              "name": "toggleTheme",
+              "description": "Toggle between light and dark theme.\nAnnounces the theme change to screen readers and fires no events (use attribute observation for reactivity).",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "close",
+              "description": "Close the terminal by hiding it.\nSets `display: none` on the element and dispatches a `close` event.\nThe terminal can be shown again by setting `display: block` or removing the style.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "minimize",
+              "description": "Toggle the minimized state of the terminal.\nWhen minimized, only the header is visible. Dispatches a `minimize` event with the new state.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toggleFullscreen",
+              "description": "Toggle fullscreen mode (maximize).\nWhen fullscreen, the terminal fills the entire viewport. Press Escape to exit.\nDispatches a `fullscreen` event with the new state.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setTheme",
+              "parameters": [
+                {
+                  "name": "theme",
+                  "description": "The theme to apply",
+                  "type": {
+                    "text": "('dark'|'light')"
+                  }
+                }
+              ],
+              "description": "Set the color theme programmatically.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setPrompt",
+              "parameters": [
+                {
+                  "name": "prompt",
+                  "description": "The prompt text to display (e.g., \"$ \", \"> \", \"user@host:~$ \")",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Set the command prompt text programmatically.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setCursorStyle",
+              "parameters": [
+                {
+                  "name": "style",
+                  "description": "The cursor style to apply",
+                  "type": {
+                    "text": "('block'|'underline'|'bar')"
+                  }
+                }
+              ],
+              "description": "Set the cursor style programmatically.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setCursorBlink",
+              "parameters": [
+                {
+                  "name": "blink",
+                  "description": "Whether the cursor should blink",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Enable or disable cursor blinking programmatically.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setTypingEffect",
+              "parameters": [
+                {
+                  "name": "enabled",
+                  "description": "Whether to enable the typing effect",
+                  "type": {
+                    "text": "boolean"
+                  }
+                },
+                {
+                  "name": "speed",
+                  "default": "30",
+                  "description": "Milliseconds per character (lower = faster)",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Enable or disable the typing effect for output.\nWhen enabled, printed text appears character by character like a typewriter.\nRespects `prefers-reduced-motion` unless `force-animations` is set.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setReadonly",
+              "parameters": [
+                {
+                  "name": "readonly",
+                  "description": "Whether to enable readonly mode",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Enable or disable readonly mode.\nWhen readonly, the input line is hidden and users cannot type commands.\nUseful for presentation or demonstration purposes.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setForceAnimations",
+              "parameters": [
+                {
+                  "name": "force",
+                  "description": "If true, animations will run regardless of system preference",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Override the user's `prefers-reduced-motion` system preference.\nWhen forced, typing animations will run even if the user has reduced motion enabled.\nUse sparingly and only for testing or when the animation is essential to the experience.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "hasReducedMotion",
+              "description": "Check if the user has enabled `prefers-reduced-motion` in their system settings.\nWhen true, the terminal will skip typing animations unless `force-animations` is set.",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setI18n",
+              "parameters": [
+                {
+                  "name": "strings",
+                  "description": "Object containing string keys to override",
+                  "type": {
+                    "text": "@param {string} [strings.copy] - \"Copy\" button text\n   * @param {string} [strings.close] - \"Close\" button tooltip\n   * @param {string} [strings.minimize] - \"Minimize\" button tooltip\n   * @param {string} [strings.maximize] - \"Maximize\" button tooltip\n   * @param {string} [strings.toggleTheme] - \"Toggle theme\" button tooltip\n   * @param {string} [strings.copyAll] - \"Copy All\" menu item\n   * @param {string} [strings.copyCommandsOnly] - \"Copy Commands Only\" menu item\n   * @param {string} [strings.copyOutputOnly] - \"Copy Output Only\" menu item\n   * @param {string} [strings.copied] - \"Copied!\" feedback message\n   * @param {string} [strings.commandNotFound] - \"Command not found\" error message\n   * "
+                  }
+                }
+              ],
+              "description": "Set internationalization (i18n) strings for localization.\nMerges the provided strings with the existing defaults.\nTriggers a re-render to apply the new strings.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getI18n",
+              "description": "Get a copy of the current i18n strings configuration.",
+              "return": {
+                "type": {
+                  "text": "Object"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_t",
+              "parameters": [
+                {
+                  "name": "key",
+                  "description": "The i18n key",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get a localized string",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getHistory",
+              "description": "Get the command history array.\nReturns a copy of the history, not a reference to the internal array.",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setHistory",
+              "parameters": [
+                {
+                  "name": "history",
+                  "description": "Array of commands to set as history",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "description": "Replace the command history with a new array.\nUseful for restoring history from storage or initializing with predefined commands.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "clearHistory",
+              "description": "Clear all command history.\nIf `persist-history` is enabled, also clears the localStorage entry.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getContent",
+              "description": "Get all terminal output as plain text.\nIncludes both commands (with prompts) and output lines.",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "focus",
+              "description": "Focus the terminal's input field.\nUseful after programmatically interacting with the terminal.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "render",
+              "description": "Render the component"
+            },
+            {
+              "kind": "field",
+              "name": "adoptedStyleSheets",
+              "type": {
+                "text": "array"
+              },
+              "default": "[sheet]"
+            },
+            {
+              "kind": "field",
+              "name": "ansiParser",
+              "default": "new AnsiParser()"
+            },
+            {
+              "kind": "field",
+              "name": "commandRegistry",
+              "default": "new CommandRegistry()"
+            },
+            {
+              "kind": "field",
+              "name": "historyManager",
+              "default": "new HistoryManager()"
+            },
+            {
+              "kind": "field",
+              "name": "fileSystem",
+              "default": "new VirtualFileSystem()"
+            },
+            {
+              "kind": "field",
+              "name": "outputLines",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "currentInput",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "inputMasked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "isFullscreen",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "isMinimized",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_fullscreenEscHandler",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_copyMenuCloseHandler",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_copyFeedbackTimeout",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_announceTimeout",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_copyMenuOpen",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_copyMenuFocusIndex",
+              "type": {
+                "text": "number"
+              },
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "_autoScroll",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "_scrollThreshold",
+              "type": {
+                "text": "number"
+              },
+              "default": "50"
+            },
+            {
+              "kind": "field",
+              "name": "_typingInProgress",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_typingCancelled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_typingQueue",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "config",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ theme: 'dark', prompt: '$ ', cursorStyle: 'block', // block, underline, bar cursorBlink: true, fontFamily: \"'Consolas', 'Monaco', 'Courier New', monospace\", fontSize: '14px', lineHeight: '1.4', typingEffect: false, typingSpeed: 30, // ms per character // Header options showHeader: true, title: 'Terminal', showControls: true, showCopy: true, showThemeToggle: true, // Behavior options readonly: false, maxLines: 1000, // Features enableVfs: false, persistHistory: false, // Accessibility forceAnimations: false, // Override prefers-reduced-motion (for testing only) }"
+            },
+            {
+              "kind": "field",
+              "name": "_i18n",
+              "type": {
+                "text": "object"
+              },
+              "default": "{ // Button labels copy: 'Copy', close: 'Close', minimize: 'Minimize', maximize: 'Maximize', exitFullscreen: 'Exit fullscreen', toggleFullscreen: 'Toggle fullscreen', toggleTheme: 'Toggle theme', switchToLight: 'switch to light', switchToDark: 'switch to dark', // Copy menu copyAll: 'Copy All', copyCommandsOnly: 'Copy Commands Only', copyOutputOnly: 'Copy Output Only', copyOptions: 'Copy options', copied: 'Copied!', nothingToCopy: 'Nothing to copy', noSelection: 'No selection', // Announcements terminalReady: 'Terminal ready', terminalCleared: 'Terminal cleared', terminalClosed: 'Terminal closed', terminalMinimized: 'Terminal minimized', terminalRestored: 'Terminal restored', enteredFullscreen: 'Entered fullscreen mode', exitedFullscreen: 'Exited fullscreen mode', themeChangedTo: 'Theme changed to', copiedToClipboard: 'copied to clipboard', content: 'Content', // Built-in commands availableCommands: 'Available commands:', noCommandsInHistory: 'No commands in history.', commandNotFound: 'Command not found:', typeHelpForCommands: \"Type 'help' for available commands.\", // Input terminalInputLabel: 'Terminal input. Type a command and press Enter.', terminalOutput: 'Terminal output', }"
+            }
+          ],
+          "events": [
+            {
+              "name": "command-result",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired after a command executes successfully. Detail: { command, args, result }"
+            },
+            {
+              "name": "command-error",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when a command fails or is not found. Detail: { command, error }"
+            },
+            {
+              "name": "command",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when a command is executed. Detail: { command, args, input }"
+            },
+            {
+              "name": "output",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when a line is printed to the terminal. Detail: { type, content }"
+            },
+            {
+              "name": "interrupt",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when user presses Ctrl+C"
+            },
+            {
+              "name": "copy",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when content is copied to clipboard. Detail: { text, mode }"
+            },
+            {
+              "name": "close",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the terminal is closed via the close button"
+            },
+            {
+              "name": "minimize",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when the terminal is minimized/restored. Detail: { minimized }"
+            },
+            {
+              "name": "fullscreen",
+              "type": {
+                "text": "CustomEvent"
+              },
+              "description": "Fired when fullscreen mode is toggled. Detail: { fullscreen }"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "theme",
+              "type": {
+                "text": "string"
+              },
+              "description": "Color theme: \"dark\" or \"light\"",
+              "default": "dark"
+            },
+            {
+              "name": "prompt",
+              "type": {
+                "text": "string"
+              },
+              "description": "The command prompt text",
+              "default": "\"$ \""
+            },
+            {
+              "name": "cursor-style",
+              "type": {
+                "text": "string"
+              },
+              "description": "Cursor shape: \"block\", \"underline\", or \"bar\"",
+              "default": "block"
+            },
+            {
+              "name": "cursor-blink",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Enable cursor blinking",
+              "default": "true"
+            },
+            {
+              "name": "font-family",
+              "type": {
+                "text": "string"
+              },
+              "description": "Font family for terminal text",
+              "default": "'Consolas', 'Monaco', monospace"
+            },
+            {
+              "name": "font-size",
+              "type": {
+                "text": "string"
+              },
+              "description": "Font size (e.g., \"14px\", \"1rem\")",
+              "default": "14px"
+            },
+            {
+              "name": "line-height",
+              "type": {
+                "text": "string"
+              },
+              "description": "Line height multiplier",
+              "default": "1.4"
+            },
+            {
+              "name": "typing-effect",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Enable typewriter animation for output",
+              "default": "false"
+            },
+            {
+              "name": "typing-speed",
+              "type": {
+                "text": "number"
+              },
+              "description": "Milliseconds per character when typing effect is enabled",
+              "default": "30"
+            },
+            {
+              "name": "show-header",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Show the terminal header bar",
+              "default": "true"
+            },
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "description": "Title displayed in the header bar",
+              "default": "Terminal"
+            },
+            {
+              "name": "show-controls",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Show window control buttons (close, minimize, maximize)",
+              "default": "true"
+            },
+            {
+              "name": "show-copy",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Show the copy button in the header",
+              "default": "true"
+            },
+            {
+              "name": "show-theme-toggle",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Show the theme toggle button",
+              "default": "true"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Disable user input (presentation mode)",
+              "default": "false"
+            },
+            {
+              "name": "max-lines",
+              "type": {
+                "text": "number"
+              },
+              "description": "Maximum number of output lines to keep in buffer",
+              "default": "1000"
+            },
+            {
+              "name": "enable-vfs",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Enable virtual file system with built-in commands (ls, cd, pwd, mkdir, touch, rm, cat)",
+              "default": "false"
+            },
+            {
+              "name": "persist-history",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Persist command history to localStorage across sessions",
+              "default": "false"
+            },
+            {
+              "name": "force-animations",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Force typing animations even when user has prefers-reduced-motion set",
+              "default": "false"
+            },
+            {
+              "type": {
+                "text": "string"
+              },
+              "description": "Welcome message displayed when terminal loads",
+              "name": "welcome"
+            }
+          ],
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "tagName": "terminal-window",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "terminal-window",
+          "declaration": {
+            "name": "TerminalWindow",
+            "module": "src/terminal-window.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "TerminalWindow",
+            "module": "src/terminal-window.js"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - Terminal Window</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/syntax.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">API Reference</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="index.html">Home</a>
+      <a href="docs.html" class="active">Docs</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown__trigger" aria-expanded="false" aria-haspopup="true">
+          Examples
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="examples/unix.html">Unix</a>
+          <a href="examples/git.html">Git</a>
+          <a href="examples/curl.html">cURL</a>
+          <a href="examples/apache.html">Apache</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="docs-main">
+    <div class="content">
+      <article class="panel panel--docs">
+        <h1>API Reference</h1>
+        <p>A vanilla JavaScript web component that simulates a terminal console with customizable commands, themes, cursor styles, and typing effects.</p>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+          <h4>Contents</h4>
+          <ul>
+    <li><a href="#attributes">Attributes</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#methods">Methods</a></li>
+    <li><a href="#css-parts">CSS Parts</a></li>
+    <li><a href="#slots">Slots</a></li>
+    <li><a href="#css-properties">CSS Custom Properties</a></li>
+    <li><a href="#built-in-commands">Built-in Commands</a></li>
+  </ul>
+        </nav>
+
+        <!-- Attributes -->
+        <section class="syntax-section" id="attributes">
+          <h2>Attributes</h2>
+          <p>Configure the terminal using HTML attributes. All attributes can also be set via JavaScript properties.</p>
+
+          <h3 id="attr-appearance">Appearance</h3>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>theme</td>
+      <td>Color theme: &quot;dark&quot; or &quot;light&quot;</td>
+      <td><code>dark</code></td>
+    </tr>
+    <tr>
+      <td>cursor-style</td>
+      <td>Cursor shape: &quot;block&quot;, &quot;underline&quot;, or &quot;bar&quot;</td>
+      <td><code>block</code></td>
+    </tr>
+    <tr>
+      <td>cursor-blink</td>
+      <td>Enable cursor blinking</td>
+      <td><code>true</code></td>
+    </tr>
+    <tr>
+      <td>font-family</td>
+      <td>Font family for terminal text</td>
+      <td><code>&#39;Consolas&#39;, &#39;Monaco&#39;, monospace</code></td>
+    </tr>
+    <tr>
+      <td>font-size</td>
+      <td>Font size (e.g., &quot;14px&quot;, &quot;1rem&quot;)</td>
+      <td><code>14px</code></td>
+    </tr>
+    <tr>
+      <td>line-height</td>
+      <td>Line height multiplier</td>
+      <td><code>1.4</code></td>
+    </tr>
+  </tbody>
+</table>
+
+          <h3 id="attr-header">Header</h3>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>title</td>
+      <td>Title displayed in the header bar</td>
+      <td><code>Terminal</code></td>
+    </tr>
+    <tr>
+      <td>show-header</td>
+      <td>Show the terminal header bar</td>
+      <td><code>true</code></td>
+    </tr>
+    <tr>
+      <td>show-controls</td>
+      <td>Show window control buttons (close, minimize, maximize)</td>
+      <td><code>true</code></td>
+    </tr>
+    <tr>
+      <td>show-copy</td>
+      <td>Show the copy button in the header</td>
+      <td><code>true</code></td>
+    </tr>
+    <tr>
+      <td>show-theme-toggle</td>
+      <td>Show the theme toggle button</td>
+      <td><code>true</code></td>
+    </tr>
+  </tbody>
+</table>
+
+          <h3 id="attr-behavior">Behavior</h3>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>prompt</td>
+      <td>The command prompt text</td>
+      <td><code>&quot;$ &quot;</code></td>
+    </tr>
+    <tr>
+      <td>typing-effect</td>
+      <td>Enable typewriter animation for output</td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>typing-speed</td>
+      <td>Milliseconds per character when typing effect is enabled</td>
+      <td><code>30</code></td>
+    </tr>
+    <tr>
+      <td>readonly</td>
+      <td>Disable user input (presentation mode)</td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>max-lines</td>
+      <td>Maximum number of output lines to keep in buffer</td>
+      <td><code>1000</code></td>
+    </tr>
+    <tr>
+      <td>welcome</td>
+      <td>Welcome message displayed when terminal loads</td>
+      <td><code>—</code></td>
+    </tr>
+    <tr>
+      <td>enable-vfs</td>
+      <td>Enable virtual file system with built-in commands (ls, cd, pwd, mkdir, touch, rm, cat)</td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>persist-history</td>
+      <td>Persist command history to localStorage across sessions</td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>force-animations</td>
+      <td>Force typing animations even when user has prefers-reduced-motion set</td>
+      <td><code>false</code></td>
+    </tr>
+  </tbody>
+</table>
+        </section>
+
+        <!-- Events -->
+        <section class="syntax-section" id="events">
+          <h2>Events</h2>
+          <p>Listen for these custom events to respond to terminal activity.</p>
+          
+<h3 id="event-command">command</h3>
+<div class="event-name">command</div>
+<p>Fired when a command is executed. Detail: { command, args, input }</p>
+
+<h3 id="event-command-result">command-result</h3>
+<div class="event-name">command-result</div>
+<p>Fired after a command executes successfully. Detail: { command, args, result }</p>
+
+<h3 id="event-command-error">command-error</h3>
+<div class="event-name">command-error</div>
+<p>Fired when a command fails or is not found. Detail: { command, error }</p>
+
+<h3 id="event-output">output</h3>
+<div class="event-name">output</div>
+<p>Fired when a line is printed to the terminal. Detail: { type, content }</p>
+
+<h3 id="event-copy">copy</h3>
+<div class="event-name">copy</div>
+<p>Fired when content is copied to clipboard. Detail: { text, mode }</p>
+
+<h3 id="event-close">close</h3>
+<div class="event-name">close</div>
+<p>Fired when the terminal is closed via the close button</p>
+
+<h3 id="event-minimize">minimize</h3>
+<div class="event-name">minimize</div>
+<p>Fired when the terminal is minimized/restored. Detail: { minimized }</p>
+
+<h3 id="event-fullscreen">fullscreen</h3>
+<div class="event-name">fullscreen</div>
+<p>Fired when fullscreen mode is toggled. Detail: { fullscreen }</p>
+
+<h3 id="event-interrupt">interrupt</h3>
+<div class="event-name">interrupt</div>
+<p>Fired when user presses Ctrl+C</p>
+
+        </section>
+
+        <!-- Methods -->
+        <section class="syntax-section" id="methods">
+          <h2>Methods</h2>
+          <p>Control the terminal programmatically using these public methods.</p>
+          
+<h3 id="method-registerCommand">registerCommand()</h3>
+<div class="method-signature">registerCommand(name, handler)</div>
+<p>Register a custom command handler. The handler receives an array of arguments and the terminal instance, and can return a string to print, null to suppress output, or a Promise for async commands.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>name</code> <em>(string)</em> - Command name (case-insensitive)</li>
+  <li><code>handler</code> <em>(Function)</em> - Function that receives (args: string[], terminal: TerminalWindow) and returns string|null|Promise</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code><span class="cmt">// Simple command</span>
+terminal.<span class="fn">registerCommand</span>(&#<span class="num">39</span>;hello&#<span class="num">39</span>;, () =&gt; &#<span class="num">39</span>;Hello, World!&#<span class="num">39</span>;);
+
+<span class="cmt">// Command with arguments</span>
+terminal.<span class="fn">registerCommand</span>(&#<span class="num">39</span>;greet&#<span class="num">39</span>;, (args) =&gt; <span class="tpl">`Hello, ${args[0] || &#39;stranger&#39;}!`</span>);
+
+<span class="cmt">// Async command</span>
+terminal.<span class="fn">registerCommand</span>(&#<span class="num">39</span>;fetch-data&#<span class="num">39</span>;,</code>
+</div>
+<h3 id="method-unregisterCommand">unregisterCommand()</h3>
+<div class="method-signature">unregisterCommand(name)</div>
+<p>Remove a registered command.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>name</code> <em>(string)</em> - Command name to remove</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">unregisterCommand</span>(&#<span class="num">39</span>;greet&#<span class="num">39</span>;);</code>
+</div>
+<h3 id="method-registerAlias">registerAlias()</h3>
+<div class="method-signature">registerAlias(alias, command)</div>
+<p>Create an alias for a command.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>alias</code> <em>(string)</em> - Alias name</li>
+  <li><code>command</code> <em>(string)</em> - Full command string to execute when alias is used</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">registerAlias</span>(&#<span class="num">39</span>;ll&#<span class="num">39</span>;, &#<span class="num">39</span>;ls -la&#<span class="num">39</span>;);
+terminal.<span class="fn">registerAlias</span>(&#<span class="num">39</span>;cls&#<span class="num">39</span>;, &#<span class="num">39</span>;clear&#<span class="num">39</span>;);</code>
+</div>
+<h3 id="method-skipTypingEffect">skipTypingEffect()</h3>
+<div class="method-signature">skipTypingEffect()</div>
+<p>Render output with typing effect</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">skipTypingEffect</span>();</code>
+</div>
+<h3 id="method-clear">clear()</h3>
+<div class="method-signature">clear()</div>
+<p>Clear all terminal output.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">clear</span>();</code>
+</div>
+<h3 id="method-scrollToBottom">scrollToBottom()</h3>
+<div class="method-signature">scrollToBottom()</div>
+<p>Force scroll to the bottom of the terminal. The terminal uses smart auto-scroll: it automatically scrolls when new output appears, but stops if the user scrolls up to read previous content. This method forces a scroll and re-enables auto-scroll.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">scrollToBottom</span>();</code>
+</div>
+<h3 id="method-setInputMask">setInputMask()</h3>
+<div class="method-signature">setInputMask(masked)</div>
+<p>Enable or disable input masking for password prompts. When masked, input is displayed as asterisks (***) instead of the actual characters.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>masked</code> <em>(boolean)</em> - Whether to mask input</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setInputMask</span>(<span class="kw">true</span>);  <span class="cmt">// Shows *** instead of text</span>
+terminal.<span class="fn">setInputMask</span>(<span class="kw">false</span>); <span class="cmt">// Shows normal text</span></code>
+</div>
+<h3 id="method-toggleTheme">toggleTheme()</h3>
+<div class="method-signature">toggleTheme()</div>
+<p>Toggle between light and dark theme. Announces the theme change to screen readers and fires no events (use attribute observation for reactivity).</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">toggleTheme</span>(); <span class="cmt">// Switches from dark to light or vice versa</span></code>
+</div>
+<h3 id="method-close">close()</h3>
+<div class="method-signature">close()</div>
+<p>Close the terminal by hiding it. Sets `display: none` on the element and dispatches a `close` event. The terminal can be shown again by setting `display: block` or removing the style.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">close</span>();
+
+<span class="cmt">// Listen for close event</span>
+terminal.<span class="fn">addEventListener</span>(&#<span class="num">39</span>;close&#<span class="num">39</span>;, () =&gt; {
+  console.<span class="fn">log</span>(&#<span class="num">39</span>;Terminal was closed&#<span class="num">39</span>;);
+});</code>
+</div>
+<h3 id="method-minimize">minimize()</h3>
+<div class="method-signature">minimize()</div>
+<p>Toggle the minimized state of the terminal. When minimized, only the header is visible. Dispatches a `minimize` event with the new state.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">minimize</span>(); <span class="cmt">// Minimize the terminal</span>
+terminal.<span class="fn">minimize</span>(); <span class="cmt">// Restore the terminal</span>
+
+<span class="cmt">// Listen for minimize event</span>
+terminal.<span class="fn">addEventListener</span>(&#<span class="num">39</span>;minimize&#<span class="num">39</span>;, (e) =&gt; {
+  console.<span class="fn">log</span>(&#<span class="num">39</span>;Minimized:&#<span class="num">39</span>;, e.detail.minimized);
+});</code>
+</div>
+<h3 id="method-toggleFullscreen">toggleFullscreen()</h3>
+<div class="method-signature">toggleFullscreen()</div>
+<p>Toggle fullscreen mode (maximize). When fullscreen, the terminal fills the entire viewport. Press Escape to exit. Dispatches a `fullscreen` event with the new state.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">toggleFullscreen</span>(); <span class="cmt">// Enter fullscreen</span>
+terminal.<span class="fn">toggleFullscreen</span>(); <span class="cmt">// Exit fullscreen</span>
+
+<span class="cmt">// Listen for fullscreen event</span>
+terminal.<span class="fn">addEventListener</span>(&#<span class="num">39</span>;fullscreen&#<span class="num">39</span>;, (e) =&gt; {
+  console.<span class="fn">log</span>(&#<span class="num">39</span>;Fullscreen:&#<span class="num">39</span>;, e.detail.fullscreen);
+});</code>
+</div>
+<h3 id="method-setTheme">setTheme()</h3>
+<div class="method-signature">setTheme(theme)</div>
+<p>Set the color theme programmatically.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>theme</code> <em>((&#39;dark&#39;|&#39;light&#39;))</em> - The theme to apply</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setTheme</span>(&#<span class="num">39</span>;light&#<span class="num">39</span>;);
+terminal.<span class="fn">setTheme</span>(&#<span class="num">39</span>;dark&#<span class="num">39</span>;);</code>
+</div>
+<h3 id="method-setPrompt">setPrompt()</h3>
+<div class="method-signature">setPrompt(prompt)</div>
+<p>Set the command prompt text programmatically.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>prompt</code> <em>(string)</em> - The prompt text to display (e.g., &quot;$ &quot;, &quot;&gt; &quot;, &quot;user@host:~$ &quot;)</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setPrompt</span>(&#<span class="num">39</span>;&gt; &#<span class="num">39</span>;);
+terminal.<span class="fn">setPrompt</span>(&#<span class="num">39</span>;user@localhost:~$ &#<span class="num">39</span>;);</code>
+</div>
+<h3 id="method-setCursorStyle">setCursorStyle()</h3>
+<div class="method-signature">setCursorStyle(style)</div>
+<p>Set the cursor style programmatically.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>style</code> <em>((&#39;block&#39;|&#39;underline&#39;|&#39;bar&#39;))</em> - The cursor style to apply</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setCursorStyle</span>(&#<span class="num">39</span>;block&#<span class="num">39</span>;);     <span class="cmt">// █ (default)</span>
+terminal.<span class="fn">setCursorStyle</span>(&#<span class="num">39</span>;underline&#<span class="num">39</span>;); <span class="cmt">// _</span>
+terminal.<span class="fn">setCursorStyle</span>(&#<span class="num">39</span>;bar&#<span class="num">39</span>;);       <span class="cmt">// |</span></code>
+</div>
+<h3 id="method-setCursorBlink">setCursorBlink()</h3>
+<div class="method-signature">setCursorBlink(blink)</div>
+<p>Enable or disable cursor blinking programmatically.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>blink</code> <em>(boolean)</em> - Whether the cursor should blink</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setCursorBlink</span>(<span class="kw">true</span>);  <span class="cmt">// Enable blinking</span>
+terminal.<span class="fn">setCursorBlink</span>(<span class="kw">false</span>); <span class="cmt">// Disable</span></code>
+</div>
+<h3 id="method-setTypingEffect">setTypingEffect()</h3>
+<div class="method-signature">setTypingEffect(enabled, speed=30)</div>
+<p>Enable or disable the typing effect for output. When enabled, printed text appears character by character like a typewriter. Respects `prefers-reduced-motion` unless `force-animations` is set.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>enabled</code> <em>(boolean)</em> - Whether to enable the typing effect</li>
+  <li><code>speed=30</code> <em>(number)</em> - Milliseconds per character (lower = faster)</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setTypingEffect</span>(<span class="kw">true</span>);        <span class="cmt">// Enable with default</span></code>
+</div>
+<h3 id="method-setReadonly">setReadonly()</h3>
+<div class="method-signature">setReadonly(readonly)</div>
+<p>Enable or disable readonly mode. When readonly, the input line is hidden and users cannot type commands. Useful for presentation or demonstration purposes.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>readonly</code> <em>(boolean)</em> - Whether to enable readonly mode</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setReadonly</span>(<span class="kw">true</span>);  <span class="cmt">// Disable input</span>
+terminal.<span class="fn">setReadonly</span>(<span class="kw">false</span>); <span class="cmt">// Enable input</span></code>
+</div>
+<h3 id="method-setForceAnimations">setForceAnimations()</h3>
+<div class="method-signature">setForceAnimations(force)</div>
+<p>Override the user&#39;s `prefers-reduced-motion` system preference. When forced, typing animations will run even if the user has reduced motion enabled. Use sparingly and only for testing or when the animation is essential to the experience.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>force</code> <em>(boolean)</em> - If true, animations will run regardless of system preference</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setForceAnimations</span>(<span class="kw">true</span>);  <span class="cmt">// Force animations on</span>
+terminal.<span class="fn">setForceAnimations</span>(<span class="kw">false</span>); <span class="cmt">// Respect system preference</span></code>
+</div>
+<h3 id="method-hasReducedMotion">hasReducedMotion()</h3>
+<div class="method-signature">hasReducedMotion()</div>
+<p>Check if the user has enabled `prefers-reduced-motion` in their system settings. When true, the terminal will skip typing animations unless `force-animations` is set.</p>
+<p><strong>Returns:</strong> <em>boolean</em> - True if the user prefers reduced motion</p>
+<h3 id="method-setI18n">setI18n()</h3>
+<div class="method-signature">setI18n(strings, strings.copy, strings.close, strings.minimize, strings.maximize, strings.toggleTheme, strings.copyAll, strings.copyCommandsOnly, strings.copyOutputOnly, strings.copied, strings.commandNotFound)</div>
+<p>Set internationalization (i18n) strings for localization. Merges the provided strings with the existing defaults. Triggers a re-render to apply the new strings.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>strings</code> <em>(Object)</em> - Object containing string keys to override</li>
+  <li><code>strings.copy</code> <em>(string)</em> - &quot;Copy&quot; button text</li>
+  <li><code>strings.close</code> <em>(string)</em> - &quot;Close&quot; button tooltip</li>
+  <li><code>strings.minimize</code> <em>(string)</em> - &quot;Minimize&quot; button tooltip</li>
+  <li><code>strings.maximize</code> <em>(string)</em> - &quot;Maximize&quot; button tooltip</li>
+  <li><code>strings.toggleTheme</code> <em>(string)</em> - &quot;Toggle theme&quot; button tooltip</li>
+  <li><code>strings.copyAll</code> <em>(string)</em> - &quot;Copy All&quot; menu item</li>
+  <li><code>strings.copyCommandsOnly</code> <em>(string)</em> - &quot;Copy Commands Only&quot; menu item</li>
+  <li><code>strings.copyOutputOnly</code> <em>(string)</em> - &quot;Copy Output Only&quot; menu item</li>
+  <li><code>strings.copied</code> <em>(string)</em> - &quot;Copied!&quot; feedback message</li>
+  <li><code>strings.commandNotFound</code> <em>(string)</em> - &quot;Command not found&quot; error message</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setI18n</span>({
+  copy: &#<span class="num">39</span>;Copiar&#<span class="num">39</span>;,
+  copied: &#<span class="num">39</span>;¡Copiado!&#<span class="num">39</span>;,
+  commandNotFound: &#<span class="num">39</span>;Comando no encontrado&#<span class="num">39</span>;
+});</code>
+</div>
+<h3 id="method-getI18n">getI18n()</h3>
+<div class="method-signature">getI18n()</div>
+<p>Get a copy of the current i18n strings configuration.</p>
+<p><strong>Returns:</strong> <em>Object</em> - Current i18n configuration object</p>
+<div class="code-block" data-lang="JS">
+  <code><span class="kw">const</span> strings = terminal.<span class="fn">getI18n</span>();
+console.<span class="fn">log</span>(strings.copy); <span class="cmt">// &quot;Copy&quot;</span></code>
+</div>
+<h3 id="method-getHistory">getHistory()</h3>
+<div class="method-signature">getHistory()</div>
+<p>Get the command history array. Returns a copy of the history, not a reference to the internal array.</p>
+<p><strong>Returns:</strong> <em>string[]</em> - Array of previously executed commands (newest last)</p>
+<div class="code-block" data-lang="JS">
+  <code><span class="kw">const</span> history = terminal.<span class="fn">getHistory</span>();
+console.<span class="fn">log</span>(history); <span class="cmt">// [&#39;ls&#39;, &#39;cd /home&#39;, &#39;cat file.txt&#39;]</span></code>
+</div>
+<h3 id="method-setHistory">setHistory()</h3>
+<div class="method-signature">setHistory(history)</div>
+<p>Replace the command history with a new array. Useful for restoring history from storage or initializing with predefined commands.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+  <li><code>history</code> <em>(string[])</em> - Array of commands to set as history</li>
+</ul>
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">setHistory</span>([&#<span class="num">39</span>;ls&#<span class="num">39</span>;, &#<span class="num">39</span>;pwd&#<span class="num">39</span>;, &#<span class="num">39</span>;whoami&#<span class="num">39</span>;]);</code>
+</div>
+<h3 id="method-clearHistory">clearHistory()</h3>
+<div class="method-signature">clearHistory()</div>
+<p>Clear all command history. If `persist-history` is enabled, also clears the localStorage entry.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">clearHistory</span>();</code>
+</div>
+<h3 id="method-getContent">getContent()</h3>
+<div class="method-signature">getContent()</div>
+<p>Get all terminal output as plain text. Includes both commands (with prompts) and output lines.</p>
+<p><strong>Returns:</strong> <em>string</em> - All terminal content as newline-separated text</p>
+<div class="code-block" data-lang="JS">
+  <code><span class="kw">const</span> content = terminal.<span class="fn">getContent</span>();
+console.<span class="fn">log</span>(content);
+<span class="cmt">// $ ls</span>
+<span class="cmt">// file1.txt file2.txt</span>
+<span class="cmt">// $ pwd</span>
+<span class="cmt">// /home/user</span></code>
+</div>
+<h3 id="method-focus">focus()</h3>
+<div class="method-signature">focus()</div>
+<p>Focus the terminal&#39;s input field. Useful after programmatically interacting with the terminal.</p>
+
+<div class="code-block" data-lang="JS">
+  <code>terminal.<span class="fn">focus</span>();</code>
+</div>
+        </section>
+
+        <!-- CSS Parts -->
+        <section class="syntax-section" id="css-parts">
+          <h2>CSS Parts</h2>
+          <p>Style internal elements using the <code>::part()</code> selector.</p>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Part Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>terminal</td>
+      <td>Main terminal container</td>
+    </tr>
+    <tr>
+      <td>header</td>
+      <td>Terminal header bar</td>
+    </tr>
+    <tr>
+      <td>controls</td>
+      <td>Window controls container (close, minimize, maximize)</td>
+    </tr>
+    <tr>
+      <td>control-close</td>
+      <td>Close button</td>
+    </tr>
+    <tr>
+      <td>control-minimize</td>
+      <td>Minimize button</td>
+    </tr>
+    <tr>
+      <td>control-maximize</td>
+      <td>Maximize button</td>
+    </tr>
+    <tr>
+      <td>title</td>
+      <td>Terminal title text</td>
+    </tr>
+    <tr>
+      <td>actions</td>
+      <td>Actions container (theme toggle, copy)</td>
+    </tr>
+    <tr>
+      <td>theme-button</td>
+      <td>Theme toggle button</td>
+    </tr>
+    <tr>
+      <td>copy-button</td>
+      <td>Copy button</td>
+    </tr>
+    <tr>
+      <td>copy-menu</td>
+      <td>Copy dropdown menu</td>
+    </tr>
+    <tr>
+      <td>copy-menu-item</td>
+      <td>Copy menu items</td>
+    </tr>
+    <tr>
+      <td>body</td>
+      <td>Terminal body (scrollable area)</td>
+    </tr>
+    <tr>
+      <td>output</td>
+      <td>Output container</td>
+    </tr>
+    <tr>
+      <td>input-line</td>
+      <td>Input line container</td>
+    </tr>
+    <tr>
+      <td>prompt</td>
+      <td>Command prompt text</td>
+    </tr>
+    <tr>
+      <td>input-text</td>
+      <td>User input text</td>
+    </tr>
+    <tr>
+      <td>cursor</td>
+      <td>Cursor element</td>
+    </tr>
+  </tbody>
+</table>
+
+          <div class="code-block" data-lang="CSS">
+            <code><span class="cmt">/* Example: Style the terminal header */</span>
+terminal-window::<span class="fn">part</span>(header) {
+  background: #<span class="num">2</span>d2d2d;
+  border-bottom: <span class="num">2</span>px solid #<span class="num">50</span>fa7b;
+}
+
+<span class="cmt">/* Style the prompt */</span>
+terminal-window::<span class="fn">part</span>(prompt) {
+  color: #ff79c6;
+}</code>
+          </div>
+        </section>
+
+        <!-- Slots -->
+        <section class="syntax-section" id="slots">
+          <h2>Slots</h2>
+          <p>Customize content using named slots.</p>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Slot Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>title</td>
+      <td>Custom content for the terminal title in the header</td>
+    </tr>
+    <tr>
+      <td>actions</td>
+      <td>Custom buttons/actions before the theme and copy buttons</td>
+    </tr>
+    <tr>
+      <td>before-output</td>
+      <td>Content inserted before the output area in the terminal body</td>
+    </tr>
+  </tbody>
+</table>
+
+          <div class="code-block" data-lang="HTML">
+            <code>&lt;<span class="tag">terminal-window</span>&gt;
+  &lt;<span class="tag">span</span> <span class="attr">slot</span>=<span class="val">&quot;title&quot;</span>&gt;My Custom Terminal&lt;/<span class="tag">span</span>&gt;
+  &lt;<span class="tag">button</span> <span class="attr">slot</span>=<span class="val">&quot;actions&quot;</span> <span class="attr">onclick</span>=<span class="val">&quot;runScript()&quot;</span>&gt;Run&lt;/<span class="tag">button</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">slot</span>=<span class="val">&quot;before-output&quot;</span>&gt;
+    &lt;<span class="tag">p</span>&gt;Welcome to the interactive tutorial!&lt;/<span class="tag">p</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+&lt;/<span class="tag">terminal-window</span>&gt;</code>
+          </div>
+        </section>
+
+        <!-- CSS Custom Properties -->
+        <section class="syntax-section" id="css-properties">
+          <h2>CSS Custom Properties</h2>
+          <p>Customize colors and styling using CSS custom properties.</p>
+          <table class="attr-table">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>--bg-primary</code></td>
+      <td>Primary background color</td>
+      <td><code>#1a1a2e</code></td>
+    </tr>
+    <tr>
+      <td><code>--bg-secondary</code></td>
+      <td>Secondary background color</td>
+      <td><code>#16213e</code></td>
+    </tr>
+    <tr>
+      <td><code>--bg-header</code></td>
+      <td>Header background color</td>
+      <td><code>#0f0f23</code></td>
+    </tr>
+    <tr>
+      <td><code>--border-color</code></td>
+      <td>Border color</td>
+      <td><code>#2a2a4a</code></td>
+    </tr>
+    <tr>
+      <td><code>--text-primary</code></td>
+      <td>Primary text color</td>
+      <td><code>#e0e0e0</code></td>
+    </tr>
+    <tr>
+      <td><code>--text-secondary</code></td>
+      <td>Secondary text color</td>
+      <td><code>#888</code></td>
+    </tr>
+    <tr>
+      <td><code>--prompt-color</code></td>
+      <td>Prompt color</td>
+      <td><code>#50fa7b</code></td>
+    </tr>
+    <tr>
+      <td><code>--cursor-color</code></td>
+      <td>Cursor color</td>
+      <td><code>#50fa7b</code></td>
+    </tr>
+    <tr>
+      <td><code>--command-color</code></td>
+      <td>Command text color</td>
+      <td><code>#f8f8f2</code></td>
+    </tr>
+    <tr>
+      <td><code>--output-color</code></td>
+      <td>Output text color</td>
+      <td><code>#e0e0e0</code></td>
+    </tr>
+    <tr>
+      <td><code>--error-color</code></td>
+      <td>Error text color</td>
+      <td><code>#ff5555</code></td>
+    </tr>
+    <tr>
+      <td><code>--info-color</code></td>
+      <td>Info text color</td>
+      <td><code>#8be9fd</code></td>
+    </tr>
+    <tr>
+      <td><code>--success-color</code></td>
+      <td>Success text color</td>
+      <td><code>#50fa7b</code></td>
+    </tr>
+    <tr>
+      <td><code>--cursor-width</code></td>
+      <td>Cursor width</td>
+      <td><code>8px</code></td>
+    </tr>
+    <tr>
+      <td><code>--cursor-height</code></td>
+      <td>Cursor height</td>
+      <td><code>1.2em</code></td>
+    </tr>
+    <tr>
+      <td><code>--cursor-blink-speed</code></td>
+      <td>Cursor blink animation speed</td>
+      <td><code>1s</code></td>
+    </tr>
+    <tr>
+      <td><code>--btn-bg</code></td>
+      <td>Button background color</td>
+      <td><code>#2a2a4a</code></td>
+    </tr>
+    <tr>
+      <td><code>--btn-hover</code></td>
+      <td>Button hover background color</td>
+      <td><code>#3a3a5a</code></td>
+    </tr>
+    <tr>
+      <td><code>--btn-text</code></td>
+      <td>Button text color</td>
+      <td><code>#e0e0e0</code></td>
+    </tr>
+    <tr>
+      <td><code>--control-close</code></td>
+      <td>Close button color</td>
+      <td><code>#ff5f56</code></td>
+    </tr>
+    <tr>
+      <td><code>--control-minimize</code></td>
+      <td>Minimize button color</td>
+      <td><code>#ffbd2e</code></td>
+    </tr>
+    <tr>
+      <td><code>--control-maximize</code></td>
+      <td>Maximize button color</td>
+      <td><code>#27c93f</code></td>
+    </tr>
+  </tbody>
+</table>
+        </section>
+
+        <!-- Built-in Commands -->
+        <section class="syntax-section" id="built-in-commands">
+          <h2>Built-in Commands</h2>
+          <p>These commands are available by default:</p>
+          <ul>
+            <li><strong>help</strong> - Display available commands</li>
+            <li><strong>clear</strong> - Clear the terminal output</li>
+            <li><strong>echo [text]</strong> - Print text to the terminal</li>
+            <li><strong>history</strong> - Show command history</li>
+          </ul>
+
+          <h3>VFS Commands</h3>
+          <p>When <code>enable-vfs="true"</code> is set, these additional commands are available:</p>
+          <ul>
+            <li><strong>ls [path]</strong> - List directory contents</li>
+            <li><strong>cd [path]</strong> - Change current directory</li>
+            <li><strong>pwd</strong> - Print working directory</li>
+            <li><strong>mkdir [name]</strong> - Create a directory</li>
+            <li><strong>touch [name]</strong> - Create an empty file</li>
+            <li><strong>rm [name]</strong> - Remove a file or directory</li>
+            <li><strong>cat [file]</strong> - Display file contents</li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>Terminal Window Web Component</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script>
+    // Dropdown menu toggle
+    document.querySelectorAll('.nav-dropdown__trigger').forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdown = trigger.closest('.nav-dropdown');
+        dropdown.classList.toggle('open');
+        trigger.setAttribute('aria-expanded', dropdown.classList.contains('open'));
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
+        dropdown.classList.remove('open');
+        dropdown.querySelector('.nav-dropdown__trigger').setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
