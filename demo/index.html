@@ -104,6 +104,20 @@
               <li><button type="button" data-variant="secondary" onclick="terminal.copyContent()">Copy Content</button></li>
             </menu>
           </fieldset>
+
+          <fieldset>
+            <legend>VFS Demo</legend>
+            <p><code>enable-vfs="true"</code> is set. Try: </p>
+            <menu>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('ls')">ls</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('pwd')">pwd</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('mkdir new_dir')">mkdir new_dir</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('cd new_dir')">cd new_dir</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('touch test.txt')">touch test.txt</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('cat test.txt')">cat test.txt</button></li>
+              <li><button type="button" data-variant="secondary" onclick="terminal.executeCommand('rm test.txt')">rm test.txt</button></li>
+            </menu>
+          </fieldset>
         </form>
 
         <details class="info-section" open>
@@ -138,6 +152,8 @@
           cursor-style="block"
           cursor-blink="true"
           welcome="Welcome to Terminal Window! Type 'help' for available commands."
+          enable-vfs="true"
+          persist-history="true"
         ></terminal-window>
       </article>
     </section>

@@ -2,39 +2,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   await customElements.whenDefined('terminal-window');
   const terminal = document.getElementById('terminal');
 
-  // File system simulation
-terminal.registerCommand('ls', (args) => {
-  const files = [
-    'drwxr-xr-x  Documents/',
-    'drwxr-xr-x  Downloads/',
-    'drwxr-xr-x  Pictures/',
-    '-rw-r--r--  README.md',
-    '-rw-r--r--  package.json',
-    '-rwxr-xr-x  script.sh',
-    'drwxr-xr-x  src/',
-    '-rw-r--r--  .gitignore'
-  ];
+  // These commands are now handled by the VFS directly via enable-vfs attribute
+  // terminal.registerCommand('ls', ...);
+  // terminal.registerCommand('pwd', ...);
+  // terminal.registerCommand('cat', ...);
+  // terminal.registerCommand('cd', ...);
+  // terminal.registerCommand('mkdir', ...);
+  // terminal.registerCommand('touch', ...);
+  // terminal.registerCommand('rm', ...);
 
-  if (args.includes('-la') || args.includes('-l')) {
-    return `total 24\n${files.join('\n')}`;
-  }
-  return 'Documents  Downloads  Pictures  README.md  package.json  script.sh  src  .gitignore';
-});
-
-terminal.registerCommand('pwd', () => '/home/user/projects/terminal-window');
 terminal.registerCommand('whoami', () => 'user');
-
-terminal.registerCommand('cat', (args) => {
-  if (args.length === 0) return 'Usage: cat <filename>';
-
-  const files = {
-    'README.md': '# Terminal Window\n\nA vanilla JavaScript web component for simulating a terminal console.\n\n## Features\n- Custom commands\n- Themes\n- Cursor styles',
-    'package.json': '{\n  "name": "terminal-window",\n  "version": "1.0.0",\n  "type": "module"\n}',
-    '.gitignore': 'node_modules/\n.DS_Store\n*.log'
-  };
-
-  return files[args[0]] || `cat: ${args[0]}: No such file or directory`;
-});
 
 terminal.registerCommand('neofetch', () => `
     .--.          user@terminal
@@ -77,15 +54,6 @@ terminal.registerCommand('uname', (args) =>
 terminal.registerCommand('uptime', () => {
   const now = new Date();
   return ` ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:00 up 42 days, 13:37, 1 user, load average: 0.42, 0.38, 0.35`;
-});
-
-terminal.registerCommand('cd', () => null);
-terminal.registerCommand('mkdir', (args) => args.length === 0 ? 'mkdir: missing operand' : null);
-terminal.registerCommand('touch', (args) => args.length === 0 ? 'touch: missing file operand' : null);
-terminal.registerCommand('rm', (args) => {
-  if (args.length === 0) return 'rm: missing operand';
-  if (args.includes('-rf') && args.includes('/')) return 'rm: Nice try! This is a simulated terminal.';
-  return null;
 });
 
 terminal.registerCommand('cowsay', (args) => {
