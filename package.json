@@ -84,7 +84,7 @@
     "jsdom": "^27.2.0",
     "prettier": "^3.7.4",
     "terser": "^5.44.1",
-    "vite": "^7.2.6",
+    "vite": "^7.2.7",
     "vitest": "^4.0.15",
     "storybook": "^10.1.4",
     "@storybook/html-vite": "^10.1.4",
