@@ -1,40 +1,37 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import js from '@eslint/js';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 
-export default [
-  js.configs.recommended,
-  prettier,
-  {
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
-    rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'no-console': 'off',
-      'prefer-const': 'warn',
-      'no-var': 'error',
+export default [js.configs.recommended, prettier, {
+  languageOptions: {
+    ecmaVersion: 2022,
+    sourceType: 'module',
+    globals: {
+      ...globals.browser,
+      ...globals.node,
     },
   },
-  {
-    // Allow control characters in ANSI parser regex
-    files: ['src/internals/ansi-parser.js'],
-    rules: {
-      'no-control-regex': 'off',
-    },
+  rules: {
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-console': 'off',
+    'prefer-const': 'warn',
+    'no-var': 'error',
   },
-  {
-    ignores: [
-      'dist/**',
-      'node_modules/**',
-      'coverage/**',
-      'test-results/**',
-      'playwright-report/**',
-    ],
+}, {
+  // Allow control characters in ANSI parser regex
+  files: ['src/internals/ansi-parser.js'],
+  rules: {
+    'no-control-regex': 'off',
   },
-];
+}, {
+  ignores: [
+    'dist/**',
+    'node_modules/**',
+    'coverage/**',
+    'test-results/**',
+    'playwright-report/**',
+  ],
+}, ...storybook.configs["flat/recommended"]];

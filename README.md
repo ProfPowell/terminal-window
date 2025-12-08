@@ -20,6 +20,30 @@ A vanilla JavaScript web component for simulating terminal consoles with customi
 - **Copy to Clipboard** - Copy all content, commands only, or output only
 - **TypeScript Support** - Full type definitions included
 
+## Quickstart
+
+Get running in 30 seconds:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="module" src="https://unpkg.com/terminal-window"></script>
+</head>
+<body>
+  <terminal-window
+    theme="dark"
+    prompt="$ "
+    welcome="Hello! Type 'help' for commands."
+    enable-vfs
+    autofocus
+  ></terminal-window>
+</body>
+</html>
+```
+
+[View the full Quickstart Guide](./docs/quickstart.md) | [Live Demo](https://profpowell.github.io/terminal-window/quickstart.html)
+
 ## Installation
 
 ### NPM
@@ -38,7 +62,19 @@ npm install terminal-window
 
 Download the latest release from [GitHub Releases](https://github.com/ProfPowell/terminal-window/releases).
 
-## Quick Start
+## Framework Integration
+
+Works with any framework! See our integration guides:
+
+| Framework | Guide | Live Demo |
+|-----------|-------|-----------|
+| React | [react.md](./docs/frameworks/react.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-react-terminal-window) |
+| Vue | [vue.md](./docs/frameworks/vue.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-vue-terminal-window) |
+| Svelte | [svelte.md](./docs/frameworks/svelte.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-svelte-terminal-window) |
+| Astro | [astro.md](./docs/frameworks/astro.md) | [StackBlitz](https://stackblitz.com/edit/astro-terminal-window) |
+| Eleventy | [eleventy.md](./docs/frameworks/eleventy.md) | [CodeSandbox](https://codesandbox.io/s/11ty-terminal-window) |
+
+## Basic Usage
 
 ### ES Module
 
@@ -55,6 +91,7 @@ import 'terminal-window';
   title="My Terminal"
   prompt="$ "
   welcome="Welcome! Type 'help' for available commands."
+  autofocus
 ></terminal-window>
 ```
 
@@ -101,6 +138,7 @@ terminal.clear();
 | `enable-vfs` | `boolean` | `false` | Enable virtual file system |
 | `persist-history` | `boolean` | `false` | Save history to localStorage |
 | `welcome` | `string` | `''` | Welcome message |
+| `autofocus` | `boolean` | `false` | Auto-focus terminal on mount |
 | `font-family` | `string` | `'Consolas', 'Monaco', monospace` | Font family |
 | `font-size` | `string` | `'14px'` | Font size |
 | `line-height` | `string` | `'1.4'` | Line height |

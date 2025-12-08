@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Framework Integrations - Terminal Window</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <style>
+    /* Override grid for full-width content */
+    main {
+      grid-template-columns: 1fr;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .integrations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .integration-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .integration-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .integration-card__header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .integration-card__icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 1.5rem;
+    }
+
+    .integration-card__icon--react { background: rgba(97, 218, 251, 0.2); color: #61dafb; }
+    .integration-card__icon--vue { background: rgba(65, 184, 131, 0.2); color: #41b883; }
+    .integration-card__icon--svelte { background: rgba(255, 62, 0, 0.2); color: #ff3e00; }
+    .integration-card__icon--astro { background: rgba(255, 93, 1, 0.2); color: #ff5d01; }
+    .integration-card__icon--11ty { background: rgba(255, 255, 255, 0.1); color: #e0e0e0; }
+
+    .integration-card__title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .integration-card__desc {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .integration-card__links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .integration-card__link {
+      padding: 0.5rem 0.75rem;
+      background: var(--btn-secondary);
+      color: var(--text-primary);
+      border-radius: 0.375rem;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: all 0.2s;
+    }
+
+    .integration-card__link:hover {
+      background: var(--btn-secondary-hover);
+      transform: translateY(-1px);
+    }
+
+    .integration-card__link--primary {
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    .integration-card__link--primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .intro-text {
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .intro-text code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.1875rem;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #ff79c6;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">Framework Integrations</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="index.html">Features</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Docs
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="quickstart.html">Quickstart</a>
+          <a href="integrations.html" class="active">Integrations</a>
+          <a href="docs.html">API Reference</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Examples
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="examples/apache.html">Apache</a>
+          <a href="examples/curl.html">Curl</a>
+          <a href="examples/git.html">Git</a>
+          <a href="examples/unix.html">Unix</a>
+        </div>
+      </div>
+      <a href="storybook/" target="_blank">Playground</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="panel">
+      <h2 class="panel__title">Framework Integrations</h2>
+
+      <p class="intro-text">
+        <code>&lt;terminal-window&gt;</code> is a vanilla web component that works with any JavaScript framework.
+        Choose your framework below for installation instructions, code examples, and live demos.
+      </p>
+
+      <div class="integrations-grid">
+        <!-- React -->
+        <div class="integration-card">
+          <div class="integration-card__header">
+            <div class="integration-card__icon integration-card__icon--react">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M12 10.11c1.03 0 1.87.84 1.87 1.89 0 1-.84 1.85-1.87 1.85S10.13 13 10.13 12c0-1.05.84-1.89 1.87-1.89M7.37 20c.63.38 2.01-.2 3.6-1.7-.52-.59-1.03-1.23-1.51-1.9a22.7 22.7 0 01-2.4-.36c-.51 2.14-.32 3.61.31 3.96m.71-5.74l-.29-.51c-.11.29-.22.58-.29.86.27.06.57.11.88.16l-.3-.51m6.54-.76l.81-1.5-.81-1.5c-.3-.53-.62-1-.91-1.47C13.17 9 12.6 9 12 9c-.6 0-1.17 0-1.71.03-.29.47-.61.94-.91 1.47L8.57 12l.81 1.5c.3.53.62 1 .91 1.47.54.03 1.11.03 1.71.03.6 0 1.17 0 1.71-.03.29-.47.61-.94.91-1.47M12 6.78c-.19.22-.39.45-.59.72h1.18c-.2-.27-.4-.5-.59-.72m0 10.44c.19-.22.39-.45.59-.72h-1.18c.2.27.4.5.59.72M16.62 4c-.62-.38-2 .2-3.59 1.7.52.59 1.03 1.23 1.51 1.9.82.08 1.63.2 2.4.36.51-2.14.32-3.61-.32-3.96m-.7 5.74l.29.51c.11-.29.22-.58.29-.86-.27-.06-.57-.11-.88-.16l.3.51m1.45-7.05c1.47.84 1.63 3.05 1.01 5.63 2.54.75 4.37 1.99 4.37 3.68 0 1.69-1.83 2.93-4.37 3.68.62 2.58.46 4.79-1.01 5.63-1.46.84-3.45-.12-5.37-1.95-1.92 1.83-3.91 2.79-5.38 1.95-1.46-.84-1.62-3.05-1-5.63-2.54-.75-4.37-1.99-4.37-3.68 0-1.69 1.83-2.93 4.37-3.68-.62-2.58-.46-4.79 1-5.63 1.47-.84 3.46.12 5.38 1.95 1.92-1.83 3.91-2.79 5.37-1.95M17.08 12c.34.75.64 1.5.89 2.26 2.1-.63 3.28-1.53 3.28-2.26 0-.73-1.18-1.63-3.28-2.26-.25.76-.55 1.51-.89 2.26M6.92 12c-.34-.75-.64-1.5-.89-2.26-2.1.63-3.28 1.53-3.28 2.26 0 .73 1.18 1.63 3.28 2.26.25-.76.55-1.51.89-2.26m9 2.26l-.3.51c.31-.05.61-.1.88-.16-.07-.28-.18-.57-.29-.86l-.29.51m-2.89 4.04c1.59 1.5 2.97 2.08 3.59 1.7.64-.35.83-1.82.32-3.96-.77.16-1.58.28-2.4.36-.48.67-.99 1.31-1.51 1.9M8.08 9.74l.3-.51c-.31.05-.61.1-.88.16.07.28.18.57.29.86l.29-.51m2.89-4.04C9.38 4.2 8 3.62 7.37 4c-.63.35-.82 1.82-.31 3.96a22.7 22.7 0 012.4-.36c.48-.67.99-1.31 1.51-1.9z"/>
+              </svg>
+            </div>
+            <span class="integration-card__title">React</span>
+          </div>
+          <p class="integration-card__desc">
+            Use refs and useEffect for event handling. Includes TypeScript types and Next.js support.
+          </p>
+          <div class="integration-card__links">
+            <a href="integrations/react.html" class="integration-card__link">Guide</a>
+            <a href="https://stackblitz.com/edit/vitejs-vite-4fkxgtyp?file=src%2FApp.jsx" class="integration-card__link integration-card__link--primary" target="_blank">Live Demo</a>
+          </div>
+        </div>
+
+        <!-- Vue -->
+        <div class="integration-card">
+          <div class="integration-card__header">
+            <div class="integration-card__icon integration-card__icon--vue">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M2 3h3.5L12 15l6.5-12H22L12 21 2 3m4.5 0h3L12 7.58 14.5 3h3L12 13.08 6.5 3z"/>
+              </svg>
+            </div>
+            <span class="integration-card__title">Vue</span>
+          </div>
+          <p class="integration-card__desc">
+            Native web component support with isCustomElement config. Works with Vue 3 and Nuxt 3.
+          </p>
+          <div class="integration-card__links">
+            <a href="integrations/vue.html" class="integration-card__link">Guide</a>
+            <a href="https://stackblitz.com/edit/vitejs-vite-sevqxwf6?file=src%2FApp.vue" class="integration-card__link integration-card__link--primary" target="_blank">Live Demo</a>
+          </div>
+        </div>
+
+        <!-- Svelte -->
+        <div class="integration-card">
+          <div class="integration-card__header">
+            <div class="integration-card__icon integration-card__icon--svelte">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M10.354 21.125a4.44 4.44 0 01-4.765-1.767 4.109 4.109 0 01-.703-3.107 3.898 3.898 0 01.134-.522l.105-.321.287.21a5.07 5.07 0 001.647.959l.156.048-.015.163a1.262 1.262 0 00.235.764 1.372 1.372 0 001.478.544 1.322 1.322 0 00.396-.149l5.191-3.066a1.151 1.151 0 00.522-.702 1.208 1.208 0 00-.191-.878 1.372 1.372 0 00-1.478-.545 1.322 1.322 0 00-.396.149l-1.983 1.171a4.277 4.277 0 01-1.282.482 4.44 4.44 0 01-4.765-1.767 4.109 4.109 0 01-.703-3.107 3.723 3.723 0 011.69-2.27l5.191-3.066a4.277 4.277 0 011.282-.482 4.44 4.44 0 014.765 1.767 4.109 4.109 0 01.703 3.107 3.898 3.898 0 01-.134.522l-.105.321-.287-.21a5.07 5.07 0 00-1.647-.959l-.156-.048.015-.163a1.262 1.262 0 00-.235-.764 1.372 1.372 0 00-1.478-.544 1.322 1.322 0 00-.396.149l-5.191 3.066a1.151 1.151 0 00-.522.702 1.208 1.208 0 00.191.878 1.372 1.372 0 001.478.545 1.322 1.322 0 00.396-.149l1.983-1.171a4.277 4.277 0 011.282-.482 4.44 4.44 0 014.765 1.767 4.109 4.109 0 01.703 3.107 3.723 3.723 0 01-1.69 2.27l-5.191 3.066a4.277 4.277 0 01-1.282.482z"/>
+              </svg>
+            </div>
+            <span class="integration-card__title">Svelte</span>
+          </div>
+          <p class="integration-card__desc">
+            Works out of the box with excellent native support. Compatible with Svelte 4, 5, and SvelteKit.
+          </p>
+          <div class="integration-card__links">
+            <a href="integrations/svelte.html" class="integration-card__link">Guide</a>
+            <a href="https://stackblitz.com/edit/vitejs-vite-jbdqfwxj?file=src%2FApp.svelte" class="integration-card__link integration-card__link--primary" target="_blank">Live Demo</a>
+          </div>
+        </div>
+
+        <!-- Astro -->
+        <div class="integration-card">
+          <div class="integration-card__header">
+            <div class="integration-card__icon integration-card__icon--astro">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M16.074 16.86c-.72.616-2.157 1.035-3.812 1.035-2.032 0-3.735-.632-4.187-1.483-.161.488-.198 1.046-.198 1.402 0 0-.106 1.75 1.111 2.968 0-.632.513-1.145 1.145-1.145 1.083 0 1.082.945 1.081 1.712v.069c0 1.164.711 2.161 1.723 2.582a2.347 2.347 0 01-.236-1.029c0-1.11.652-1.523 1.41-2.003.602-.382 1.276-.81 1.77-1.622a3.147 3.147 0 00.193-2.486zM15.551 3.199c.259.756.255 1.596-.015 2.349-.238.663-.662 1.306-1.389 1.881-.784.62-1.704.918-2.293 1.4-.382.313-.633.655-.819 1.057-.107.23-.171.48-.171.74 0 .592.326 1.108.808 1.382-.053-.263-.065-.54.014-.806.124-.418.403-.789.757-1.095.455-.394 1.027-.703 1.59-1.008.943-.511 1.869-1.013 2.486-1.878.485-.68.756-1.509.764-2.346l.007-.095a5.611 5.611 0 00-.192-1.561 5.607 5.607 0 00-1.547-.02z"/>
+              </svg>
+            </div>
+            <span class="integration-card__title">Astro</span>
+          </div>
+          <p class="integration-card__desc">
+            Perfect for static sites. No hydration needed for static content, optional client directives.
+          </p>
+          <div class="integration-card__links">
+            <a href="integrations/astro.html" class="integration-card__link">Guide</a>
+            <a href="https://stackblitz.com/edit/withastro-astro-apyxzy?file=src%2Fpages%2Findex.astro" class="integration-card__link integration-card__link--primary" target="_blank">Live Demo</a>
+          </div>
+        </div>
+
+        <!-- Eleventy -->
+        <div class="integration-card">
+          <div class="integration-card__header">
+            <div class="integration-card__icon integration-card__icon--11ty">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M5.92 22h2.08v-12.8l-2.08.32v12.48zm6.88-10.64v8.56h2.08v-8.88l-2.08.32zm-1.04-5.36h-1.76v1.6h1.76v-1.6zm4.16 3.76v-3.76h-2.08v4.08l2.08-.32zm-4.16 1.92h-1.76v10.32h1.76v-10.32zm4.16 8.32h1.76v-8l-1.76.32v7.68z"/>
+              </svg>
+            </div>
+            <span class="integration-card__title">Eleventy (11ty)</span>
+          </div>
+          <p class="integration-card__desc">
+            Static HTML generation with passthrough copy. Great for documentation and tutorial sites.
+          </p>
+          <div class="integration-card__links">
+            <a href="integrations/eleventy.html" class="integration-card__link">Guide</a>
+            <a href="https://stackblitz.com/edit/11ty-terminal-window?file=src%2Findex.md" class="integration-card__link integration-card__link--primary" target="_blank">Live Demo</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="tip" style="margin-top: 2rem;">
+        <strong>Don't see your framework?</strong> Since terminal-window is a standard web component, it works with any framework that supports custom elements. Check the <a href="docs.html">API Reference</a> for the core usage pattern.
+      </aside>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script>
+    // Dropdown menu toggle
+    document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+      const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+      const menu = dropdown.querySelector('.nav-dropdown__menu');
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+          if (d !== dropdown) d.classList.remove('open');
+        });
+        dropdown.classList.toggle('open');
+      });
+
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          dropdown.classList.toggle('open');
+          if (dropdown.classList.contains('open')) {
+            menu.querySelector('a')?.focus();
+          }
+        }
+        if (e.key === 'Escape') {
+          dropdown.classList.remove('open');
+        }
+      });
+
+      menu.addEventListener('keydown', (e) => {
+        const links = [...menu.querySelectorAll('a')];
+        const current = document.activeElement;
+        const index = links.indexOf(current);
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          links[(index + 1) % links.length]?.focus();
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          links[(index - 1 + links.length) % links.length]?.focus();
+        }
+        if (e.key === 'Escape') {
+          dropdown.classList.remove('open');
+          trigger.focus();
+        }
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+        d.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

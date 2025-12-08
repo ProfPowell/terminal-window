@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Svelte Integration - Terminal Window</title>
+  <link rel="stylesheet" href="../styles/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">Svelte Integration</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="../index.html">Features</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Docs
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="../quickstart.html">Quickstart</a>
+          <a href="../integrations.html" class="active">Integrations</a>
+          <a href="../docs.html">API Reference</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Examples
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="../examples/apache.html">Apache</a>
+          <a href="../examples/curl.html">Curl</a>
+          <a href="../examples/git.html">Git</a>
+          <a href="../examples/unix.html">Unix</a>
+        </div>
+      </div>
+      <a href="../storybook/" target="_blank">Playground</a>
+    </nav>
+  </header>
+
+  <main>
+    <nav class="panel panel--sidebar" aria-label="Svelte integration guide">
+      <h2 class="panel__title">Svelte Integration</h2>
+
+      <details open>
+        <summary>Installation</summary>
+        <section>
+          <p class="desc">Install terminal-window via npm:</p>
+          <pre class="example">npm install terminal-window</pre>
+          <aside class="tip">
+            <strong>No config needed!</strong> Svelte has excellent native web component support.
+          </aside>
+        </section>
+      </details>
+
+      <details open>
+        <summary>Basic Usage</summary>
+        <section>
+          <p class="desc">Works out of the box:</p>
+          <pre class="example">&lt;script&gt;
+  import { onMount } from 'svelte';
+  import 'terminal-window';
+
+  let terminal;
+
+  onMount(() => {
+    terminal.registerCommand('svelte', () => {
+      return 'Hello from Svelte!';
+    });
+  });
+
+  function handleCommand(event) {
+    console.log('Command:', event.detail);
+  }
+&lt;/script&gt;
+
+&lt;terminal-window
+  bind:this={terminal}
+  theme="dark"
+  prompt="svelte&gt; "
+  on:command={handleCommand}
+  autofocus
+/&gt;</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Svelte 5 (Runes)</summary>
+        <section>
+          <p class="desc">Using the new runes syntax:</p>
+          <pre class="example">&lt;script&gt;
+  import { onMount } from 'svelte';
+  import 'terminal-window';
+
+  let terminal = $state(null);
+  let history = $state([]);
+
+  onMount(() => {
+    terminal.registerCommand('count', () => {
+      return `Commands: ${history.length}`;
+    });
+  });
+
+  function handleCommand(event) {
+    history = [...history, event.detail];
+  }
+&lt;/script&gt;
+
+&lt;terminal-window
+  bind:this={terminal}
+  theme="dark"
+  oncommand={handleCommand}
+  autofocus
+/&gt;</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>SvelteKit</summary>
+        <section>
+          <p class="desc">Use dynamic imports for SSR:</p>
+          <pre class="example">&lt;script&gt;
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+
+  let terminal;
+
+  onMount(async () => {
+    if (browser) {
+      await import('terminal-window');
+    }
+  });
+&lt;/script&gt;
+
+{#if browser}
+  &lt;terminal-window
+    bind:this={terminal}
+    theme="dark"
+    autofocus
+  /&gt;
+{/if}</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Wrapper Component</summary>
+        <section>
+          <p class="desc">Create a reusable component:</p>
+          <pre class="example">&lt;!-- lib/Terminal.svelte --&gt;
+&lt;script&gt;
+  import { onMount, createEventDispatcher } from 'svelte';
+  import 'terminal-window';
+
+  export let theme = 'dark';
+  export let prompt = '$ ';
+  export let commands = {};
+
+  let terminal;
+  const dispatch = createEventDispatcher();
+
+  onMount(() => {
+    Object.entries(commands).forEach(
+      ([name, handler]) => {
+        terminal.registerCommand(name, handler);
+      }
+    );
+  });
+
+  export function executeCommand(cmd) {
+    terminal?.executeCommand(cmd);
+  }
+&lt;/script&gt;
+
+&lt;terminal-window
+  bind:this={terminal}
+  {theme}
+  {prompt}
+  on:command={(e) => dispatch('command', e.detail)}
+  autofocus
+/&gt;</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Try It Live</summary>
+        <section>
+          <p class="desc">Open a working Svelte example:</p>
+          <menu>
+            <li><a href="https://stackblitz.com/edit/vitejs-vite-jbdqfwxj?file=src%2FApp.svelte" target="_blank" class="btn-link">Open in StackBlitz</a></li>
+          </menu>
+        </section>
+      </details>
+
+      <details>
+        <summary>Other Frameworks</summary>
+        <section>
+          <menu>
+            <li><button onclick="window.location='react.html'">React</button></li>
+            <li><button onclick="window.location='vue.html'">Vue</button></li>
+            <li><button onclick="window.location='astro.html'">Astro</button></li>
+            <li><button onclick="window.location='eleventy.html'">11ty</button></li>
+          </menu>
+        </section>
+      </details>
+    </nav>
+
+    <article class="panel">
+      <h2 class="panel__title">Interactive Demo</h2>
+      <terminal-window
+        id="terminal"
+        theme="dark"
+        prompt="svelte> "
+        cursor-style="block"
+        cursor-blink
+        welcome="Svelte + Terminal Window demo. Try 'svelte' or 'help'."
+        enable-vfs
+        autofocus
+      ></terminal-window>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script type="module" src="../dist/terminal-window.es.js"></script>
+  <script type="module">
+    const terminal = document.getElementById('terminal');
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await customElements.whenDefined('terminal-window');
+
+      terminal.registerCommand('svelte', () => {
+        return 'Hello from Svelte! No config needed - it just works.';
+      });
+
+      terminal.registerCommand('bind', () => {
+        return 'let terminal;\n// Use bind:this={terminal} to get reference';
+      });
+
+      terminal.registerCommand('runes', () => {
+        return 'let terminal = $state(null);\n// Svelte 5 runes syntax';
+      });
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+      const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+          if (d !== dropdown) d.classList.remove('open');
+        });
+        dropdown.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    });
+  </script>
+</body>
+</html>

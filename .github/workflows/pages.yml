@@ -30,6 +30,9 @@ jobs:
       - name: Build library
         run: npm run build
 
+      - name: Build Storybook
+        run: npm run build-storybook
+
       - name: Build demo site
         run: |
           # Create a static demo site
@@ -38,6 +41,8 @@ jobs:
           cp -r dist _site/
           cp README.md _site/
           cp custom-elements.json _site/
+          # Copy Storybook to /storybook subdirectory
+          cp -r storybook-static _site/storybook
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

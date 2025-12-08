@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Integration - Terminal Window</title>
+  <link rel="stylesheet" href="../styles/base.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">React Integration</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="../index.html">Features</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Docs
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="../quickstart.html">Quickstart</a>
+          <a href="../integrations.html" class="active">Integrations</a>
+          <a href="../docs.html">API Reference</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Examples
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="../examples/apache.html">Apache</a>
+          <a href="../examples/curl.html">Curl</a>
+          <a href="../examples/git.html">Git</a>
+          <a href="../examples/unix.html">Unix</a>
+        </div>
+      </div>
+      <a href="../storybook/" target="_blank">Playground</a>
+    </nav>
+  </header>
+
+  <main>
+    <nav class="panel panel--sidebar" aria-label="React integration guide">
+      <h2 class="panel__title">React Integration</h2>
+
+      <details open>
+        <summary>Installation</summary>
+        <section>
+          <p class="desc">Install terminal-window via npm:</p>
+          <pre class="example">npm install terminal-window</pre>
+        </section>
+      </details>
+
+      <details open>
+        <summary>Basic Usage</summary>
+        <section>
+          <p class="desc">Import and use in your React component:</p>
+          <pre class="example">import { useEffect, useRef } from 'react';
+import 'terminal-window';
+
+function App() {
+  const terminalRef = useRef(null);
+
+  useEffect(() => {
+    const terminal = terminalRef.current;
+    terminal.registerCommand('react', () => {
+      return 'Hello from React!';
+    });
+  }, []);
+
+  return (
+    &lt;terminal-window
+      ref={terminalRef}
+      theme="dark"
+      prompt="$ "
+      autofocus
+    /&gt;
+  );
+}</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Wrapper Component</summary>
+        <section>
+          <p class="desc">Create a reusable wrapper with event handling:</p>
+          <pre class="example">const Terminal = forwardRef(({
+  onCommand, commands, ...props
+}, ref) => {
+  const terminalRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    executeCommand: (cmd) =>
+      terminalRef.current?.executeCommand(cmd),
+    print: (text, type) =>
+      terminalRef.current?.print(text, type),
+    clear: () =>
+      terminalRef.current?.clear(),
+  }));
+
+  useEffect(() => {
+    const terminal = terminalRef.current;
+    if (commands) {
+      Object.entries(commands).forEach(
+        ([name, handler]) => {
+          terminal.registerCommand(name, handler);
+        }
+      );
+    }
+  }, [commands]);
+
+  return &lt;terminal-window
+    ref={terminalRef} {...props} /&gt;;
+});</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>TypeScript Types</summary>
+        <section>
+          <p class="desc">Add type declarations for JSX:</p>
+          <pre class="example">// types/terminal-window.d.ts
+declare namespace JSX {
+  interface IntrinsicElements {
+    'terminal-window': React.DetailedHTMLProps&lt;
+      React.HTMLAttributes&lt;HTMLElement&gt; & {
+        theme?: 'dark' | 'light';
+        prompt?: string;
+        'enable-vfs'?: boolean;
+        autofocus?: boolean;
+      },
+      HTMLElement
+    &gt;;
+  }
+}</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Next.js / App Router</summary>
+        <section>
+          <p class="desc">Use dynamic imports for SSR:</p>
+          <pre class="example">'use client';
+
+import { useEffect, useRef } from 'react';
+
+export default function ClientTerminal(props) {
+  const terminalRef = useRef(null);
+
+  useEffect(() => {
+    import('terminal-window');
+  }, []);
+
+  return &lt;terminal-window
+    ref={terminalRef} {...props} /&gt;;
+}</pre>
+        </section>
+      </details>
+
+      <details>
+        <summary>Try It Live</summary>
+        <section>
+          <p class="desc">Open a working React example:</p>
+          <menu>
+            <li><a href="https://stackblitz.com/edit/vitejs-vite-4fkxgtyp?file=src%2FApp.jsx" target="_blank" class="btn-link">Open in StackBlitz</a></li>
+          </menu>
+        </section>
+      </details>
+
+      <details>
+        <summary>Other Frameworks</summary>
+        <section>
+          <menu>
+            <li><button onclick="window.location='vue.html'">Vue</button></li>
+            <li><button onclick="window.location='svelte.html'">Svelte</button></li>
+            <li><button onclick="window.location='astro.html'">Astro</button></li>
+            <li><button onclick="window.location='eleventy.html'">11ty</button></li>
+          </menu>
+        </section>
+      </details>
+    </nav>
+
+    <article class="panel">
+      <h2 class="panel__title">Interactive Demo</h2>
+      <terminal-window
+        id="terminal"
+        theme="dark"
+        prompt="react> "
+        cursor-style="block"
+        cursor-blink
+        welcome="React + Terminal Window demo. Try 'react' or 'help'."
+        enable-vfs
+        autofocus
+      ></terminal-window>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script type="module" src="../dist/terminal-window.es.js"></script>
+  <script type="module">
+    const terminal = document.getElementById('terminal');
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await customElements.whenDefined('terminal-window');
+
+      terminal.registerCommand('react', () => {
+        return 'Hello from React! This simulates how the component works in a React app.';
+      });
+
+      terminal.registerCommand('useref', () => {
+        return 'const terminalRef = useRef(null);\n// Access terminal via terminalRef.current';
+      });
+
+      terminal.registerCommand('useeffect', () => {
+        return "useEffect(() => {\n  terminal.registerCommand('cmd', handler);\n}, []);";
+      });
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+      const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+      const menu = dropdown.querySelector('.nav-dropdown__menu');
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.nav-dropdown.open').forEach(d => {
+          if (d !== dropdown) d.classList.remove('open');
+        });
+        dropdown.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    });
+  </script>
+</body>
+</html>

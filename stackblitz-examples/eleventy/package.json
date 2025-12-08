@@ -1,0 +1,14 @@
+{
+  "name": "terminal-window-eleventy-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "dependencies": {
+    "terminal-window": "^2.0.0"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.0"
+  }
+}

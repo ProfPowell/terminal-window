@@ -38,3 +38,6 @@ npm-debug.log*
 # MCP config (local)
 .mcp.json
 .playwright-mcp/
+
+*storybook.log
+storybook-static

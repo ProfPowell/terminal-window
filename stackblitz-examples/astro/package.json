@@ -1,0 +1,15 @@
+{
+  "name": "terminal-window-astro-demo",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^4.0.0",
+    "terminal-window": "^2.0.0"
+  }
+}

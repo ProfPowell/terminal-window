@@ -14,7 +14,19 @@
     </div>
     <nav class="site-header__nav">
       <a href="index.html" class="active">Features</a>
-      <a href="docs.html">Docs</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Docs
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="quickstart.html">Quickstart</a>
+          <a href="integrations.html">Integrations</a>
+          <a href="docs.html">API Reference</a>
+        </div>
+      </div>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown__trigger">
           Examples
@@ -29,6 +41,7 @@
           <a href="examples/unix.html">Unix</a>
         </div>
       </div>
+      <a href="storybook/" target="_blank">Playground</a>
     </nav>
   </header>
 
@@ -148,6 +161,7 @@
         welcome="Welcome to Terminal Window! Type 'help' for available commands."
         enable-vfs="true"
         persist-history="true"
+        autofocus
       ></terminal-window>
     </article>
   </main>
@@ -161,7 +175,7 @@
     </a>
   </footer>
 
-  <script type="module" src="../src/terminal-window.js"></script>
+  <script type="module" src="./dist/terminal-window.es.js"></script>
   <script src="scripts/features.js"></script>
   <script>
     // Dropdown menu toggle

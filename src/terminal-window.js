@@ -236,7 +236,9 @@ class TerminalWindow extends HTMLElement {
       this._registerVfsCommands();
     }
 
-    if (!this.config.readonly) {
+    // Only auto-focus if explicitly requested via autofocus attribute
+    // This prevents focus stealing in contexts like Storybook or pages with other interactive elements
+    if (!this.config.readonly && this.hasAttribute('autofocus')) {
       this._focusInput();
     }
 
@@ -1551,7 +1553,6 @@ class TerminalWindow extends HTMLElement {
     this.setAttribute('theme', this.config.theme);
     this._updateStyles();
     this._announce(`${this._t('themeChangedTo')} ${this.config.theme}`);
-    this._focusInput();
   }
 
   /**

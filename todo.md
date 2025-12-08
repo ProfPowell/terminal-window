@@ -1,181 +1,53 @@
 # Terminal Window - Production Readiness Checklist
 
-This document tracks the work needed to make `terminal-window` production-ready for NPM publishing and community sharing.
+# For the LLM (Claude) to Do or Advise on
+[ ] Correct the focus issue for Storybook, as when making changes in controls, the focus goes back to the terminal window constantly. I think we have a problem with aggressive event capture.  Could this also happen with the component on a page that has other interactive features?
+[ ] Get the demo, docs, etc., deployed to Github pages properly
+[ ] Write a quickstart guide for the component.  This will just add it to a page and the command it will run will be to echo "hello world I am a fun terminal simulator" and it then cats (the unix command) a file that contains a message that says "Hopefully I am useful web component for you if you are building educational materials or demos!"
+[ ] Create integration information on this component for 
+ [ ] React
+ [ ] Vue
+ [ ] Svelte
+ [ ] Astro 
+ [ ] 11ty
 
-## Build & Distribution
+Demos may be necessary for these things, but we need to be careful about committing all the dependencies we just want to prove out all of these are correct and create the helloworld demo for each and provide notes, wrappers, etc. to make sure it is smooth.
 
-- [x] **Build dist files** - Run `npm run build` to generate production bundles
-- [x] **Minification** - Configure Vite to output minified builds with terser
-- [x] **Source maps** - Generate source maps for debugging
-- [ ] **CSS extraction** - Consider extracting styles to separate CSS file option
-- [ ] **Bundle analysis** - Add bundle size visualization (rollup-plugin-visualizer)
-- [ ] **Tree-shaking verification** - Ensure ES module is properly tree-shakeable
+# For Me to Do
+[ ] Enable Chromatic visual regression testing:
+1. Sign up at https://www.chromatic.com
+2. Create a project and get your project token
+3. Add CHROMATIC_PROJECT_TOKEN to your GitHub repository secrets
 
-## TypeScript Support
+[ ] Determine how to relate this to the other developer components I made
+[ ] Determine how to use it to promote ZingGrid since I can claim it is sponsored by them given they paid me to do this
+[ ] Write a blog piece about "Made in China, Designed in California" comparing it to how I designed this and used Claude very heavily to make this component 
+[ ] Create a prompt and skeleton repo of all the possible things here so that way we can move it to other projects easily
 
-- [x] **TypeScript definitions** - Create `terminal-window.d.ts` type declarations
-- [x] **JSDoc to d.ts** - Generate types from existing JSDoc comments
-- [x] **Export types in package.json** - Add `types` field pointing to declaration file
-- [ ] **Test type definitions** - Verify types work correctly in TS projects
+[ ] Stackblitz links
+Needs Manual Action - StackBlitz Examples:
 
-## Web Components Standards
+To create working StackBlitz demos, you'll need to:
 
-- [x] **Custom Elements Manifest** - Generate `custom-elements.json` using CEM analyzer
-- [x] **VS Code support** - Enable autocomplete in HTML via manifest
-- [x] **JetBrains support** - web-types.json for WebStorm/IntelliJ
-- [ ] **Lit Analyzer compatibility** - Ensure manifest works with lit-plugin
+1. Go to https://stackblitz.com
+2. Create a new project for each framework
+3. Install terminal-window (npm install terminal-window)
+4. Add the example code from each integration guide
+5. Update the links in both demo/integrations.html and demo/integrations/*.html files
 
-## Testing
+The code examples in each integration page can be copied directly into StackBlitz. For example, the React demo should
+contain:
 
-### Unit Tests (Vitest)
-- [x] **Increase test coverage** - Achieved 70%+ code coverage (146 tests)
-- [x] **Test all public methods** - Ensure every method has tests
-- [x] **Test all events** - Verify all custom events fire correctly
-- [x] **Test attributes** - Test all attribute/property reflection
-- [x] **Test edge cases** - Empty inputs, special characters, long content
-- [x] **Test VFS commands** - Full coverage of virtual file system
-- [ ] **Test accessibility** - ARIA attributes, keyboard navigation
+import { useEffect, useRef } from 'react';
+import 'terminal-window';
 
-### E2E Tests (Playwright)
-- [x] **Setup Playwright config** - Create `playwright.config.js`
-- [ ] **Visual regression tests** - Screenshot comparisons
-- [x] **Keyboard interaction tests** - Tab navigation, Enter, Ctrl+C
-- [x] **Theme switching tests** - Light/dark mode transitions
-- [x] **Copy functionality tests** - Clipboard operations
-- [x] **Responsive tests** - Different viewport sizes
-- [ ] **Cross-browser tests** - Chrome, Firefox, Safari, Edge
+function App() {
+const terminalRef = useRef(null);
 
-### Coverage
-- [x] **Configure coverage thresholds** - Fail build if coverage drops (70%/55% thresholds)
-- [ ] **Coverage badges** - Add badges to README
-- [ ] **Upload to Codecov/Coveralls** - CI integration
+    useEffect(() => {
+      terminalRef.current.registerCommand('react', () => 'Hello from React!');
+    }, []);
 
-## Documentation
+    return <terminal-window ref={terminalRef} theme="dark" prompt="$ " autofocus />;
+}
 
-### README.md
-- [x] **Project overview** - Clear description of what it does
-- [x] **Installation instructions** - npm, yarn, CDN options
-- [x] **Quick start example** - Minimal working code
-- [x] **Features list** - Bullet points of capabilities
-- [x] **API overview** - Full methods, events, CSS properties docs
-- [x] **Browser support** - Compatibility table
-- [x] **Screenshots/GIFs** - Visual demonstrations
-- [x] **Contributing guide** - How to contribute
-- [x] **License section** - MIT license info
-- [x] **Badges** - npm version, license badges
-
-### API Documentation
-- [x] **JSDoc comments** - All public methods documented
-- [x] **Generated docs page** - Auto-generated from JSDoc
-- [ ] **Usage examples** - Real-world code snippets
-- [ ] **Migration guide** - If upgrading from v1.x
-
-## NPM Publishing
-
-### package.json
-- [x] **Author field** - Add author name/email
-- [x] **Keywords** - Expand for discoverability
-- [x] **Files field** - Specify which files to publish
-- [x] **Side effects** - Add `sideEffects: false` for tree-shaking
-- [x] **Peer dependencies** - None needed (vanilla JS)
-- [x] **Engines** - Specify Node.js version requirements
-- [ ] **Funding** - Add funding info if applicable
-
-### Publishing Prep
-- [ ] **NPM account** - Ensure account exists
-- [x] **Scoped vs unscoped** - Using unscoped: `terminal-window`
-- [x] **Version strategy** - Semantic versioning (currently v2.0.0)
-- [x] **Changelog** - Create CHANGELOG.md
-- [x] **Pre-publish checks** - `npm pack` to verify contents
-- [x] **Publish script** - Automated publish workflow
-
-## CI/CD (GitHub Actions)
-
-- [x] **Test workflow** - Run tests on push/PR
-- [x] **Build verification** - Ensure build succeeds
-- [x] **Coverage reporting** - Upload coverage reports
-- [x] **Auto-publish** - Publish on version tag (release.yml)
-- [x] **Release notes** - Auto-generate from commits
-- [x] **Dependabot** - Keep dependencies updated
-
-## Code Quality
-
-- [x] **ESLint configuration** - Linting rules
-- [x] **Prettier configuration** - Code formatting
-- [ ] **Pre-commit hooks** - Husky + lint-staged
-- [x] **Security audit** - `npm audit` in CI
-- [ ] **License compliance** - Check dependencies
-
-## Demo Site
-
-- [x] **Features demo** - Interactive configuration
-- [x] **API reference** - Generated documentation
-- [x] **Example pages** - Unix, Git, Curl, Apache themes
-- [x] **GitHub Pages deployment** - Host demo site (pages.yml workflow)
-- [ ] **Live examples** - Embedded CodePen/StackBlitz
-
-## Accessibility
-
-- [ ] **ARIA labels** - All interactive elements labeled
-- [ ] **Screen reader testing** - VoiceOver, NVDA compatibility
-- [ ] **Keyboard navigation** - Full keyboard support
-- [ ] **Focus management** - Visible focus indicators
-- [ ] **Reduced motion** - Respect prefers-reduced-motion
-- [ ] **Color contrast** - WCAG AA compliance
-
-## Performance
-
-- [ ] **Bundle size budget** - Set maximum size limits
-- [ ] **Lazy loading** - Consider lazy-loading VFS if not used
-- [ ] **Memory leaks** - Test for memory leaks in long-running sessions
-- [ ] **Large output handling** - Test with thousands of lines
-
----
-
-## Priority Order
-
-### Phase 1: Core Production Ready ✅
-1. ~~Build dist files with minification~~ ✅
-2. ~~TypeScript definitions~~ ✅
-3. ~~Improve test coverage to 70%+~~ ✅ (146 tests passing)
-4. ~~Comprehensive README~~ ✅
-
-### Phase 2: Quality & Standards ✅
-5. ~~Custom Elements Manifest~~ ✅
-6. ~~Playwright E2E tests~~ ✅ (30 tests passing)
-7. ~~ESLint/Prettier setup~~ ✅
-8. ~~GitHub Actions CI~~ ✅
-
-### Phase 3: Publishing ✅
-9. ~~Finalize package.json~~ ✅
-10. ~~CHANGELOG.md~~ ✅
-11. ~~NPM publish workflow~~ ✅ (release.yml)
-12. GitHub Pages for demo (optional)
-
-### Phase 4: Polish ✅
-13. Accessibility audit (ongoing)
-14. Performance optimization (ongoing)
-15. ~~Additional documentation~~ ✅ (CONTRIBUTING.md)
-16. ~~Community templates~~ ✅ (issues, PRs, .editorconfig)
-
----
-
-## Commands Reference
-
-```bash
-# Development
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm run preview      # Preview production build
-
-# Testing
-npm test             # Run unit tests
-npm run test:coverage # Run with coverage
-
-# Documentation
-npm run docs         # Generate API docs
-```
-
----
-
-*Last updated: December 2025*

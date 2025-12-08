@@ -5,105 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quickstart - Terminal Window</title>
   <link rel="stylesheet" href="styles/base.css">
-  <style>
-    .quickstart-hero {
-      text-align: center;
-      padding: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .quickstart-hero h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .quickstart-hero p {
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .demo-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    @media (max-width: 900px) {
-      .demo-section {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .code-panel {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .code-panel__header {
-      background: var(--bg-header);
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-      font-weight: 600;
-    }
-
-    .code-panel__content {
-      padding: 1rem;
-      overflow-x: auto;
-    }
-
-    .code-panel pre {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .code-panel code {
-      color: var(--text-primary);
-    }
-
-    .terminal-panel {
-      min-height: 400px;
-    }
-
-    .terminal-panel terminal-window {
-      height: 100%;
-      min-height: 400px;
-    }
-
-    .instructions {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: var(--bg-secondary);
-      border-radius: 8px;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .instructions h2 {
-      margin-top: 0;
-    }
-
-    .instructions ol {
-      padding-left: 1.5rem;
-    }
-
-    .instructions li {
-      margin-bottom: 0.5rem;
-    }
-
-    .instructions code {
-      background: var(--bg-header);
-      padding: 0.2em 0.4em;
-      border-radius: 4px;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
@@ -112,8 +13,20 @@
       <span class="site-header__tagline">Quickstart Guide</span>
     </div>
     <nav class="site-header__nav">
-      <a href="index.html">Home</a>
-      <a href="docs.html">Docs</a>
+      <a href="index.html">Features</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown__trigger">
+          Docs
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown__menu">
+          <a href="quickstart.html" class="active">Quickstart</a>
+          <a href="integrations.html">Integrations</a>
+          <a href="docs.html">API Reference</a>
+        </div>
+      </div>
       <div class="nav-dropdown">
         <button type="button" class="nav-dropdown__trigger">
           Examples
@@ -133,79 +46,108 @@
   </header>
 
   <main>
-    <div class="quickstart-hero">
-      <h1>Quickstart</h1>
-      <p>Get terminal-window running in under 2 minutes. See it in action below!</p>
-    </div>
+    <nav class="panel panel--sidebar" aria-label="Quickstart guide">
+      <h2 class="panel__title">Get Started</h2>
 
-    <div class="demo-section">
-      <div class="code-panel">
-        <div class="code-panel__header">HTML Code</div>
-        <div class="code-panel__content">
-          <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-  &lt;script type="module"
-    src="https://unpkg.com/terminal-window"&gt;
-  &lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;terminal-window
-    title="Hello Terminal"
-    enable-vfs="true"
-    autofocus
-  &gt;&lt;/terminal-window&gt;
+      <details open>
+        <summary>1. Include the Component</summary>
+        <section>
+          <p class="desc">Add the script tag to your HTML page.</p>
+          <pre class="example">&lt;script type="module"
+  src="https://unpkg.com/terminal-window"&gt;
+&lt;/script&gt;</pre>
+          <aside class="tip">
+            <strong>Or via npm:</strong> <code>npm install terminal-window</code>
+          </aside>
+        </section>
+      </details>
 
-  &lt;script type="module"&gt;
-    const terminal = document.querySelector('terminal-window');
-    await customElements.whenDefined('terminal-window');
+      <details open>
+        <summary>2. Add the Element</summary>
+        <section>
+          <p class="desc">Place the terminal-window element in your page.</p>
+          <pre class="example">&lt;terminal-window
+  theme="dark"
+  prompt="$ "
+  enable-vfs
+  autofocus
+&gt;&lt;/terminal-window&gt;</pre>
+        </section>
+      </details>
 
-    // Create a greeting file
-    terminal.fileSystem.writeFile('/greeting.txt',
-      'Hopefully I am useful web component...');
+      <details open>
+        <summary>3. Try It Out</summary>
+        <section>
+          <p class="desc">The terminal on the right is running live. Try these commands:</p>
+          <menu>
+            <li><button onclick="run('help')">help</button></li>
+            <li><button onclick="run('ls')">ls</button></li>
+            <li><button onclick="run('cat /greeting.txt')">cat /greeting.txt</button></li>
+            <li><button onclick="run('echo &quot;Hello World&quot;')">echo "Hello World"</button></li>
+            <li><button onclick="run('clear')">clear</button></li>
+          </menu>
+        </section>
+      </details>
 
-    // Run hello world commands
-    terminal.executeCommand(
-      'echo "hello world I am a fun terminal simulator"'
-    );
-    terminal.executeCommand('cat /greeting.txt');
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-        </div>
-      </div>
+      <details>
+        <summary>4. Register Commands</summary>
+        <section>
+          <p class="desc">Add custom commands with JavaScript.</p>
+          <pre class="example">terminal.registerCommand('greet', (args) => {
+  return `Hello, ${args[0] || 'World'}!`;
+});</pre>
+          <menu>
+            <li><button onclick="run('greet')">greet</button></li>
+            <li><button onclick="run('greet Developer')">greet Developer</button></li>
+            <li><button onclick="run('time')">time</button></li>
+          </menu>
+        </section>
+      </details>
 
-      <div class="terminal-panel">
-        <terminal-window
-          id="quickstart-terminal"
-          title="Hello Terminal"
-          theme="dark"
-          enable-vfs="true"
-          autofocus
-        ></terminal-window>
-      </div>
-    </div>
+      <details>
+        <summary>Common Attributes</summary>
+        <section>
+          <p class="desc">Configure the terminal with attributes.</p>
+          <pre class="example">theme="dark|light"
+prompt="$ "
+title="Terminal"
+enable-vfs
+readonly
+autofocus
+typing-effect
+typing-speed="30"</pre>
+          <aside class="tip">
+            <strong>Full list:</strong> See the <a href="docs.html">API Reference</a>
+          </aside>
+        </section>
+      </details>
 
-    <div class="instructions">
-      <h2>Try It Yourself</h2>
-      <ol>
-        <li>The terminal above is running the quickstart code</li>
-        <li>Type <code>ls</code> to see files in the virtual file system</li>
-        <li>Type <code>cat /greeting.txt</code> to read the greeting</li>
-        <li>Type <code>help</code> to see all available commands</li>
-        <li>Try <code>mkdir mydir</code> then <code>cd mydir</code></li>
-      </ol>
+      <details>
+        <summary>Next Steps</summary>
+        <section>
+          <menu>
+            <li><button onclick="window.location='docs.html'">API Reference</button></li>
+            <li><button onclick="window.location='integrations.html'">Framework Guides</button></li>
+            <li><button onclick="window.location='examples/unix.html'">Unix Example</button></li>
+            <li><button onclick="window.open('storybook/', '_blank')">Playground</button></li>
+          </menu>
+        </section>
+      </details>
+    </nav>
 
-      <h2>Install via npm</h2>
-      <pre><code>npm install terminal-window</code></pre>
-
-      <h2>Next Steps</h2>
-      <ul>
-        <li><a href="docs.html">API Reference</a> - Full attribute and method documentation</li>
-        <li><a href="examples/unix.html">Examples</a> - Real-world usage examples</li>
-        <li><a href="storybook/">Playground</a> - Interactive component explorer</li>
-      </ul>
-    </div>
+    <article class="panel">
+      <h2 class="panel__title">Interactive Terminal</h2>
+      <terminal-window
+        id="terminal"
+        theme="dark"
+        prompt="$ "
+        cursor-style="block"
+        cursor-blink="true"
+        welcome="Welcome! Follow the steps on the left, or type 'help' for commands."
+        enable-vfs="true"
+        autofocus
+      ></terminal-window>
+    </article>
   </main>
 
   <footer class="site-footer">
@@ -220,23 +162,24 @@
 
   <script type="module" src="./dist/terminal-window.es.js"></script>
   <script type="module">
-    const terminal = document.getElementById('quickstart-terminal');
+    const terminal = document.getElementById('terminal');
+    window.run = function(cmd) { terminal.executeCommand(cmd); }
 
     window.addEventListener('DOMContentLoaded', async () => {
       await customElements.whenDefined('terminal-window');
 
       // Pre-populate the VFS with a greeting file
       terminal.fileSystem.writeFile('/greeting.txt',
-        'Hopefully I am useful web component for you if you are building educational materials or demos!');
+        'Hopefully I am a useful web component for you if you are building educational materials or demos!');
 
-      // Execute the demo commands with a slight delay for effect
-      setTimeout(() => {
-        terminal.executeCommand('echo "hello world I am a fun terminal simulator"');
-      }, 500);
+      // Register custom commands for the demo
+      terminal.registerCommand('greet', (args) => {
+        return `Hello, ${args[0] || 'World'}!`;
+      });
 
-      setTimeout(() => {
-        terminal.executeCommand('cat /greeting.txt');
-      }, 1500);
+      terminal.registerCommand('time', () => {
+        return new Date().toLocaleTimeString();
+      });
     });
   </script>
   <script>
