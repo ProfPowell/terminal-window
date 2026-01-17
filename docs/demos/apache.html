@@ -228,8 +228,13 @@
       </section>
 
       <section class="demo-code">
-        <h2>Example Code</h2>
-        <p class="demo-description">HTML and JavaScript to create this interactive Apache terminal demo.</p>
+        <div class="demo-code-header">
+          <div>
+            <h2>Example Code</h2>
+            <p class="demo-description">HTML and JavaScript to create this interactive Apache terminal demo.</p>
+          </div>
+          <button class="btn primary" onclick="downloadDemo()">Download Demo</button>
+        </div>
 
         <h3>HTML</h3>
         <code-block language="html">&lt;terminal-window
@@ -302,6 +307,60 @@ terminal.registerCommand('sudo', (args) => {
       document.body.classList.toggle('dark');
       localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     });
+
+    // Download demo as standalone HTML file
+    async function downloadDemo() {
+      // Fetch the commands module
+      const commandsResponse = await fetch('./commands/apache-commands.js');
+      const commandsCode = await commandsResponse.text();
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apache Commands - Terminal Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #1a1a2e; color: #fff; }
+    h1 { margin-top: 0; }
+    terminal-window { height: 500px; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Apache HTTP Server Terminal</h1>
+  <p>Interactive terminal for learning Apache commands. Type 'help' to see available commands.</p>
+
+  <terminal-window
+    id="terminal"
+    theme="dark"
+    prompt="root@server:~# "
+    cursor-style="block"
+    cursor-blink="true"
+    welcome="Apache HTTP Server Tutorial - Type 'help' for available commands."
+  ></terminal-window>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"><\\/script>
+  <script type="module">
+${commandsCode}
+
+const terminal = document.getElementById('terminal');
+window.addEventListener('DOMContentLoaded', async () => {
+  await customElements.whenDefined('terminal-window');
+  registerApacheCommands(terminal);
+});
+  <\\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'apache-terminal-demo.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    window.downloadDemo = downloadDemo;
   </script>
 </body>
 </html>

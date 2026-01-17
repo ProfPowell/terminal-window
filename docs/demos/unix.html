@@ -3,338 +3,431 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn Unix Commands - Interactive Terminal</title>
+  <title>Unix Commands - terminal-window Demo</title>
+  <meta name="description" content="Interactive Unix/Linux command reference with simulated terminal.">
   <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="site-header__brand">
-      <span class="site-header__title">&lt;terminal-window&gt;</span>
-      <span class="site-header__tagline">A vanilla JS web component for terminal simulation</span>
-    </div>
-    <nav class="site-header__nav">
-      <a href="../index.html">Features</a>
-      <a href="../demos.html" class="active">Demos</a>
-      <a href="../api.html">API</a>
-      <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+    <nav>
+      <a href="../index.html" class="nav-brand">&lt;terminal-window&gt;</a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../demos.html" class="active">Demos</a>
+        <a href="../api.html">API</a>
+        <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme">🌓</button>
+      </div>
     </nav>
   </header>
 
-  <main>
-    <nav class="panel panel--sidebar" aria-label="Command reference">
-      <h2 class="panel__title">Command Reference</h2>
+  <main class="demo-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="demo-sidebar">
+      <h2>Unix Commands</h2>
 
+      <nav class="command-nav">
         <details open>
-          <summary>File System Navigation</summary>
-          <section>
-            <p class="desc">Commands for moving around the file system and viewing directory contents.</p>
-            <menu>
-              <li><button onclick="run('pwd')">pwd</button></li>
-              <li><button onclick="run('ls')">ls</button></li>
-              <li><button onclick="run('ls -la')">ls -la</button></li>
-              <li><button onclick="run('ls -lh')">ls -lh</button></li>
-              <li><button onclick="run('cd /home')">cd /home</button></li>
-              <li><button onclick="run('cd ..')">cd ..</button></li>
-              <li><button onclick="run('cd ~')">cd ~</button></li>
-              <li><button onclick="run('tree')">tree</button></li>
-            </menu>
-          </section>
+          <summary>File Navigation</summary>
+          <div class="command-group">
+            <p class="command-desc">Navigate the file system.</p>
+            <div class="command-buttons">
+              <button onclick="run('pwd')">pwd</button>
+              <button onclick="run('ls')">ls</button>
+              <button onclick="run('ls -la')">ls -la</button>
+              <button onclick="run('ls -lh')">ls -lh</button>
+              <button onclick="run('cd /home')">cd /home</button>
+              <button onclick="run('cd ..')">cd ..</button>
+              <button onclick="run('cd ~')">cd ~</button>
+              <button onclick="run('tree')">tree</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>File Operations</summary>
-          <section>
-            <p class="desc">Create, copy, move, and delete files and directories.</p>
-            <menu>
-              <li><button onclick="run('touch newfile.txt')">touch</button></li>
-              <li><button onclick="run('mkdir newdir')">mkdir</button></li>
-              <li><button onclick="run('mkdir -p path/to/dir')">mkdir -p</button></li>
-              <li><button onclick="run('cp file1.txt file2.txt')">cp</button></li>
-              <li><button onclick="run('cp -r dir1 dir2')">cp -r</button></li>
-              <li><button onclick="run('mv old.txt new.txt')">mv</button></li>
-              <li><button onclick="run('rm file.txt')">rm</button></li>
-              <li><button onclick="run('rm -rf directory')">rm -rf</button></li>
-              <li><button onclick="run('rmdir emptydir')">rmdir</button></li>
-              <li><button onclick="run('ln -s target link')">ln -s</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Create, copy, move, delete files.</p>
+            <div class="command-buttons">
+              <button onclick="run('touch newfile.txt')">touch</button>
+              <button onclick="run('mkdir newdir')">mkdir</button>
+              <button onclick="run('mkdir -p path/to/dir')">mkdir -p</button>
+              <button onclick="run('cp file1.txt file2.txt')">cp</button>
+              <button onclick="run('cp -r dir1 dir2')">cp -r</button>
+              <button onclick="run('mv old.txt new.txt')">mv</button>
+              <button onclick="run('rm file.txt')">rm</button>
+              <button onclick="run('rm -rf directory')">rm -rf</button>
+              <button onclick="run('ln -s target link')">ln -s</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>File Viewing</summary>
-          <section>
-            <p class="desc">View and examine file contents.</p>
-            <menu>
-              <li><button onclick="run('cat README.md')">cat</button></li>
-              <li><button onclick="run('less README.md')">less</button></li>
-              <li><button onclick="run('head README.md')">head</button></li>
-              <li><button onclick="run('head -n 5 README.md')">head -n 5</button></li>
-              <li><button onclick="run('tail README.md')">tail</button></li>
-              <li><button onclick="run('tail -f /var/log/syslog')">tail -f</button></li>
-              <li><button onclick="run('wc README.md')">wc</button></li>
-              <li><button onclick="run('wc -l README.md')">wc -l</button></li>
-              <li><button onclick="run('file README.md')">file</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">View file contents.</p>
+            <div class="command-buttons">
+              <button onclick="run('cat README.md')">cat</button>
+              <button onclick="run('less README.md')">less</button>
+              <button onclick="run('head README.md')">head</button>
+              <button onclick="run('head -n 5 README.md')">head -n 5</button>
+              <button onclick="run('tail README.md')">tail</button>
+              <button onclick="run('tail -f /var/log/syslog')">tail -f</button>
+              <button onclick="run('wc README.md')">wc</button>
+              <button onclick="run('file README.md')">file</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Text Processing</summary>
-          <section>
-            <p class="desc">Search, filter, and transform text.</p>
-            <menu>
-              <li><button onclick="run('grep error /var/log/syslog')">grep</button></li>
-              <li><button onclick="run('grep -i ERROR logs.txt')">grep -i</button></li>
-              <li><button onclick="run('grep -r TODO .')">grep -r</button></li>
-              <li><button onclick="run('grep -n pattern file.txt')">grep -n</button></li>
-              <li><button onclick="run('sed &quot;s/old/new/g&quot; file.txt')">sed</button></li>
-              <li><button onclick="run('awk &quot;{print $1}&quot; file.txt')">awk</button></li>
-              <li><button onclick="run('sort file.txt')">sort</button></li>
-              <li><button onclick="run('sort -n numbers.txt')">sort -n</button></li>
-              <li><button onclick="run('uniq file.txt')">uniq</button></li>
-              <li><button onclick="run('cut -d: -f1 /etc/passwd')">cut</button></li>
-              <li><button onclick="run('tr a-z A-Z')">tr</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Search and transform text.</p>
+            <div class="command-buttons">
+              <button onclick="run('grep error /var/log/syslog')">grep</button>
+              <button onclick="run('grep -i ERROR logs.txt')">grep -i</button>
+              <button onclick="run('grep -r TODO .')">grep -r</button>
+              <button onclick="run('sed &quot;s/old/new/g&quot; file.txt')">sed</button>
+              <button onclick="run('awk &quot;{print $1}&quot; file.txt')">awk</button>
+              <button onclick="run('sort file.txt')">sort</button>
+              <button onclick="run('uniq file.txt')">uniq</button>
+              <button onclick="run('cut -d: -f1 /etc/passwd')">cut</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>File Search</summary>
-          <section>
-            <p class="desc">Find files and directories.</p>
-            <menu>
-              <li><button onclick="run('find . -name &quot;*.txt&quot;')">find -name</button></li>
-              <li><button onclick="run('find . -type f')">find -type f</button></li>
-              <li><button onclick="run('find . -type d')">find -type d</button></li>
-              <li><button onclick="run('find . -mtime -7')">find -mtime</button></li>
-              <li><button onclick="run('find . -size +10M')">find -size</button></li>
-              <li><button onclick="run('locate filename')">locate</button></li>
-              <li><button onclick="run('which bash')">which</button></li>
-              <li><button onclick="run('whereis ls')">whereis</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Find files and directories.</p>
+            <div class="command-buttons">
+              <button onclick="run('find . -name &quot;*.txt&quot;')">find -name</button>
+              <button onclick="run('find . -type f')">find -type f</button>
+              <button onclick="run('find . -type d')">find -type d</button>
+              <button onclick="run('find . -mtime -7')">find -mtime</button>
+              <button onclick="run('locate filename')">locate</button>
+              <button onclick="run('which bash')">which</button>
+              <button onclick="run('whereis ls')">whereis</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Permissions</summary>
-          <section>
-            <p class="desc">Manage file permissions and ownership.</p>
-            <menu>
-              <li><button onclick="run('chmod 755 script.sh')">chmod 755</button></li>
-              <li><button onclick="run('chmod +x script.sh')">chmod +x</button></li>
-              <li><button onclick="run('chmod -R 644 dir/')">chmod -R</button></li>
-              <li><button onclick="run('chown user:group file')">chown</button></li>
-              <li><button onclick="run('chgrp group file')">chgrp</button></li>
-              <li><button onclick="run('umask')">umask</button></li>
-              <li><button onclick="run('stat file.txt')">stat</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Manage file permissions.</p>
+            <div class="command-buttons">
+              <button onclick="run('chmod 755 script.sh')">chmod 755</button>
+              <button onclick="run('chmod +x script.sh')">chmod +x</button>
+              <button onclick="run('chown user:group file')">chown</button>
+              <button onclick="run('chgrp group file')">chgrp</button>
+              <button onclick="run('umask')">umask</button>
+              <button onclick="run('stat file.txt')">stat</button>
+            </div>
+          </div>
         </details>
 
         <details>
-          <summary>System Information</summary>
-          <section>
-            <p class="desc">View system and hardware information.</p>
-            <menu>
-              <li><button onclick="run('uname -a')">uname -a</button></li>
-              <li><button onclick="run('hostname')">hostname</button></li>
-              <li><button onclick="run('uptime')">uptime</button></li>
-              <li><button onclick="run('whoami')">whoami</button></li>
-              <li><button onclick="run('id')">id</button></li>
-              <li><button onclick="run('date')">date</button></li>
-              <li><button onclick="run('cal')">cal</button></li>
-              <li><button onclick="run('df -h')">df -h</button></li>
-              <li><button onclick="run('du -sh *')">du -sh</button></li>
-              <li><button onclick="run('free -h')">free -h</button></li>
-              <li><button onclick="run('lscpu')">lscpu</button></li>
-              <li><button onclick="run('lsblk')">lsblk</button></li>
-            </menu>
-          </section>
+          <summary>System Info</summary>
+          <div class="command-group">
+            <p class="command-desc">View system information.</p>
+            <div class="command-buttons">
+              <button onclick="run('uname -a')">uname -a</button>
+              <button onclick="run('hostname')">hostname</button>
+              <button onclick="run('uptime')">uptime</button>
+              <button onclick="run('whoami')">whoami</button>
+              <button onclick="run('id')">id</button>
+              <button onclick="run('date')">date</button>
+              <button onclick="run('cal')">cal</button>
+              <button onclick="run('df -h')">df -h</button>
+              <button onclick="run('du -sh *')">du -sh</button>
+              <button onclick="run('free -h')">free -h</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Process Management</summary>
-          <section>
-            <p class="desc">View and manage running processes.</p>
-            <menu>
-              <li><button onclick="run('ps')">ps</button></li>
-              <li><button onclick="run('ps aux')">ps aux</button></li>
-              <li><button onclick="run('ps aux | grep node')">ps | grep</button></li>
-              <li><button onclick="run('top')">top</button></li>
-              <li><button onclick="run('htop')">htop</button></li>
-              <li><button onclick="run('kill 1234')">kill</button></li>
-              <li><button onclick="run('kill -9 1234')">kill -9</button></li>
-              <li><button onclick="run('killall node')">killall</button></li>
-              <li><button onclick="run('pkill -f pattern')">pkill</button></li>
-              <li><button onclick="run('pgrep node')">pgrep</button></li>
-              <li><button onclick="run('bg')">bg</button></li>
-              <li><button onclick="run('fg')">fg</button></li>
-              <li><button onclick="run('jobs')">jobs</button></li>
-              <li><button onclick="run('nohup command &')">nohup</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">View and manage processes.</p>
+            <div class="command-buttons">
+              <button onclick="run('ps')">ps</button>
+              <button onclick="run('ps aux')">ps aux</button>
+              <button onclick="run('ps aux | grep node')">ps | grep</button>
+              <button onclick="run('top')">top</button>
+              <button onclick="run('htop')">htop</button>
+              <button onclick="run('kill 1234')">kill</button>
+              <button onclick="run('kill -9 1234')">kill -9</button>
+              <button onclick="run('killall node')">killall</button>
+              <button onclick="run('jobs')">jobs</button>
+              <button onclick="run('bg')">bg</button>
+              <button onclick="run('fg')">fg</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Networking</summary>
-          <section>
-            <p class="desc">Network configuration and diagnostics.</p>
-            <menu>
-              <li><button onclick="run('ping google.com')">ping</button></li>
-              <li><button onclick="run('ifconfig')">ifconfig</button></li>
-              <li><button onclick="run('ip addr')">ip addr</button></li>
-              <li><button onclick="run('netstat -tulpn')">netstat</button></li>
-              <li><button onclick="run('ss -tulpn')">ss</button></li>
-              <li><button onclick="run('nslookup google.com')">nslookup</button></li>
-              <li><button onclick="run('dig google.com')">dig</button></li>
-              <li><button onclick="run('traceroute google.com')">traceroute</button></li>
-              <li><button onclick="run('wget https://example.com')">wget</button></li>
-              <li><button onclick="run('curl https://api.example.com')">curl</button></li>
-              <li><button onclick="run('ssh user@host')">ssh</button></li>
-              <li><button onclick="run('scp file.txt user@host:/path')">scp</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Network commands.</p>
+            <div class="command-buttons">
+              <button onclick="run('ping google.com')">ping</button>
+              <button onclick="run('ifconfig')">ifconfig</button>
+              <button onclick="run('ip addr')">ip addr</button>
+              <button onclick="run('netstat -tulpn')">netstat</button>
+              <button onclick="run('ss -tulpn')">ss</button>
+              <button onclick="run('nslookup google.com')">nslookup</button>
+              <button onclick="run('dig google.com')">dig</button>
+              <button onclick="run('wget https://example.com')">wget</button>
+              <button onclick="run('curl https://api.example.com')">curl</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Compression</summary>
-          <section>
-            <p class="desc">Compress and extract archives.</p>
-            <menu>
-              <li><button onclick="run('tar -cvf archive.tar files/')">tar -cvf</button></li>
-              <li><button onclick="run('tar -xvf archive.tar')">tar -xvf</button></li>
-              <li><button onclick="run('tar -czvf archive.tar.gz files/')">tar -czvf</button></li>
-              <li><button onclick="run('tar -xzvf archive.tar.gz')">tar -xzvf</button></li>
-              <li><button onclick="run('gzip file.txt')">gzip</button></li>
-              <li><button onclick="run('gunzip file.txt.gz')">gunzip</button></li>
-              <li><button onclick="run('zip -r archive.zip dir/')">zip</button></li>
-              <li><button onclick="run('unzip archive.zip')">unzip</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Compress and extract archives.</p>
+            <div class="command-buttons">
+              <button onclick="run('tar -cvf archive.tar files/')">tar -cvf</button>
+              <button onclick="run('tar -xvf archive.tar')">tar -xvf</button>
+              <button onclick="run('tar -czvf archive.tar.gz files/')">tar -czvf</button>
+              <button onclick="run('tar -xzvf archive.tar.gz')">tar -xzvf</button>
+              <button onclick="run('gzip file.txt')">gzip</button>
+              <button onclick="run('gunzip file.txt.gz')">gunzip</button>
+              <button onclick="run('zip -r archive.zip dir/')">zip</button>
+              <button onclick="run('unzip archive.zip')">unzip</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>User Management</summary>
-          <section>
-            <p class="desc">Manage users and groups (requires root).</p>
-            <menu>
-              <li><button onclick="run('sudo useradd newuser')">useradd</button></li>
-              <li><button onclick="run('sudo userdel olduser')">userdel</button></li>
-              <li><button onclick="run('sudo usermod -aG group user')">usermod</button></li>
-              <li><button onclick="run('sudo passwd user')">passwd</button></li>
-              <li><button onclick="run('sudo groupadd newgroup')">groupadd</button></li>
-              <li><button onclick="run('groups')">groups</button></li>
-              <li><button onclick="run('su - user')">su</button></li>
-              <li><button onclick="run('sudo command')">sudo</button></li>
-              <li><button onclick="run('visudo')">visudo</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Manage users (requires root).</p>
+            <div class="command-buttons">
+              <button onclick="run('sudo useradd newuser')">useradd</button>
+              <button onclick="run('sudo userdel olduser')">userdel</button>
+              <button onclick="run('sudo passwd user')">passwd</button>
+              <button onclick="run('groups')">groups</button>
+              <button onclick="run('su - user')">su</button>
+              <button onclick="run('sudo command')">sudo</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Package Management</summary>
-          <section>
-            <p class="desc">Install and manage software packages.</p>
-            <menu>
-              <li><button onclick="run('apt update')">apt update</button></li>
-              <li><button onclick="run('apt upgrade')">apt upgrade</button></li>
-              <li><button onclick="run('apt install package')">apt install</button></li>
-              <li><button onclick="run('apt remove package')">apt remove</button></li>
-              <li><button onclick="run('apt search keyword')">apt search</button></li>
-              <li><button onclick="run('dpkg -i package.deb')">dpkg -i</button></li>
-              <li><button onclick="run('yum install package')">yum install</button></li>
-              <li><button onclick="run('dnf install package')">dnf install</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Install software packages.</p>
+            <div class="command-buttons">
+              <button onclick="run('apt update')">apt update</button>
+              <button onclick="run('apt upgrade')">apt upgrade</button>
+              <button onclick="run('apt install package')">apt install</button>
+              <button onclick="run('apt remove package')">apt remove</button>
+              <button onclick="run('apt search keyword')">apt search</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Environment</summary>
-          <section>
-            <p class="desc">Environment variables and shell configuration.</p>
-            <menu>
-              <li><button onclick="run('env')">env</button></li>
-              <li><button onclick="run('printenv')">printenv</button></li>
-              <li><button onclick="run('echo $PATH')">echo $PATH</button></li>
-              <li><button onclick="run('echo $HOME')">echo $HOME</button></li>
-              <li><button onclick="run('export VAR=value')">export</button></li>
-              <li><button onclick="run('alias ll=&quot;ls -la&quot;')">alias</button></li>
-              <li><button onclick="run('source ~/.bashrc')">source</button></li>
-              <li><button onclick="run('history')">history</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Environment variables.</p>
+            <div class="command-buttons">
+              <button onclick="run('env')">env</button>
+              <button onclick="run('printenv')">printenv</button>
+              <button onclick="run('echo $PATH')">echo $PATH</button>
+              <button onclick="run('echo $HOME')">echo $HOME</button>
+              <button onclick="run('export VAR=value')">export</button>
+              <button onclick="run('alias ll=&quot;ls -la&quot;')">alias</button>
+              <button onclick="run('history')">history</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Redirection & Pipes</summary>
-          <section>
-            <p class="desc">Input/output redirection and command chaining.</p>
-            <menu>
-              <li><button onclick="run('echo hello > file.txt')">></button></li>
-              <li><button onclick="run('echo hello >> file.txt')">>></button></li>
-              <li><button onclick="run('cat < file.txt')"><</button></li>
-              <li><button onclick="run('ls | grep txt')">|</button></li>
-              <li><button onclick="run('command 2>&1')">2>&1</button></li>
-              <li><button onclick="run('command > /dev/null')">/dev/null</button></li>
-              <li><button onclick="run('cat file.txt | tee output.txt')">tee</button></li>
-              <li><button onclick="run('ls -la | xargs rm')">xargs</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">I/O redirection.</p>
+            <div class="command-buttons">
+              <button onclick="run('echo hello > file.txt')">></button>
+              <button onclick="run('echo hello >> file.txt')">>></button>
+              <button onclick="run('cat < file.txt')"><</button>
+              <button onclick="run('ls | grep txt')">|</button>
+              <button onclick="run('command > /dev/null')">/dev/null</button>
+              <button onclick="run('cat file.txt | tee output.txt')">tee</button>
+              <button onclick="run('ls -la | xargs rm')">xargs</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Fun Commands</summary>
-          <section>
-            <p class="desc">Just for fun!</p>
-            <menu>
-              <li><button onclick="run('cowsay Hello!')">cowsay</button></li>
-              <li><button onclick="run('fortune')">fortune</button></li>
-              <li><button onclick="run('figlet UNIX')">figlet</button></li>
-              <li><button onclick="run('matrix')">matrix</button></li>
-              <li><button onclick="run('sl')">sl</button></li>
-              <li><button onclick="run('cmatrix')">cmatrix</button></li>
-              <li><button onclick="run('neofetch')">neofetch</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Just for fun!</p>
+            <div class="command-buttons">
+              <button onclick="run('cowsay Hello!')">cowsay</button>
+              <button onclick="run('fortune')">fortune</button>
+              <button onclick="run('figlet UNIX')">figlet</button>
+              <button onclick="run('matrix')">matrix</button>
+              <button onclick="run('neofetch')">neofetch</button>
+            </div>
+          </div>
         </details>
-    </nav>
+      </nav>
+    </aside>
 
-    <article class="panel">
-      <h2 class="panel__title">Interactive Terminal</h2>
-      <terminal-window
-        id="terminal"
-        theme="dark"
-        prompt="user@linux:~$ "
-        cursor-style="block"
-        cursor-blink="true"
-        welcome="Welcome to the Unix Command Trainer! Type 'help' for available commands, or click any command in the sidebar."
-        autofocus
-      ></terminal-window>
-    </article>
+    <!-- Main Content -->
+    <div class="demo-content">
+      <section class="demo-terminal">
+        <h1>Unix/Linux Commands</h1>
+        <p class="demo-description">Interactive terminal for learning Unix/Linux commands. Click buttons in the sidebar or type commands directly.</p>
+
+        <terminal-window
+          id="terminal"
+          theme="dark"
+          prompt="user@linux:~$ "
+          cursor-style="block"
+          cursor-blink="true"
+          welcome="Unix Command Trainer - Type 'help' for available commands."
+        ></terminal-window>
+      </section>
+
+      <section class="demo-code">
+        <div class="demo-code-header">
+          <div>
+            <h2>Example Code</h2>
+            <p class="demo-description">HTML and JavaScript to create this interactive Unix terminal demo.</p>
+          </div>
+          <button class="btn primary" onclick="downloadDemo()">Download Demo</button>
+        </div>
+
+        <h3>HTML</h3>
+        <code-block language="html">&lt;terminal-window
+  id="terminal"
+  theme="dark"
+  prompt="user@linux:~$ "
+  cursor-style="block"
+  cursor-blink="true"
+  welcome="Unix Command Trainer - Type 'help' for available commands."
+&gt;&lt;/terminal-window&gt;</code-block>
+
+        <h3>JavaScript</h3>
+        <code-block language="js">import { registerUnixCommands } from './commands/unix-commands.js';
+
+const terminal = document.getElementById('terminal');
+
+// Register all Unix commands
+registerUnixCommands(terminal);
+
+// Helper to run commands from buttons
+function run(cmd) {
+  terminal.executeCommand(cmd);
+}</code-block>
+
+        <h3>Custom Command Example</h3>
+        <code-block language="js">// Simulated ls command
+terminal.registerCommand('ls', (args) => {
+  const showHidden = args.includes('-a') || args.includes('-la');
+  const longFormat = args.includes('-l') || args.includes('-la');
+
+  let files = ['Documents', 'Downloads', 'Pictures'];
+  if (showHidden) files.unshift('.bashrc', '.profile');
+
+  if (longFormat) {
+    return files.map(f =>
+      `drwxr-xr-x  2 user user 4096 Jan 15 10:30 ${f}`
+    ).join('\\n');
+  }
+  return files.join('  ');
+});</code-block>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
-    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-      </svg>
-      GitHub
-    </a>
+    <p>&copy; 2025 Thomas A. Powell. MIT License.</p>
   </footer>
 
   <script type="module" src="../src/terminal-window.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/ProfPowell/code-block@v2.0.1/dist/code-block.min.js"></script>
   <script type="module">
     import { registerUnixCommands } from './commands/unix-commands.js';
 
     const terminal = document.getElementById('terminal');
     window.run = function(cmd) { terminal.executeCommand(cmd); }
 
-    // Register all Unix commands
     window.addEventListener('DOMContentLoaded', async () => {
       await customElements.whenDefined('terminal-window');
       registerUnixCommands(terminal);
     });
+  </script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Download demo as standalone HTML file
+    async function downloadDemo() {
+      const commandsResponse = await fetch('./commands/unix-commands.js');
+      const commandsCode = await commandsResponse.text();
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unix Commands - Terminal Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #1a1a2e; color: #fff; }
+    h1 { margin-top: 0; }
+    terminal-window { height: 500px; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Unix Terminal</h1>
+  <p>Interactive terminal for learning Unix commands. Type 'help' to see available commands.</p>
+
+  <terminal-window
+    id="terminal"
+    theme="dark"
+    prompt="user@linux:~$ "
+    cursor-style="block"
+    cursor-blink="true"
+    welcome="Unix Command Trainer - Type 'help' for available commands."
+  ></terminal-window>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"><\\/script>
+  <script type="module">
+${commandsCode}
+
+const terminal = document.getElementById('terminal');
+window.addEventListener('DOMContentLoaded', async () => {
+  await customElements.whenDefined('terminal-window');
+  registerUnixCommands(terminal);
+});
+  <\\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'unix-terminal-demo.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    window.downloadDemo = downloadDemo;
   </script>
 </body>
 </html>

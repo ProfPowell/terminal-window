@@ -3,315 +3,361 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn cURL - Interactive Terminal</title>
+  <title>cURL Commands - terminal-window Demo</title>
+  <meta name="description" content="Interactive cURL command reference with simulated terminal.">
   <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="site-header__brand">
-      <span class="site-header__title">&lt;terminal-window&gt;</span>
-      <span class="site-header__tagline">A vanilla JS web component for terminal simulation</span>
-    </div>
-    <nav class="site-header__nav">
-      <a href="../index.html">Features</a>
-      <a href="../demos.html" class="active">Demos</a>
-      <a href="../api.html">API</a>
-      <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+    <nav>
+      <a href="../index.html" class="nav-brand">&lt;terminal-window&gt;</a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../demos.html" class="active">Demos</a>
+        <a href="../api.html">API</a>
+        <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme">🌓</button>
+      </div>
     </nav>
   </header>
 
-  <main>
-    <nav class="panel panel--sidebar" aria-label="cURL reference">
-      <h2 class="panel__title">cURL Reference</h2>
+  <main class="demo-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="demo-sidebar">
+      <h2>cURL Commands</h2>
 
+      <nav class="command-nav">
         <details open>
           <summary>Basic Requests</summary>
-          <section>
-            <p class="desc">Simple HTTP requests to fetch content from URLs.</p>
-            <pre class="example">curl https://api.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl https://api.example.com')">GET request</button></li>
-              <li><button onclick="run('curl -v https://api.example.com')">Verbose mode</button></li>
-              <li><button onclick="run('curl -s https://api.example.com')">Silent mode</button></li>
-              <li><button onclick="run('curl -I https://api.example.com')">Headers only</button></li>
-              <li><button onclick="run('curl -i https://api.example.com')">Include headers</button></li>
-            </menu>
-            <aside class="tip">
-              <strong>Tip:</strong> Use <code>-v</code> for debugging and <code>-s</code> in scripts.
-            </aside>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Simple HTTP requests to fetch content.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl https://api.example.com')">GET request</button>
+              <button onclick="run('curl -v https://api.example.com')">verbose</button>
+              <button onclick="run('curl -s https://api.example.com')">silent</button>
+              <button onclick="run('curl -I https://api.example.com')">headers only</button>
+              <button onclick="run('curl -i https://api.example.com')">include headers</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>HTTP Methods</summary>
-          <section>
-            <p class="desc">Different HTTP methods for REST APIs.</p>
-            <pre class="example">curl -X POST https://api.example.com/data</pre>
-            <menu>
-              <li><button onclick="run('curl -X GET https://api.example.com/users')">GET</button></li>
-              <li><button onclick="run('curl -X POST https://api.example.com/users')">POST</button></li>
-              <li><button onclick="run('curl -X PUT https://api.example.com/users/1')">PUT</button></li>
-              <li><button onclick="run('curl -X PATCH https://api.example.com/users/1')">PATCH</button></li>
-              <li><button onclick="run('curl -X DELETE https://api.example.com/users/1')">DELETE</button></li>
-              <li><button onclick="run('curl -X OPTIONS https://api.example.com')">OPTIONS</button></li>
-              <li><button onclick="run('curl -X HEAD https://api.example.com')">HEAD</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Different HTTP methods for REST APIs.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -X GET https://api.example.com/users')">GET</button>
+              <button onclick="run('curl -X POST https://api.example.com/users')">POST</button>
+              <button onclick="run('curl -X PUT https://api.example.com/users/1')">PUT</button>
+              <button onclick="run('curl -X PATCH https://api.example.com/users/1')">PATCH</button>
+              <button onclick="run('curl -X DELETE https://api.example.com/users/1')">DELETE</button>
+              <button onclick="run('curl -X OPTIONS https://api.example.com')">OPTIONS</button>
+            </div>
+          </div>
         </details>
 
         <details>
-          <summary>Sending Data (POST/PUT)</summary>
-          <section>
-            <p class="desc">Send data in request body for creating or updating resources.</p>
-            <pre class="example">curl -X POST -d "name=John" https://api.example.com/users</pre>
-            <menu>
-              <li><button onclick="run('curl -d &quot;name=John&amp;email=john@example.com&quot; https://api.example.com/users')">Form data (-d)</button></li>
-              <li><button onclick="run('curl --data-urlencode &quot;query=hello world&quot; https://api.example.com/search')">URL encode</button></li>
-              <li><button onclick="run('curl -d @data.json https://api.example.com/users')">From file (@)</button></li>
-              <li><button onclick="run('curl -X POST -H &quot;Content-Type: application/json&quot; -d &quot;{ name: John, email: john@example.com }&quot; https://api.example.com/users')">JSON body</button></li>
-              <li><button onclick="run('curl -X PUT -d &quot;name=Jane&quot; https://api.example.com/users/1')">PUT update</button></li>
-            </menu>
-            <aside class="tip">
-              <strong>Tip:</strong> Use <code>@filename</code> to read data from a file.
-            </aside>
-          </section>
+          <summary>Sending Data</summary>
+          <div class="command-group">
+            <p class="command-desc">Send data in request body.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -d &quot;name=John&amp;email=john@example.com&quot; https://api.example.com/users')">form data</button>
+              <button onclick="run('curl --data-urlencode &quot;query=hello world&quot; https://api.example.com/search')">URL encode</button>
+              <button onclick="run('curl -X POST -H &quot;Content-Type: application/json&quot; -d &quot;{ name: John }&quot; https://api.example.com/users')">JSON body</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Headers</summary>
-          <section>
-            <p class="desc">Add custom HTTP headers to requests.</p>
-            <pre class="example">curl -H "Authorization: Bearer token123" https://api.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -H &quot;Content-Type: application/json&quot; https://api.example.com')">Content-Type</button></li>
-              <li><button onclick="run('curl -H &quot;Accept: application/json&quot; https://api.example.com')">Accept</button></li>
-              <li><button onclick="run('curl -H &quot;Authorization: Bearer abc123token&quot; https://api.example.com/protected')">Bearer Token</button></li>
-              <li><button onclick="run('curl -H &quot;X-API-Key: myapikey&quot; https://api.example.com')">API Key</button></li>
-              <li><button onclick="run('curl -H &quot;User-Agent: MyApp/1.0&quot; https://api.example.com')">User-Agent</button></li>
-              <li><button onclick="run('curl -H &quot;Cache-Control: no-cache&quot; https://api.example.com')">Cache-Control</button></li>
-              <li><button onclick="run('curl -H &quot;X-Custom: value&quot; -H &quot;X-Another: value2&quot; https://api.example.com')">Multiple headers</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Add custom HTTP headers.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -H &quot;Content-Type: application/json&quot; https://api.example.com')">Content-Type</button>
+              <button onclick="run('curl -H &quot;Accept: application/json&quot; https://api.example.com')">Accept</button>
+              <button onclick="run('curl -H &quot;Authorization: Bearer abc123token&quot; https://api.example.com/protected')">Bearer Token</button>
+              <button onclick="run('curl -H &quot;X-API-Key: myapikey&quot; https://api.example.com')">API Key</button>
+              <button onclick="run('curl -H &quot;User-Agent: MyApp/1.0&quot; https://api.example.com')">User-Agent</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Authentication</summary>
-          <section>
-            <p class="desc">Various authentication methods for secure APIs.</p>
-            <pre class="example">curl -u username:password https://api.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -u admin:secret123 https://api.example.com/admin')">Basic Auth (-u)</button></li>
-              <li><button onclick="run('curl --basic -u admin:secret https://api.example.com')">Basic explicit</button></li>
-              <li><button onclick="run('curl --digest -u admin:secret https://api.example.com')">Digest Auth</button></li>
-              <li><button onclick="run('curl -H &quot;Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...&quot; https://api.example.com')">JWT Token</button></li>
-              <li><button onclick="run('curl --oauth2-bearer mytoken https://api.example.com')">OAuth2 Bearer</button></li>
-              <li><button onclick="run('curl --netrc https://api.example.com')">Use .netrc</button></li>
-            </menu>
-            <aside class="tip">
-              <strong>Security:</strong> Avoid passwords in command line. Use <code>-u user</code> to be prompted.
-            </aside>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Various authentication methods.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -u admin:secret123 https://api.example.com/admin')">Basic Auth</button>
+              <button onclick="run('curl --digest -u admin:secret https://api.example.com')">Digest Auth</button>
+              <button onclick="run('curl -H &quot;Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...&quot; https://api.example.com')">JWT Token</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>File Uploads</summary>
-          <section>
-            <p class="desc">Upload files to servers using multipart form data.</p>
-            <pre class="example">curl -F "file=@photo.jpg" https://api.example.com/upload</pre>
-            <menu>
-              <li><button onclick="run('curl -F &quot;file=@photo.jpg&quot; https://api.example.com/upload')">Upload file (-F)</button></li>
-              <li><button onclick="run('curl -F &quot;file=@document.pdf;type=application/pdf&quot; https://api.example.com/upload')">With MIME type</button></li>
-              <li><button onclick="run('curl -F &quot;file=@image.png&quot; -F &quot;description=My image&quot; https://api.example.com/upload')">File + fields</button></li>
-              <li><button onclick="run('curl -F &quot;files[]=@file1.txt&quot; -F &quot;files[]=@file2.txt&quot; https://api.example.com/upload')">Multiple files</button></li>
-              <li><button onclick="run('curl -T localfile.txt https://server.com/upload/')">PUT upload (-T)</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Upload files with multipart form data.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -F &quot;file=@photo.jpg&quot; https://api.example.com/upload')">upload file</button>
+              <button onclick="run('curl -F &quot;file=@document.pdf;type=application/pdf&quot; https://api.example.com/upload')">with MIME</button>
+              <button onclick="run('curl -T localfile.txt https://server.com/upload/')">PUT upload</button>
+            </div>
+          </div>
         </details>
 
         <details>
-          <summary>Downloading Files</summary>
-          <section>
-            <p class="desc">Save responses to files and resume downloads.</p>
-            <pre class="example">curl -o output.html https://example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -o page.html https://example.com')">Save as (-o)</button></li>
-              <li><button onclick="run('curl -O https://example.com/file.zip')">Keep name (-O)</button></li>
-              <li><button onclick="run('curl -O -O https://example.com/file1.zip https://example.com/file2.zip')">Multiple files</button></li>
-              <li><button onclick="run('curl -C - -O https://example.com/largefile.zip')">Resume download</button></li>
-              <li><button onclick="run('curl --limit-rate 100K -O https://example.com/file.zip')">Limit speed</button></li>
-              <li><button onclick="run('curl -L -O https://example.com/redirect')">Follow redirects</button></li>
-            </menu>
-          </section>
+          <summary>Downloading</summary>
+          <div class="command-group">
+            <p class="command-desc">Save responses to files.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -o page.html https://example.com')">save as (-o)</button>
+              <button onclick="run('curl -O https://example.com/file.zip')">keep name (-O)</button>
+              <button onclick="run('curl -C - -O https://example.com/largefile.zip')">resume</button>
+              <button onclick="run('curl --limit-rate 100K -O https://example.com/file.zip')">limit speed</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Redirects & Cookies</summary>
-          <section>
-            <p class="desc">Handle HTTP redirects and manage cookies.</p>
-            <pre class="example">curl -L -c cookies.txt https://example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -L https://example.com/redirect')">Follow redirects (-L)</button></li>
-              <li><button onclick="run('curl --max-redirs 5 -L https://example.com')">Limit redirects</button></li>
-              <li><button onclick="run('curl -c cookies.txt https://example.com/login')">Save cookies (-c)</button></li>
-              <li><button onclick="run('curl -b cookies.txt https://example.com/dashboard')">Send cookies (-b)</button></li>
-              <li><button onclick="run('curl -b &quot;session=abc123&quot; https://example.com')">Cookie string</button></li>
-              <li><button onclick="run('curl -c cookies.txt -b cookies.txt https://example.com')">Cookie jar</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Handle redirects and cookies.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -L https://example.com/redirect')">follow redirects</button>
+              <button onclick="run('curl --max-redirs 5 -L https://example.com')">limit redirects</button>
+              <button onclick="run('curl -c cookies.txt https://example.com/login')">save cookies</button>
+              <button onclick="run('curl -b cookies.txt https://example.com/dashboard')">send cookies</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>SSL/TLS</summary>
-          <section>
-            <p class="desc">Handle HTTPS connections and certificates.</p>
-            <pre class="example">curl --cacert ca.crt https://secure.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -k https://self-signed.example.com')">Skip verify (-k)</button></li>
-              <li><button onclick="run('curl --cacert /path/to/ca.crt https://example.com')">Custom CA</button></li>
-              <li><button onclick="run('curl --cert client.pem https://example.com')">Client cert</button></li>
-              <li><button onclick="run('curl --cert client.pem --key key.pem https://example.com')">Cert + key</button></li>
-              <li><button onclick="run('curl --tlsv1.2 https://example.com')">Force TLS 1.2</button></li>
-              <li><button onclick="run('curl --tlsv1.3 https://example.com')">Force TLS 1.3</button></li>
-            </menu>
-            <aside class="tip">
-              <strong>Warning:</strong> Never use <code>-k</code> in production! It disables certificate verification.
-            </aside>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Handle HTTPS connections.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -k https://self-signed.example.com')">skip verify</button>
+              <button onclick="run('curl --cacert /path/to/ca.crt https://example.com')">custom CA</button>
+              <button onclick="run('curl --cert client.pem https://example.com')">client cert</button>
+              <button onclick="run('curl --tlsv1.3 https://example.com')">force TLS 1.3</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Timeouts & Retries</summary>
-          <section>
-            <p class="desc">Control connection behavior and handle failures.</p>
-            <pre class="example">curl --connect-timeout 10 --max-time 60 https://slow.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl --connect-timeout 5 https://example.com')">Connect timeout</button></li>
-              <li><button onclick="run('curl --max-time 30 https://example.com')">Max time</button></li>
-              <li><button onclick="run('curl --retry 3 https://flaky.example.com')">Retry</button></li>
-              <li><button onclick="run('curl --retry 3 --retry-delay 2 https://example.com')">Retry delay</button></li>
-              <li><button onclick="run('curl --retry 3 --retry-max-time 60 https://example.com')">Retry max time</button></li>
-              <li><button onclick="run('curl --keepalive-time 60 https://example.com')">Keep-alive</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Control connection behavior.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl --connect-timeout 5 https://example.com')">connect timeout</button>
+              <button onclick="run('curl --max-time 30 https://example.com')">max time</button>
+              <button onclick="run('curl --retry 3 https://flaky.example.com')">retry</button>
+              <button onclick="run('curl --retry 3 --retry-delay 2 https://example.com')">retry delay</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Proxy Settings</summary>
-          <section>
-            <p class="desc">Route requests through proxy servers.</p>
-            <pre class="example">curl -x http://proxy:8080 https://example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -x http://proxy.company.com:8080 https://example.com')">HTTP proxy</button></li>
-              <li><button onclick="run('curl -x socks5://proxy:1080 https://example.com')">SOCKS5 proxy</button></li>
-              <li><button onclick="run('curl --proxy-user user:pass -x http://proxy:8080 https://example.com')">Proxy auth</button></li>
-              <li><button onclick="run('curl --noproxy &quot;*.local,localhost&quot; -x http://proxy:8080 https://example.com')">No proxy list</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Route through proxy servers.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -x http://proxy.company.com:8080 https://example.com')">HTTP proxy</button>
+              <button onclick="run('curl -x socks5://proxy:1080 https://example.com')">SOCKS5</button>
+              <button onclick="run('curl --proxy-user user:pass -x http://proxy:8080 https://example.com')">proxy auth</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>JSON APIs</summary>
-          <section>
-            <p class="desc">Common patterns for working with JSON REST APIs.</p>
-            <pre class="example">curl -H "Content-Type: application/json" -d '{"key":"value"}' https://api.example.com</pre>
-            <menu>
-              <li><button onclick="run('curl https://api.example.com/users | jq .')">GET + jq</button></li>
-              <li><button onclick="run('curl -X POST -H &quot;Content-Type: application/json&quot; -d &quot;{ name: John, email: john@test.com }&quot; https://api.example.com/users')">Create (POST)</button></li>
-              <li><button onclick="run('curl -X PUT -H &quot;Content-Type: application/json&quot; -d &quot;{ name: Jane }&quot; https://api.example.com/users/1')">Update (PUT)</button></li>
-              <li><button onclick="run('curl -X PATCH -H &quot;Content-Type: application/json&quot; -d &quot;{ status: active }&quot; https://api.example.com/users/1')">Partial (PATCH)</button></li>
-              <li><button onclick="run('curl -X DELETE https://api.example.com/users/1')">Delete</button></li>
-              <li><button onclick="run('curl &quot;https://api.example.com/users?page=1&amp;limit=10&quot;')">Pagination</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Common REST API patterns.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl https://api.example.com/users | jq .')">GET + jq</button>
+              <button onclick="run('curl -X POST -H &quot;Content-Type: application/json&quot; -d &quot;{ name: John }&quot; https://api.example.com/users')">Create</button>
+              <button onclick="run('curl -X PUT -H &quot;Content-Type: application/json&quot; -d &quot;{ name: Jane }&quot; https://api.example.com/users/1')">Update</button>
+              <button onclick="run('curl -X DELETE https://api.example.com/users/1')">Delete</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Output Formatting</summary>
-          <section>
-            <p class="desc">Control what curl outputs and how it's formatted.</p>
-            <pre class="example">curl -w "%{http_code}" -o /dev/null -s https://example.com</pre>
-            <menu>
-              <li><button onclick="run('curl -w &quot;%{http_code}\n&quot; -o /dev/null -s https://example.com')">Status code only</button></li>
-              <li><button onclick="run('curl -w &quot;%{time_total}\n&quot; -o /dev/null -s https://example.com')">Total time</button></li>
-              <li><button onclick="run('curl -w &quot;%{size_download}\n&quot; -o /dev/null -s https://example.com')">Download size</button></li>
-              <li><button onclick="run('curl -w &quot;@format.txt&quot; https://example.com')">Custom format</button></li>
-              <li><button onclick="run('curl --trace trace.log https://example.com')">Full trace</button></li>
-              <li><button onclick="run('curl --trace-ascii - https://example.com')">ASCII trace</button></li>
-            </menu>
-            <aside class="tip">
-              <strong>Tip:</strong> Use <code>-w</code> to extract timing metrics for performance testing.
-            </aside>
-          </section>
-        </details>
-
-        <details>
-          <summary>Scripting & Automation</summary>
-          <section>
-            <p class="desc">Options useful for scripts and CI/CD pipelines.</p>
-            <pre class="example">curl -sf https://example.com || echo "Failed"</pre>
-            <menu>
-              <li><button onclick="run('curl -s https://example.com')">Silent (-s)</button></li>
-              <li><button onclick="run('curl -S https://example.com')">Show errors (-S)</button></li>
-              <li><button onclick="run('curl -f https://example.com/notfound')">Fail on error (-f)</button></li>
-              <li><button onclick="run('curl -sS https://example.com')">Silent + errors</button></li>
-              <li><button onclick="run('curl --fail-with-body https://api.example.com')">Fail with body</button></li>
-              <li><button onclick="run('curl -K config.txt')">From config (-K)</button></li>
-              <li><button onclick="run('curl --compressed https://example.com')">Auto decompress</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Control output format.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -w &quot;%{http_code}\n&quot; -o /dev/null -s https://example.com')">status code</button>
+              <button onclick="run('curl -w &quot;%{time_total}\n&quot; -o /dev/null -s https://example.com')">total time</button>
+              <button onclick="run('curl -w &quot;%{size_download}\n&quot; -o /dev/null -s https://example.com')">download size</button>
+              <button onclick="run('curl --trace-ascii - https://example.com')">ASCII trace</button>
+            </div>
+          </div>
         </details>
 
         <details>
           <summary>Useful Examples</summary>
-          <section>
-            <p class="desc">Real-world curl commands you'll use often.</p>
-            <menu>
-              <li><button onclick="run('curl -s https://api.github.com/users/octocat | jq .name')">GitHub API</button></li>
-              <li><button onclick="run('curl -s https://api.ipify.org?format=json')">Get my IP</button></li>
-              <li><button onclick="run('curl -s https://wttr.in/London?format=3')">Weather</button></li>
-              <li><button onclick="run('curl -X POST -H &quot;Content-Type: application/json&quot; -d &quot;{ text: Hello! }&quot; https://hooks.slack.com/services/xxx')">Slack webhook</button></li>
-              <li><button onclick="run('curl -s https://api.exchangerate-api.com/v4/latest/USD | jq .rates.EUR')">Exchange rate</button></li>
-            </menu>
-          </section>
+          <div class="command-group">
+            <p class="command-desc">Real-world examples.</p>
+            <div class="command-buttons">
+              <button onclick="run('curl -s https://api.github.com/users/octocat | jq .name')">GitHub API</button>
+              <button onclick="run('curl -s https://api.ipify.org?format=json')">Get my IP</button>
+              <button onclick="run('curl -s https://wttr.in/London?format=3')">Weather</button>
+            </div>
+          </div>
         </details>
-    </nav>
+      </nav>
+    </aside>
 
-    <article class="panel">
-      <h2 class="panel__title">Interactive Terminal</h2>
-      <terminal-window
-        id="terminal"
-        theme="dark"
-        prompt="$ "
-        cursor-style="block"
-        cursor-blink="true"
-        welcome="Welcome to the cURL Tutorial! Type 'help' for command list, or click examples in the sidebar."
-        autofocus
-      ></terminal-window>
-    </article>
+    <!-- Main Content -->
+    <div class="demo-content">
+      <section class="demo-terminal">
+        <h1>cURL Commands</h1>
+        <p class="demo-description">Interactive terminal for learning cURL HTTP client commands. Click buttons in the sidebar or type commands directly.</p>
+
+        <terminal-window
+          id="terminal"
+          theme="dark"
+          prompt="$ "
+          cursor-style="block"
+          cursor-blink="true"
+          welcome="cURL Tutorial - Type 'help' for available commands."
+        ></terminal-window>
+      </section>
+
+      <section class="demo-code">
+        <div class="demo-code-header">
+          <div>
+            <h2>Example Code</h2>
+            <p class="demo-description">HTML and JavaScript to create this interactive cURL terminal demo.</p>
+          </div>
+          <button class="btn primary" onclick="downloadDemo()">Download Demo</button>
+        </div>
+
+        <h3>HTML</h3>
+        <code-block language="html">&lt;terminal-window
+  id="terminal"
+  theme="dark"
+  prompt="$ "
+  cursor-style="block"
+  cursor-blink="true"
+  welcome="cURL Tutorial - Type 'help' for available commands."
+&gt;&lt;/terminal-window&gt;</code-block>
+
+        <h3>JavaScript</h3>
+        <code-block language="js">import { registerCurlCommands } from './commands/curl-commands.js';
+
+const terminal = document.getElementById('terminal');
+
+// Register all cURL commands
+registerCurlCommands(terminal);
+
+// Helper to run commands from buttons
+function run(cmd) {
+  terminal.executeCommand(cmd);
+}</code-block>
+
+        <h3>Custom Command Example</h3>
+        <code-block language="js">// Simulated curl command handler
+terminal.registerCommand('curl', (args) => {
+  const url = args.find(a => a.startsWith('http'));
+  const method = args.includes('-X') ?
+    args[args.indexOf('-X') + 1] : 'GET';
+
+  // Return simulated response
+  return JSON.stringify({
+    message: 'Success',
+    method: method,
+    url: url
+  }, null, 2);
+});</code-block>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
-    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-      </svg>
-      GitHub
-    </a>
+    <p>&copy; 2025 Thomas A. Powell. MIT License.</p>
   </footer>
 
   <script type="module" src="../src/terminal-window.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/ProfPowell/code-block@v2.0.1/dist/code-block.min.js"></script>
   <script type="module">
     import { registerCurlCommands } from './commands/curl-commands.js';
 
     const terminal = document.getElementById('terminal');
     window.run = function(cmd) { terminal.executeCommand(cmd); }
 
-    // Register curl commands
     window.addEventListener('DOMContentLoaded', async () => {
       await customElements.whenDefined('terminal-window');
       registerCurlCommands(terminal);
     });
+  </script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Download demo as standalone HTML file
+    async function downloadDemo() {
+      const commandsResponse = await fetch('./commands/curl-commands.js');
+      const commandsCode = await commandsResponse.text();
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cURL Commands - Terminal Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #1a1a2e; color: #fff; }
+    h1 { margin-top: 0; }
+    terminal-window { height: 500px; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>cURL Terminal</h1>
+  <p>Interactive terminal for learning cURL commands. Type 'help' to see available commands.</p>
+
+  <terminal-window
+    id="terminal"
+    theme="dark"
+    prompt="$ "
+    cursor-style="block"
+    cursor-blink="true"
+    welcome="cURL Tutorial - Type 'help' for available commands."
+  ></terminal-window>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"><\\/script>
+  <script type="module">
+${commandsCode}
+
+const terminal = document.getElementById('terminal');
+window.addEventListener('DOMContentLoaded', async () => {
+  await customElements.whenDefined('terminal-window');
+  registerCurlCommands(terminal);
+});
+  <\\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'curl-terminal-demo.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    window.downloadDemo = downloadDemo;
   </script>
 </body>
 </html>
