@@ -1,4 +1,4 @@
-name: Deploy Demo to GitHub Pages
+name: Deploy Docs to GitHub Pages
 
 on:
   push:
@@ -30,19 +30,14 @@ jobs:
       - name: Build library
         run: npm run build
 
-      - name: Build Storybook
-        run: npm run build-storybook
-
-      - name: Build demo site
+      - name: Build docs site
         run: |
-          # Create a static demo site
           mkdir -p _site
-          cp -r demo/* _site/
+          cp -r docs/* _site/
           cp -r dist _site/
+          cp -r src _site/
           cp README.md _site/
           cp custom-elements.json _site/
-          # Copy Storybook to /storybook subdirectory
-          cp -r storybook-static _site/storybook
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
