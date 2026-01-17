@@ -25,11 +25,11 @@
     <h1>API Reference</h1>
     <p class="demo-description">Complete documentation for the <code>&lt;terminal-window&gt;</code> custom element. A vanilla JavaScript web component that simulates a terminal console with customizable commands, themes, cursor styles, and typing effects.</p>
 
-    <section>
+    <section id="attributes">
       <h2>Attributes</h2>
       <p>Configure the terminal using HTML attributes. All attributes can also be set via JavaScript properties.</p>
 
-      <h3>Appearance</h3>
+      <h3 id="appearance">Appearance</h3>
       <table class="api-table">
         <thead>
           <tr>
@@ -123,7 +123,7 @@
         </tbody>
       </table>
 
-      <h3>Behavior</h3>
+      <h3 id="behavior">Behavior</h3>
       <table class="api-table">
         <thead>
           <tr>
@@ -652,7 +652,7 @@ terminal-window::part(prompt) {
       </table>
     </section>
 
-    <section>
+    <section id="commands">
       <h2>Built-in Commands</h2>
       <p>These commands are available by default:</p>
 
@@ -683,7 +683,7 @@ terminal-window::part(prompt) {
         </tbody>
       </table>
 
-      <h3>VFS Commands</h3>
+      <h3 id="vfs">VFS Commands</h3>
       <p>When <code>enable-vfs="true"</code> is set, these additional commands are available:</p>
 
       <table class="api-table">
