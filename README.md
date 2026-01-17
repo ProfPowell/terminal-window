@@ -1,34 +1,31 @@
-# Terminal Window
+# &lt;terminal-window&gt;
 
-[![npm version](https://badge.fury.io/js/terminal-window.svg)](https://badge.fury.io/js/terminal-window)
+[![npm version](https://img.shields.io/npm/v/@profpowell/terminal-window.svg)](https://www.npmjs.com/package/@profpowell/terminal-window)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A vanilla JavaScript web component for simulating terminal consoles with customizable commands, themes, cursor styles, and typing effects. Perfect for tutorials, documentation, and interactive demos.
-
-![Terminal Window Demo](https://raw.githubusercontent.com/ProfPowell/terminal-window/main/demo/screenshot.png)
+A vanilla JavaScript web component for simulating terminal interfaces with typing effects, command history, and virtual filesystem support. Perfect for tutorials, documentation, and interactive demos.
 
 ## Features
 
 - **Zero Dependencies** - Pure vanilla JavaScript web component
 - **Customizable Themes** - Built-in dark and light themes, plus CSS custom properties
 - **Custom Commands** - Register your own command handlers with async support
-- **Typing Effect** - Typewriter-style output animation
-- **ANSI Color Support** - Full support for ANSI escape codes (colors, bold, underline)
+- **Typing Effect** - Typewriter-style output animation with configurable speed
+- **ANSI Color Support** - Full support for ANSI escape codes (colors, bold, italic, underline)
 - **Virtual File System** - Optional built-in VFS with ls, cd, mkdir, touch, rm, cat
+- **In-Place Updates** - Update the last output line for progress bars and animations
 - **Persistent History** - Save command history to localStorage
 - **Accessible** - ARIA labels, keyboard navigation, screen reader support
 - **Copy to Clipboard** - Copy all content, commands only, or output only
 - **TypeScript Support** - Full type definitions included
 
-## Quickstart
-
-Get running in 30 seconds:
+## Quick Start
 
 ```html
 <!DOCTYPE html>
 <html>
 <head>
-  <script type="module" src="https://unpkg.com/terminal-window"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"></script>
 </head>
 <body>
   <terminal-window
@@ -42,47 +39,27 @@ Get running in 30 seconds:
 </html>
 ```
 
-[View the full Quickstart Guide](./docs/quickstart.md) | [Live Demo](https://profpowell.github.io/terminal-window/quickstart.html)
+[Live Demo](https://profpowell.github.io/terminal-window/) | [API Documentation](https://profpowell.github.io/terminal-window/api.html)
 
 ## Installation
 
 ### NPM
 
 ```bash
-npm install terminal-window
+npm install @profpowell/terminal-window
+```
+
+```javascript
+import '@profpowell/terminal-window';
 ```
 
 ### CDN
 
 ```html
-<script type="module" src="https://unpkg.com/terminal-window"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"></script>
 ```
-
-### Download
-
-Download the latest release from [GitHub Releases](https://github.com/ProfPowell/terminal-window/releases).
-
-## Framework Integration
-
-Works with any framework! See our integration guides:
-
-| Framework | Guide | Live Demo |
-|-----------|-------|-----------|
-| React | [react.md](./docs/frameworks/react.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-react-terminal-window) |
-| Vue | [vue.md](./docs/frameworks/vue.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-vue-terminal-window) |
-| Svelte | [svelte.md](./docs/frameworks/svelte.md) | [StackBlitz](https://stackblitz.com/edit/vitejs-vite-svelte-terminal-window) |
-| Astro | [astro.md](./docs/frameworks/astro.md) | [StackBlitz](https://stackblitz.com/edit/astro-terminal-window) |
-| Eleventy | [eleventy.md](./docs/frameworks/eleventy.md) | [CodeSandbox](https://codesandbox.io/s/11ty-terminal-window) |
 
 ## Basic Usage
-
-### ES Module
-
-```javascript
-import 'terminal-window';
-
-// The component is now registered and ready to use
-```
 
 ### HTML
 
@@ -105,14 +82,21 @@ terminal.registerCommand('greet', (args) => {
   return `Hello, ${args[0] || 'World'}!`;
 });
 
+// Async command with animation
+terminal.registerCommand('countdown', async (args) => {
+  for (let i = 5; i > 0; i--) {
+    terminal.updateLastLine(`Countdown: ${i}`);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  return 'Blast off!';
+});
+
 // Execute a command programmatically
 terminal.executeCommand('greet Developer');
 
 // Print output
 terminal.print('This is regular output');
 terminal.print('This is an error', 'error');
-terminal.print('This is info', 'info');
-terminal.print('This is success', 'success');
 
 // Clear the terminal
 terminal.clear();
@@ -129,6 +113,7 @@ terminal.clear();
 | `cursor-blink` | `boolean` | `true` | Enable cursor blinking |
 | `typing-effect` | `boolean` | `false` | Enable typewriter animation |
 | `typing-speed` | `number` | `30` | Milliseconds per character |
+| `force-animations` | `boolean` | `false` | Override prefers-reduced-motion |
 | `readonly` | `boolean` | `false` | Disable user input |
 | `max-lines` | `number` | `1000` | Maximum output lines |
 | `show-header` | `boolean` | `true` | Show terminal header |
@@ -139,9 +124,6 @@ terminal.clear();
 | `persist-history` | `boolean` | `false` | Save history to localStorage |
 | `welcome` | `string` | `''` | Welcome message |
 | `autofocus` | `boolean` | `false` | Auto-focus terminal on mount |
-| `font-family` | `string` | `'Consolas', 'Monaco', monospace` | Font family |
-| `font-size` | `string` | `'14px'` | Font size |
-| `line-height` | `string` | `'1.4'` | Line height |
 
 ## Methods
 
@@ -159,9 +141,6 @@ terminal.registerCommand('fetch', async (args) => {
   return await response.text();
 });
 
-// Command that returns null (no output)
-terminal.registerCommand('silent', () => null);
-
 // Unregister a command
 terminal.unregisterCommand('mycommand');
 
@@ -176,6 +155,7 @@ terminal.print('text');                    // Regular output
 terminal.print('error message', 'error');  // Error (red)
 terminal.print('info message', 'info');    // Info (cyan)
 terminal.print('success!', 'success');     // Success (green)
+terminal.updateLastLine('Updated text');   // Update last line in-place
 terminal.clear();                          // Clear output
 ```
 
@@ -188,6 +168,8 @@ terminal.setPrompt('>>> ');                // Change prompt
 terminal.setCursorStyle('underline');      // Change cursor
 terminal.setCursorBlink(false);            // Disable blink
 terminal.setTypingEffect(true, 50);        // Enable typing effect
+terminal.setForceAnimations(true);         // Override reduced motion
+terminal.skipTypingEffect();               // Skip current typing animation
 terminal.setReadonly(true);                // Enable readonly mode
 terminal.focus();                          // Focus input
 terminal.scrollToBottom();                 // Scroll to bottom
@@ -201,30 +183,6 @@ terminal.setHistory(['cmd1', 'cmd2']);     // Set history
 terminal.clearHistory();                   // Clear history
 ```
 
-### Content
-
-```javascript
-const content = terminal.getContent();     // Get all content as text
-```
-
-### Window Controls
-
-```javascript
-terminal.close();                          // Hide terminal
-terminal.minimize();                       // Toggle minimize
-terminal.toggleFullscreen();               // Toggle fullscreen
-```
-
-### Internationalization
-
-```javascript
-terminal.setI18n({
-  copy: 'Copiar',
-  copied: '¡Copiado!',
-  commandNotFound: 'Comando no encontrado'
-});
-```
-
 ## Events
 
 ```javascript
@@ -232,10 +190,9 @@ terminal.setI18n({
 terminal.addEventListener('command', (e) => {
   console.log('Command:', e.detail.command);
   console.log('Args:', e.detail.args);
-  console.log('Input:', e.detail.input);
 });
 
-// Command completed successfully
+// Command completed
 terminal.addEventListener('command-result', (e) => {
   console.log('Result:', e.detail.result);
 });
@@ -248,20 +205,7 @@ terminal.addEventListener('command-error', (e) => {
 // Content copied
 terminal.addEventListener('copy', (e) => {
   console.log('Copied:', e.detail.text);
-  console.log('Mode:', e.detail.mode); // 'all', 'commands', 'output'
 });
-
-// Terminal closed/minimized/fullscreen
-terminal.addEventListener('close', () => {});
-terminal.addEventListener('minimize', (e) => {
-  console.log('Minimized:', e.detail.minimized);
-});
-terminal.addEventListener('fullscreen', (e) => {
-  console.log('Fullscreen:', e.detail.fullscreen);
-});
-
-// User pressed Ctrl+C
-terminal.addEventListener('interrupt', () => {});
 ```
 
 ## CSS Custom Properties
@@ -273,27 +217,15 @@ terminal-window {
   /* Colors */
   --bg-primary: #1a1a2e;
   --bg-secondary: #16213e;
-  --bg-header: #0f0f23;
-  --border-color: #2a2a4a;
   --text-primary: #e0e0e0;
-  --text-secondary: #888;
   --prompt-color: #50fa7b;
   --cursor-color: #50fa7b;
-  --command-color: #f8f8f2;
-  --output-color: #e0e0e0;
   --error-color: #ff5555;
   --info-color: #8be9fd;
   --success-color: #50fa7b;
 
   /* Cursor */
-  --cursor-width: 8px;
-  --cursor-height: 1.2em;
   --cursor-blink-speed: 1s;
-
-  /* Buttons */
-  --btn-bg: #2a2a4a;
-  --btn-hover: #3a3a5a;
-  --btn-text: #e0e0e0;
 
   /* Window controls */
   --control-close: #ff5f56;
@@ -320,24 +252,7 @@ terminal-window::part(cursor) {
 }
 ```
 
-Available parts: `terminal`, `header`, `controls`, `control-close`, `control-minimize`, `control-maximize`, `title`, `actions`, `theme-button`, `copy-button`, `copy-menu`, `copy-menu-item`, `body`, `output`, `input-line`, `prompt`, `input-text`, `cursor`
-
-## Slots
-
-```html
-<terminal-window>
-  <!-- Custom title -->
-  <span slot="title">My Custom Terminal</span>
-
-  <!-- Custom action buttons -->
-  <button slot="actions" onclick="runScript()">Run</button>
-
-  <!-- Content before output -->
-  <div slot="before-output">
-    <p>Welcome to the tutorial!</p>
-  </div>
-</terminal-window>
-```
+Available parts: `terminal`, `header`, `controls`, `title`, `body`, `output`, `input-line`, `prompt`, `cursor`
 
 ## Built-in Commands
 
@@ -364,8 +279,6 @@ The terminal supports ANSI escape codes:
 terminal.print('\x1b[31mRed text\x1b[0m');
 terminal.print('\x1b[1mBold\x1b[0m');
 terminal.print('\x1b[32;1mBold Green\x1b[0m');
-terminal.print('\x1b[38;5;196m256 Color\x1b[0m');
-terminal.print('\x1b[38;2;255;100;0mRGB Color\x1b[0m');
 ```
 
 ## Browser Support
@@ -374,26 +287,6 @@ terminal.print('\x1b[38;2;255;100;0mRGB Color\x1b[0m');
 - Firefox 63+
 - Safari 13.1+
 - Edge 79+
-
-Requires support for:
-- Custom Elements v1
-- Shadow DOM v1
-- ES Modules
-- Constructable Stylesheets
-
-## TypeScript
-
-Type definitions are included:
-
-```typescript
-import TerminalWindow from 'terminal-window';
-
-const terminal = document.querySelector('terminal-window') as TerminalWindow;
-
-terminal.registerCommand('greet', (args: string[]): string => {
-  return `Hello, ${args[0]}!`;
-});
-```
 
 ## Development
 
@@ -407,23 +300,24 @@ npm run dev
 # Run tests
 npm test
 
-# Run tests with coverage
-npm run test:coverage
+# Run tests with UI
+npm run test:ui
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
 
 # Build for production
 npm run build
-
-# Generate documentation
-npm run docs
 ```
 
-## Contributing
+## Related Components
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- [&lt;browser-window&gt;](https://profpowell.github.io/browser-window/) - Browser chrome wrapper
+- [&lt;code-block&gt;](https://profpowell.github.io/code-block/) - Syntax highlighted code
+- [&lt;browser-console&gt;](https://profpowell.github.io/browser-console/) - DevTools console simulation
 
 ## License
 
@@ -435,4 +329,4 @@ Created by [Thomas A. Powell](https://github.com/ProfPowell)
 
 ---
 
-**[View Demo](https://profpowell.github.io/terminal-window/)** | **[API Documentation](https://profpowell.github.io/terminal-window/docs.html)**
+**[Live Demo](https://profpowell.github.io/terminal-window/)** | **[API Documentation](https://profpowell.github.io/terminal-window/api.html)** | **[GitHub](https://github.com/ProfPowell/terminal-window)**
