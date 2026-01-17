@@ -517,15 +517,15 @@ export const styles = `
     }
   }
 
-  /* Reduced motion support */
+  /* Reduced motion support (skip if force-animations is set) */
   @media (prefers-reduced-motion: reduce) {
-    .terminal[data-cursor-blink="true"] .cursor {
+    .terminal[data-cursor-blink="true"]:not([data-force-animations="true"]) .cursor {
       animation: none;
       opacity: 1;
     }
-    .theme-btn,
-    .copy-btn,
-    .control {
+    .terminal:not([data-force-animations="true"]) .theme-btn,
+    .terminal:not([data-force-animations="true"]) .copy-btn,
+    .terminal:not([data-force-animations="true"]) .control {
       transition: none;
     }
   }

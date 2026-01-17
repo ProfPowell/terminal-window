@@ -388,6 +388,7 @@ class TerminalWindow extends HTMLElement {
       terminal.dataset.cursorStyle = this.config.cursorStyle;
       terminal.dataset.cursorBlink = this.config.cursorBlink;
       terminal.dataset.readonly = this.config.readonly;
+      terminal.dataset.forceAnimations = this.config.forceAnimations;
       terminal.style.setProperty('--font-family', this.config.fontFamily);
       terminal.style.setProperty('--font-size', this.config.fontSize);
       terminal.style.setProperty('--line-height', this.config.lineHeight);
