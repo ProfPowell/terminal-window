@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World - terminal-window Demo</title>
+  <meta name="description" content="A simple introduction to the terminal-window web component with fun commands.">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav>
+      <a href="../index.html" class="nav-brand">&lt;terminal-window&gt;</a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../demos.html" class="active">Demos</a>
+        <a href="../api.html">API</a>
+        <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme">🌓</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="demo-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="demo-sidebar">
+      <h2>Hello World</h2>
+
+      <nav class="command-nav">
+        <details open>
+          <summary>Fun Commands</summary>
+          <div class="command-group">
+            <p class="command-desc">ASCII art and entertainment.</p>
+            <div class="command-buttons">
+              <button onclick="run('cowsay Hello World!')">cowsay</button>
+              <button onclick="run('figlet HI')">figlet</button>
+              <button onclick="run('fortune')">fortune</button>
+              <button onclick="run('joke')">joke</button>
+              <button onclick="run('banner')">banner</button>
+              <button onclick="run('neofetch')">neofetch</button>
+              <button onclick="run('matrix')">matrix</button>
+            </div>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Feature Demos</summary>
+          <div class="command-group">
+            <p class="command-desc">See terminal-window features in action.</p>
+            <div class="command-buttons">
+              <button onclick="run('colors')">ANSI colors</button>
+              <button onclick="run('typing')">typing effect</button>
+              <button onclick="run('progress')">progress bar</button>
+              <button onclick="run('countdown 5')">countdown</button>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Utilities</summary>
+          <div class="command-group">
+            <p class="command-desc">Basic utility commands.</p>
+            <div class="command-buttons">
+              <button onclick="run('echo Hello from the terminal!')">echo</button>
+              <button onclick="run('calc 2+2*3')">calc</button>
+              <button onclick="run('date')">date</button>
+              <button onclick="run('whoami')">whoami</button>
+              <button onclick="run('clear')">clear</button>
+              <button onclick="run('help')">help</button>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Try These!</summary>
+          <div class="command-group">
+            <p class="command-desc">Fun combinations to try.</p>
+            <div class="command-buttons">
+              <button onclick="run('cowsay I love coding!')">cowsay message</button>
+              <button onclick="run('figlet HELLO')">figlet hello</button>
+              <button onclick="run('calc 123*456')">big calc</button>
+              <button onclick="run('countdown 10')">countdown 10</button>
+            </div>
+          </div>
+        </details>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="demo-content">
+      <section class="demo-terminal">
+        <h1>Hello World Demo</h1>
+        <p class="demo-description">A simple introduction to terminal-window with fun ASCII art, animations, and ANSI color support. Click the buttons or type commands directly!</p>
+
+        <terminal-window
+          id="terminal"
+          theme="dark"
+          prompt="$ "
+          cursor-style="block"
+          cursor-blink="true"
+          welcome="Welcome! Type 'help' to see available commands, or try 'cowsay Hello!'"
+        ></terminal-window>
+      </section>
+
+      <section class="demo-code">
+        <div class="demo-code-header">
+          <div>
+            <h2>Example Code</h2>
+            <p class="demo-description">Create your own terminal demo with just a few lines of code.</p>
+          </div>
+          <button class="btn primary" onclick="downloadDemo()">Download Demo</button>
+        </div>
+
+        <h3>Basic Setup</h3>
+        <code-block language="html">&lt;!-- Include the component --&gt;
+&lt;script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"&gt;&lt;/script&gt;
+
+&lt;!-- Add the terminal --&gt;
+&lt;terminal-window
+  id="terminal"
+  theme="dark"
+  prompt="$ "
+  cursor-blink="true"
+  welcome="Welcome! Type 'help' for commands."
+&gt;&lt;/terminal-window&gt;</code-block>
+
+        <h3>Register Custom Commands</h3>
+        <code-block language="js">const terminal = document.getElementById('terminal');
+
+// Simple command
+terminal.registerCommand('hello', () => {
+  return 'Hello, World!';
+});
+
+// Command with arguments
+terminal.registerCommand('greet', (args) => {
+  const name = args[0] || 'friend';
+  return `Hello, ${name}!`;
+});
+
+// Command with ANSI colors
+terminal.registerCommand('rainbow', () => {
+  return '\x1b[31mR\x1b[33mA\x1b[32mI\x1b[36mN\x1b[34mB\x1b[35mO\x1b[0mW';
+});</code-block>
+
+        <h3>Async Commands with Animation</h3>
+        <code-block language="js">// Typing animation
+terminal.registerCommand('typewriter', async () => {
+  const text = "Typing one character at a time...";
+  for (const char of text) {
+    terminal.print(char, false); // false = no newline
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return '\nDone!';
+});
+
+// Progress bar
+terminal.registerCommand('loading', async () => {
+  for (let i = 0; i <= 10; i++) {
+    const bar = '█'.repeat(i) + '░'.repeat(10 - i);
+    terminal.print(`\r[${bar}] ${i * 10}%`, false);
+    await new Promise(r => setTimeout(r, 200));
+  }
+  return '\nComplete!';
+});</code-block>
+
+        <h3>Terminal Features</h3>
+        <code-block language="html">&lt;!-- Light theme --&gt;
+&lt;terminal-window theme="light"&gt;&lt;/terminal-window&gt;
+
+&lt;!-- Custom prompt --&gt;
+&lt;terminal-window prompt="user@host:~$ "&gt;&lt;/terminal-window&gt;
+
+&lt;!-- Underline cursor --&gt;
+&lt;terminal-window cursor-style="underline"&gt;&lt;/terminal-window&gt;
+
+&lt;!-- Read-only mode (for demos) --&gt;
+&lt;terminal-window readonly&gt;&lt;/terminal-window&gt;</code-block>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Thomas A. Powell. MIT License.</p>
+  </footer>
+
+  <script type="module" src="../src/terminal-window.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/ProfPowell/code-block@v2.0.1/dist/code-block.min.js"></script>
+  <script type="module">
+    import { registerHelloCommands } from './commands/hello-commands.js';
+
+    const terminal = document.getElementById('terminal');
+    window.run = function(cmd) { terminal.executeCommand(cmd); }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await customElements.whenDefined('terminal-window');
+      registerHelloCommands(terminal);
+    });
+  </script>
+  <script>
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Download demo as standalone HTML file
+    async function downloadDemo() {
+      const commandsResponse = await fetch('./commands/hello-commands.js');
+      const commandsCode = await commandsResponse.text();
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World - Terminal Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #1a1a2e; color: #fff; }
+    h1 { margin-top: 0; }
+    terminal-window { height: 500px; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Hello World Terminal</h1>
+  <p>A simple terminal demo. Type 'help' to see available commands, or try 'cowsay Hello!'</p>
+
+  <terminal-window
+    id="terminal"
+    theme="dark"
+    prompt="$ "
+    cursor-style="block"
+    cursor-blink="true"
+    welcome="Welcome! Type 'help' to see available commands, or try 'cowsay Hello!'"
+  ></terminal-window>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@profpowell/terminal-window/dist/terminal-window.js"><\\/script>
+  <script type="module">
+${commandsCode}
+
+const terminal = document.getElementById('terminal');
+window.addEventListener('DOMContentLoaded', async () => {
+  await customElements.whenDefined('terminal-window');
+  registerHelloCommands(terminal);
+});
+  <\\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hello-terminal-demo.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    window.downloadDemo = downloadDemo;
+  </script>
+</body>
+</html>
