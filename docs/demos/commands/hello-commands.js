@@ -161,20 +161,22 @@ Background colors:
 ╚══════════════════════════════════════════════════════════════════════╝`;
   });
 
-  // Typing effect demo - shows the built-in typing effect
-  terminal.registerCommand('typing', () => {
-    return `\x1b[36mTerminal Window has a built-in typing effect!\x1b[0m
+  // Typing effect demo - demonstrates the built-in typing effect
+  terminal.registerCommand('typing', async () => {
+    // Enable typing effect temporarily
+    terminal.setTypingEffect(true, 25);
 
-To enable it, add the \x1b[33mtyping-effect\x1b[0m attribute:
+    await terminal.print('\x1b[36mThis text is being typed character by character...\x1b[0m');
+    await terminal.print('');
+    await terminal.print('The terminal-window component has a built-in typing effect!');
+    await terminal.print('Enable it with the \x1b[33mtyping-effect\x1b[0m attribute:');
+    await terminal.print('');
+    await terminal.print('  <terminal-window \x1b[32mtyping-effect\x1b[0m typing-speed="30">');
 
-  <terminal-window \x1b[32mtyping-effect\x1b[0m typing-speed="30">
+    // Disable typing effect
+    terminal.setTypingEffect(false);
 
-Or set it via JavaScript:
-  terminal.typingEffect = true;
-  terminal.typingSpeed = 30;
-
-The output text will appear character by character,
-just like in classic terminal animations!`;
+    return '\x1b[32m✓ Typing demo complete!\x1b[0m';
   });
 
   // Progress bar demo - shows incremental progress
