@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Window - Vanilla JS Web Component</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">A vanilla JS web component for terminal simulation</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="index.html" class="active">Features</a>
+      <a href="demos.html">Demos</a>
+      <a href="api.html">API</a>
+      <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <nav class="panel panel--sidebar" aria-label="Configuration panel">
+      <h2 class="panel__title">Configuration</h2>
+      <form onsubmit="return false;">
+        <fieldset>
+          <legend>Theme</legend>
+          <menu>
+            <li><button type="button" onclick="terminal.setTheme('dark')">Dark</button></li>
+            <li><button type="button" onclick="terminal.setTheme('light')">Light</button></li>
+          </menu>
+        </fieldset>
+
+        <fieldset>
+          <legend>Cursor Style</legend>
+          <menu>
+            <li><button type="button" onclick="terminal.setCursorStyle('block')">Block</button></li>
+            <li><button type="button" onclick="terminal.setCursorStyle('underline')">Underline</button></li>
+            <li><button type="button" onclick="terminal.setCursorStyle('bar')">Bar</button></li>
+          </menu>
+        </fieldset>
+
+        <fieldset>
+          <legend>Cursor Blink</legend>
+          <label>
+            <input type="checkbox" checked onchange="terminal.setCursorBlink(this.checked)">
+            Enable blinking cursor
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Prompt</legend>
+          <select aria-label="Select prompt style" onchange="terminal.setPrompt(this.value)">
+            <option value="$ ">$ (Default)</option>
+            <option value="> ">&gt; (Arrow)</option>
+            <option value="~ ">~ (Home)</option>
+            <option value="user@host:~$ ">user@host:~$</option>
+            <option value="root# ">root#</option>
+            <option value=">>> ">&gt;&gt;&gt; (Python)</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Typing Effect</legend>
+          <label>
+            <input type="checkbox" onchange="terminal.setTypingEffect(this.checked, 30)">
+            Enable typing animation
+          </label>
+          <div class="reduced-motion-notice">
+            <small>Reduced motion is enabled in your system settings. Animations are disabled for accessibility.</small>
+            <label>
+              <input type="checkbox" onchange="terminal.setForceAnimations(this.checked)">
+              Override for testing
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Test Commands</legend>
+          <menu>
+            <li><button type="button" onclick="terminal.executeCommand('help')">help</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('ls')">ls</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('pwd')">pwd</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('whoami')">whoami</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('date')">date</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('fortune')">fortune</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('neofetch')">neofetch</button></li>
+          </menu>
+        </fieldset>
+
+        <fieldset>
+          <legend>Read-Only Mode</legend>
+          <label>
+            <input type="checkbox" onchange="terminal.setReadonly(this.checked)">
+            Enable read-only mode
+          </label>
+          <menu>
+            <li><button type="button" onclick="runDemo()">Run Demo Sequence</button></li>
+          </menu>
+        </fieldset>
+
+        <fieldset>
+          <legend>Actions</legend>
+          <menu>
+            <li><button type="button" onclick="terminal.executeCommand('colors')">Show ANSI Colors</button></li>
+            <li><button type="button" onclick="terminal.clear()">Clear Terminal</button></li>
+            <li><button type="button" onclick="terminal.copyContent()">Copy Content</button></li>
+          </menu>
+        </fieldset>
+
+        <fieldset>
+          <legend>VFS Demo</legend>
+          <p><code>enable-vfs="true"</code> is set. Try: </p>
+          <menu>
+            <li><button type="button" onclick="terminal.executeCommand('ls')">ls</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('pwd')">pwd</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('mkdir new_dir')">mkdir new_dir</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('cd new_dir')">cd new_dir</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('touch test.txt')">touch test.txt</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('cat test.txt')">cat test.txt</button></li>
+            <li><button type="button" onclick="terminal.executeCommand('rm test.txt')">rm test.txt</button></li>
+          </menu>
+        </fieldset>
+      </form>
+    </nav>
+
+    <article class="panel">
+      <h2 class="panel__title">Interactive Terminal</h2>
+      <terminal-window
+        id="terminal"
+        theme="dark"
+        prompt="$ "
+        cursor-style="block"
+        cursor-blink="true"
+        welcome="Welcome to Terminal Window! Type 'help' for available commands."
+        enable-vfs="true"
+        persist-history="true"
+        autofocus
+      ></terminal-window>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script type="module" src="../src/terminal-window.js"></script>
+  <script>
+    const terminal = document.getElementById('terminal');
+
+    // Demo sequence for read-only mode
+    async function runDemo() {
+      terminal.setReadonly(true);
+      terminal.clear();
+      terminal.setTypingEffect(true, 30);
+
+      await terminal.print('$ echo "Welcome to the demo!"');
+      await new Promise(r => setTimeout(r, 500));
+      await terminal.print('Welcome to the demo!');
+      await new Promise(r => setTimeout(r, 1000));
+
+      await terminal.print('$ ls -la');
+      await new Promise(r => setTimeout(r, 500));
+      await terminal.print('total 16');
+      await terminal.print('drwxr-xr-x  4 user staff  128 Jan 15 10:30 .');
+      await terminal.print('drwxr-xr-x  8 user staff  256 Jan 15 09:00 ..');
+      await terminal.print('-rw-r--r--  1 user staff 1234 Jan 15 10:30 README.md');
+      await terminal.print('-rw-r--r--  1 user staff  567 Jan 15 10:25 package.json');
+      await new Promise(r => setTimeout(r, 1000));
+
+      await terminal.print('$ cat README.md');
+      await new Promise(r => setTimeout(r, 500));
+      await terminal.print('# Terminal Window');
+      await terminal.print('A vanilla JavaScript web component for terminal simulation.');
+      await new Promise(r => setTimeout(r, 1000));
+
+      await terminal.print('$ echo "Demo complete!"');
+      await new Promise(r => setTimeout(r, 500));
+      await terminal.print('Demo complete!');
+
+      terminal.setTypingEffect(false);
+      terminal.setReadonly(false);
+    }
+
+    window.runDemo = runDemo;
+  </script>
+</body>
+</html>

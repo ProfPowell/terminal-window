@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal Window - Test Page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: #1a1a2e;
+      font-family: system-ui, sans-serif;
+    }
+
+    .test-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    terminal-window {
+      height: 400px;
+    }
+
+    h1 {
+      color: #50fa7b;
+      margin: 0 0 10px;
+    }
+
+    p {
+      color: #888;
+      margin: 0 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <header>
+      <h1>Terminal Window Test Page</h1>
+      <p>Test fixtures for Playwright tests</p>
+    </header>
+
+    <!-- Primary test terminal -->
+    <terminal-window
+      id="terminal"
+      theme="dark"
+      prompt="$ "
+      cursor-style="block"
+      cursor-blink="true"
+      welcome="Test terminal ready. Type 'help' for commands."
+      enable-vfs="true"
+      autofocus
+    ></terminal-window>
+
+    <!-- Secondary terminal for multi-instance tests -->
+    <terminal-window
+      id="terminal2"
+      theme="light"
+      prompt="> "
+      cursor-style="underline"
+      title="Secondary Terminal"
+    ></terminal-window>
+  </div>
+
+  <script type="module" src="../src/terminal-window.js"></script>
+  <script>
+    // Expose terminal instances globally for test access
+    window.addEventListener('DOMContentLoaded', () => {
+      window.terminal = document.getElementById('terminal');
+      window.terminal2 = document.getElementById('terminal2');
+    });
+  </script>
+</body>
+</html>

@@ -1,37 +1,55 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
-
 import js from '@eslint/js';
-import globals from 'globals';
-import prettier from 'eslint-config-prettier';
 
-export default [js.configs.recommended, prettier, {
-  languageOptions: {
-    ecmaVersion: 2022,
-    sourceType: 'module',
-    globals: {
-      ...globals.browser,
-      ...globals.node,
+export default [
+  js.configs.recommended,
+  {
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        console: 'readonly',
+        customElements: 'readonly',
+        HTMLElement: 'readonly',
+        localStorage: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        Promise: 'readonly',
+        MutationObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        navigator: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
+        KeyboardEvent: 'readonly',
+        MouseEvent: 'readonly',
+        matchMedia: 'readonly',
+        CSSStyleSheet: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_|^err' }],
+      'no-console': 'off',
+      'prefer-const': 'warn',
+      'no-var': 'error',
+      'no-case-declarations': 'off',
     },
   },
-  rules: {
-    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'no-console': 'off',
-    'prefer-const': 'warn',
-    'no-var': 'error',
+  {
+    files: ['src/internals/ansi-parser.js'],
+    rules: {
+      'no-control-regex': 'off',
+    },
   },
-}, {
-  // Allow control characters in ANSI parser regex
-  files: ['src/internals/ansi-parser.js'],
-  rules: {
-    'no-control-regex': 'off',
+  {
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'coverage/**',
+      'test-results/**',
+      'playwright-report/**',
+    ],
   },
-}, {
-  ignores: [
-    'dist/**',
-    'node_modules/**',
-    'coverage/**',
-    'test-results/**',
-    'playwright-report/**',
-  ],
-}, ...storybook.configs["flat/recommended"]];
+];

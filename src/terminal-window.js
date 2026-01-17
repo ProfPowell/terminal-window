@@ -434,9 +434,9 @@ class TerminalWindow extends HTMLElement {
    * Update copy button visibility
    */
   _updateCopyVisibility() {
-    const copyBtn = this.shadowRoot.querySelector('.copy-btn');
-    if (copyBtn) {
-      copyBtn.style.display = this.config.showCopy ? 'inline-block' : 'none';
+    const copyWrapper = this.shadowRoot.querySelector('.copy-wrapper');
+    if (copyWrapper) {
+      copyWrapper.style.display = this.config.showCopy ? '' : 'none';
     }
   }
 
@@ -446,7 +446,7 @@ class TerminalWindow extends HTMLElement {
   _updateThemeToggleVisibility() {
     const themeBtn = this.shadowRoot.querySelector('.theme-btn');
     if (themeBtn) {
-      themeBtn.style.display = this.config.showThemeToggle ? 'inline-block' : 'none';
+      themeBtn.style.display = this.config.showThemeToggle ? '' : 'none';
     }
   }
 

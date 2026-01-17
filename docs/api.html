@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - Terminal Window</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --accent: #8be9fd;
+      --accent-hover: #a4ffff;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <span class="site-header__title">&lt;terminal-window&gt;</span>
+      <span class="site-header__tagline">API Reference</span>
+    </div>
+    <nav class="site-header__nav">
+      <a href="index.html">Features</a>
+      <a href="demos.html">Demos</a>
+      <a href="api.html" class="active">API</a>
+      <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="docs-main">
+    <div class="content">
+      <article class="panel panel--docs">
+        <h1>API Reference</h1>
+        <p>A vanilla JavaScript web component that simulates a terminal console with customizable commands, themes, cursor styles, and typing effects.</p>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+          <h4>Contents</h4>
+          <ul>
+            <li><a href="#attributes">Attributes</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#methods">Methods</a></li>
+            <li><a href="#css-parts">CSS Parts</a></li>
+            <li><a href="#slots">Slots</a></li>
+            <li><a href="#css-properties">CSS Custom Properties</a></li>
+            <li><a href="#built-in-commands">Built-in Commands</a></li>
+          </ul>
+        </nav>
+
+        <!-- Attributes -->
+        <section class="syntax-section" id="attributes">
+          <h2>Attributes</h2>
+          <p>Configure the terminal using HTML attributes. All attributes can also be set via JavaScript properties.</p>
+
+          <h3 id="attr-appearance">Appearance</h3>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Description</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>theme</td>
+                <td>Color theme: "dark" or "light"</td>
+                <td><code>dark</code></td>
+              </tr>
+              <tr>
+                <td>cursor-style</td>
+                <td>Cursor shape: "block", "underline", or "bar"</td>
+                <td><code>block</code></td>
+              </tr>
+              <tr>
+                <td>cursor-blink</td>
+                <td>Enable cursor blinking</td>
+                <td><code>true</code></td>
+              </tr>
+              <tr>
+                <td>font-family</td>
+                <td>Font family for terminal text</td>
+                <td><code>'Consolas', 'Monaco', monospace</code></td>
+              </tr>
+              <tr>
+                <td>font-size</td>
+                <td>Font size (e.g., "14px", "1rem")</td>
+                <td><code>14px</code></td>
+              </tr>
+              <tr>
+                <td>line-height</td>
+                <td>Line height multiplier</td>
+                <td><code>1.4</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="attr-header">Header</h3>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Description</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>title</td>
+                <td>Title displayed in the header bar</td>
+                <td><code>Terminal</code></td>
+              </tr>
+              <tr>
+                <td>show-header</td>
+                <td>Show the terminal header bar</td>
+                <td><code>true</code></td>
+              </tr>
+              <tr>
+                <td>show-controls</td>
+                <td>Show window control buttons (close, minimize, maximize)</td>
+                <td><code>true</code></td>
+              </tr>
+              <tr>
+                <td>show-copy</td>
+                <td>Show the copy button in the header</td>
+                <td><code>true</code></td>
+              </tr>
+              <tr>
+                <td>show-theme-toggle</td>
+                <td>Show the theme toggle button</td>
+                <td><code>true</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="attr-behavior">Behavior</h3>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Description</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>prompt</td>
+                <td>The command prompt text</td>
+                <td><code>"$ "</code></td>
+              </tr>
+              <tr>
+                <td>typing-effect</td>
+                <td>Enable typewriter animation for output</td>
+                <td><code>false</code></td>
+              </tr>
+              <tr>
+                <td>typing-speed</td>
+                <td>Milliseconds per character when typing effect is enabled</td>
+                <td><code>30</code></td>
+              </tr>
+              <tr>
+                <td>readonly</td>
+                <td>Disable user input (presentation mode)</td>
+                <td><code>false</code></td>
+              </tr>
+              <tr>
+                <td>max-lines</td>
+                <td>Maximum number of output lines to keep in buffer</td>
+                <td><code>1000</code></td>
+              </tr>
+              <tr>
+                <td>welcome</td>
+                <td>Welcome message displayed when terminal loads</td>
+                <td><code>-</code></td>
+              </tr>
+              <tr>
+                <td>enable-vfs</td>
+                <td>Enable virtual file system with built-in commands (ls, cd, pwd, mkdir, touch, rm, cat)</td>
+                <td><code>false</code></td>
+              </tr>
+              <tr>
+                <td>persist-history</td>
+                <td>Persist command history to localStorage across sessions</td>
+                <td><code>false</code></td>
+              </tr>
+              <tr>
+                <td>force-animations</td>
+                <td>Force typing animations even when user has prefers-reduced-motion set</td>
+                <td><code>false</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Events -->
+        <section class="syntax-section" id="events">
+          <h2>Events</h2>
+          <p>Listen for these custom events to respond to terminal activity.</p>
+
+          <h3 id="event-command">command</h3>
+          <div class="event-name">command</div>
+          <p>Fired when a command is executed. Detail: { command, args, input }</p>
+
+          <h3 id="event-command-result">command-result</h3>
+          <div class="event-name">command-result</div>
+          <p>Fired after a command executes successfully. Detail: { command, args, result }</p>
+
+          <h3 id="event-command-error">command-error</h3>
+          <div class="event-name">command-error</div>
+          <p>Fired when a command fails or is not found. Detail: { command, error }</p>
+
+          <h3 id="event-output">output</h3>
+          <div class="event-name">output</div>
+          <p>Fired when a line is printed to the terminal. Detail: { type, content }</p>
+
+          <h3 id="event-copy">copy</h3>
+          <div class="event-name">copy</div>
+          <p>Fired when content is copied to clipboard. Detail: { text, mode }</p>
+
+          <h3 id="event-close">close</h3>
+          <div class="event-name">close</div>
+          <p>Fired when the terminal is closed via the close button</p>
+
+          <h3 id="event-minimize">minimize</h3>
+          <div class="event-name">minimize</div>
+          <p>Fired when the terminal is minimized/restored. Detail: { minimized }</p>
+
+          <h3 id="event-fullscreen">fullscreen</h3>
+          <div class="event-name">fullscreen</div>
+          <p>Fired when fullscreen mode is toggled. Detail: { fullscreen }</p>
+
+          <h3 id="event-interrupt">interrupt</h3>
+          <div class="event-name">interrupt</div>
+          <p>Fired when user presses Ctrl+C</p>
+        </section>
+
+        <!-- Methods -->
+        <section class="syntax-section" id="methods">
+          <h2>Methods</h2>
+          <p>Control the terminal programmatically using these public methods.</p>
+
+          <h3 id="method-registerCommand">registerCommand()</h3>
+          <div class="method-signature">registerCommand(name, handler)</div>
+          <p>Register a custom command handler. The handler receives an array of arguments and the terminal instance, and can return a string to print, null to suppress output, or a Promise for async commands.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>name</code> <em>(string)</em> - Command name (case-insensitive)</li>
+            <li><code>handler</code> <em>(Function)</em> - Function that receives (args: string[], terminal: TerminalWindow) and returns string|null|Promise</li>
+          </ul>
+          <div class="code-block" data-lang="JS">
+            <code>// Simple command
+terminal.registerCommand('hello', () => 'Hello, World!');
+
+// Command with arguments
+terminal.registerCommand('greet', (args) => `Hello, ${args[0] || 'stranger'}!`);
+
+// Async command
+terminal.registerCommand('fetch-data', async () => {
+  const response = await fetch('/api/data');
+  return await response.text();
+});</code>
+          </div>
+
+          <h3 id="method-unregisterCommand">unregisterCommand()</h3>
+          <div class="method-signature">unregisterCommand(name)</div>
+          <p>Remove a registered command.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>name</code> <em>(string)</em> - Command name to remove</li>
+          </ul>
+
+          <h3 id="method-registerAlias">registerAlias()</h3>
+          <div class="method-signature">registerAlias(alias, command)</div>
+          <p>Create an alias for a command.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>alias</code> <em>(string)</em> - Alias name</li>
+            <li><code>command</code> <em>(string)</em> - Full command string to execute when alias is used</li>
+          </ul>
+          <div class="code-block" data-lang="JS">
+            <code>terminal.registerAlias('ll', 'ls -la');
+terminal.registerAlias('cls', 'clear');</code>
+          </div>
+
+          <h3 id="method-clear">clear()</h3>
+          <div class="method-signature">clear()</div>
+          <p>Clear all terminal output.</p>
+
+          <h3 id="method-print">print()</h3>
+          <div class="method-signature">print(text, type)</div>
+          <p>Print text to the terminal output.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>text</code> <em>(string)</em> - Text to print</li>
+            <li><code>type</code> <em>(string)</em> - Line type: "output", "error", "info", "success"</li>
+          </ul>
+
+          <h3 id="method-executeCommand">executeCommand()</h3>
+          <div class="method-signature">executeCommand(command)</div>
+          <p>Execute a command programmatically.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>command</code> <em>(string)</em> - Full command string to execute</li>
+          </ul>
+
+          <h3 id="method-setTheme">setTheme()</h3>
+          <div class="method-signature">setTheme(theme)</div>
+          <p>Set the color theme programmatically.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>theme</code> <em>('dark'|'light')</em> - The theme to apply</li>
+          </ul>
+
+          <h3 id="method-toggleTheme">toggleTheme()</h3>
+          <div class="method-signature">toggleTheme()</div>
+          <p>Toggle between light and dark theme.</p>
+
+          <h3 id="method-setPrompt">setPrompt()</h3>
+          <div class="method-signature">setPrompt(prompt)</div>
+          <p>Set the command prompt text programmatically.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>prompt</code> <em>(string)</em> - The prompt text to display</li>
+          </ul>
+
+          <h3 id="method-setCursorStyle">setCursorStyle()</h3>
+          <div class="method-signature">setCursorStyle(style)</div>
+          <p>Set the cursor style programmatically.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>style</code> <em>('block'|'underline'|'bar')</em> - The cursor style to apply</li>
+          </ul>
+
+          <h3 id="method-setCursorBlink">setCursorBlink()</h3>
+          <div class="method-signature">setCursorBlink(blink)</div>
+          <p>Enable or disable cursor blinking programmatically.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>blink</code> <em>(boolean)</em> - Whether the cursor should blink</li>
+          </ul>
+
+          <h3 id="method-setTypingEffect">setTypingEffect()</h3>
+          <div class="method-signature">setTypingEffect(enabled, speed=30)</div>
+          <p>Enable or disable the typing effect for output.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>enabled</code> <em>(boolean)</em> - Whether to enable the typing effect</li>
+            <li><code>speed</code> <em>(number)</em> - Milliseconds per character (lower = faster)</li>
+          </ul>
+
+          <h3 id="method-setReadonly">setReadonly()</h3>
+          <div class="method-signature">setReadonly(readonly)</div>
+          <p>Enable or disable readonly mode.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>readonly</code> <em>(boolean)</em> - Whether to enable readonly mode</li>
+          </ul>
+
+          <h3 id="method-setInputMask">setInputMask()</h3>
+          <div class="method-signature">setInputMask(masked)</div>
+          <p>Enable or disable input masking for password prompts.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>masked</code> <em>(boolean)</em> - Whether to mask input</li>
+          </ul>
+
+          <h3 id="method-getHistory">getHistory()</h3>
+          <div class="method-signature">getHistory()</div>
+          <p>Get the command history array.</p>
+          <p><strong>Returns:</strong> <em>string[]</em> - Array of previously executed commands</p>
+
+          <h3 id="method-setHistory">setHistory()</h3>
+          <div class="method-signature">setHistory(history)</div>
+          <p>Replace the command history with a new array.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>history</code> <em>(string[])</em> - Array of commands to set as history</li>
+          </ul>
+
+          <h3 id="method-clearHistory">clearHistory()</h3>
+          <div class="method-signature">clearHistory()</div>
+          <p>Clear all command history.</p>
+
+          <h3 id="method-getContent">getContent()</h3>
+          <div class="method-signature">getContent()</div>
+          <p>Get all terminal output as plain text.</p>
+          <p><strong>Returns:</strong> <em>string</em> - All terminal content as newline-separated text</p>
+
+          <h3 id="method-copyContent">copyContent()</h3>
+          <div class="method-signature">copyContent(mode)</div>
+          <p>Copy terminal content to clipboard.</p>
+          <p><strong>Parameters:</strong></p>
+          <ul>
+            <li><code>mode</code> <em>('all'|'commands'|'output')</em> - What to copy</li>
+          </ul>
+
+          <h3 id="method-focus">focus()</h3>
+          <div class="method-signature">focus()</div>
+          <p>Focus the terminal's input field.</p>
+
+          <h3 id="method-scrollToBottom">scrollToBottom()</h3>
+          <div class="method-signature">scrollToBottom()</div>
+          <p>Force scroll to the bottom of the terminal.</p>
+
+          <h3 id="method-close">close()</h3>
+          <div class="method-signature">close()</div>
+          <p>Close the terminal by hiding it.</p>
+
+          <h3 id="method-minimize">minimize()</h3>
+          <div class="method-signature">minimize()</div>
+          <p>Toggle the minimized state of the terminal.</p>
+
+          <h3 id="method-toggleFullscreen">toggleFullscreen()</h3>
+          <div class="method-signature">toggleFullscreen()</div>
+          <p>Toggle fullscreen mode (maximize).</p>
+        </section>
+
+        <!-- CSS Parts -->
+        <section class="syntax-section" id="css-parts">
+          <h2>CSS Parts</h2>
+          <p>Style internal elements using the <code>::part()</code> selector.</p>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Part Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>terminal</td><td>Main terminal container</td></tr>
+              <tr><td>header</td><td>Terminal header bar</td></tr>
+              <tr><td>controls</td><td>Window controls container (close, minimize, maximize)</td></tr>
+              <tr><td>control-close</td><td>Close button</td></tr>
+              <tr><td>control-minimize</td><td>Minimize button</td></tr>
+              <tr><td>control-maximize</td><td>Maximize button</td></tr>
+              <tr><td>title</td><td>Terminal title text</td></tr>
+              <tr><td>actions</td><td>Actions container (theme toggle, copy)</td></tr>
+              <tr><td>theme-button</td><td>Theme toggle button</td></tr>
+              <tr><td>copy-button</td><td>Copy button</td></tr>
+              <tr><td>copy-menu</td><td>Copy dropdown menu</td></tr>
+              <tr><td>copy-menu-item</td><td>Copy menu items</td></tr>
+              <tr><td>body</td><td>Terminal body (scrollable area)</td></tr>
+              <tr><td>output</td><td>Output container</td></tr>
+              <tr><td>input-line</td><td>Input line container</td></tr>
+              <tr><td>prompt</td><td>Command prompt text</td></tr>
+              <tr><td>input-text</td><td>User input text</td></tr>
+              <tr><td>cursor</td><td>Cursor element</td></tr>
+            </tbody>
+          </table>
+
+          <div class="code-block" data-lang="CSS">
+            <code>/* Example: Style the terminal header */
+terminal-window::part(header) {
+  background: #2d2d2d;
+  border-bottom: 2px solid #50fa7b;
+}
+
+/* Style the prompt */
+terminal-window::part(prompt) {
+  color: #ff79c6;
+}</code>
+          </div>
+        </section>
+
+        <!-- Slots -->
+        <section class="syntax-section" id="slots">
+          <h2>Slots</h2>
+          <p>Customize content using named slots.</p>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Slot Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>title</td><td>Custom content for the terminal title in the header</td></tr>
+              <tr><td>actions</td><td>Custom buttons/actions before the theme and copy buttons</td></tr>
+              <tr><td>before-output</td><td>Content inserted before the output area in the terminal body</td></tr>
+            </tbody>
+          </table>
+
+          <div class="code-block" data-lang="HTML">
+            <code>&lt;terminal-window&gt;
+  &lt;span slot="title"&gt;My Custom Terminal&lt;/span&gt;
+  &lt;button slot="actions" onclick="runScript()"&gt;Run&lt;/button&gt;
+  &lt;div slot="before-output"&gt;
+    &lt;p&gt;Welcome to the interactive tutorial!&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/terminal-window&gt;</code>
+          </div>
+        </section>
+
+        <!-- CSS Custom Properties -->
+        <section class="syntax-section" id="css-properties">
+          <h2>CSS Custom Properties</h2>
+          <p>Customize colors and styling using CSS custom properties.</p>
+          <table class="attr-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Description</th>
+                <th>Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>--bg-primary</code></td><td>Primary background color</td><td><code>#1a1a2e</code></td></tr>
+              <tr><td><code>--bg-secondary</code></td><td>Secondary background color</td><td><code>#16213e</code></td></tr>
+              <tr><td><code>--bg-header</code></td><td>Header background color</td><td><code>#0f0f23</code></td></tr>
+              <tr><td><code>--border-color</code></td><td>Border color</td><td><code>#2a2a4a</code></td></tr>
+              <tr><td><code>--text-primary</code></td><td>Primary text color</td><td><code>#e0e0e0</code></td></tr>
+              <tr><td><code>--text-secondary</code></td><td>Secondary text color</td><td><code>#888</code></td></tr>
+              <tr><td><code>--prompt-color</code></td><td>Prompt color</td><td><code>#50fa7b</code></td></tr>
+              <tr><td><code>--cursor-color</code></td><td>Cursor color</td><td><code>#50fa7b</code></td></tr>
+              <tr><td><code>--command-color</code></td><td>Command text color</td><td><code>#f8f8f2</code></td></tr>
+              <tr><td><code>--output-color</code></td><td>Output text color</td><td><code>#e0e0e0</code></td></tr>
+              <tr><td><code>--error-color</code></td><td>Error text color</td><td><code>#ff5555</code></td></tr>
+              <tr><td><code>--info-color</code></td><td>Info text color</td><td><code>#8be9fd</code></td></tr>
+              <tr><td><code>--success-color</code></td><td>Success text color</td><td><code>#50fa7b</code></td></tr>
+              <tr><td><code>--control-close</code></td><td>Close button color</td><td><code>#ff5f56</code></td></tr>
+              <tr><td><code>--control-minimize</code></td><td>Minimize button color</td><td><code>#ffbd2e</code></td></tr>
+              <tr><td><code>--control-maximize</code></td><td>Maximize button color</td><td><code>#27c93f</code></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Built-in Commands -->
+        <section class="syntax-section" id="built-in-commands">
+          <h2>Built-in Commands</h2>
+          <p>These commands are available by default:</p>
+          <ul>
+            <li><strong>help</strong> - Display available commands</li>
+            <li><strong>clear</strong> - Clear the terminal output</li>
+            <li><strong>echo [text]</strong> - Print text to the terminal</li>
+            <li><strong>history</strong> - Show command history</li>
+          </ul>
+
+          <h3>VFS Commands</h3>
+          <p>When <code>enable-vfs="true"</code> is set, these additional commands are available:</p>
+          <ul>
+            <li><strong>ls [path]</strong> - List directory contents</li>
+            <li><strong>cd [path]</strong> - Change current directory</li>
+            <li><strong>pwd</strong> - Print working directory</li>
+            <li><strong>mkdir [name]</strong> - Create a directory</li>
+            <li><strong>touch [name]</strong> - Create an empty file</li>
+            <li><strong>rm [name]</strong> - Remove a file or directory</li>
+            <li><strong>cat [file]</strong> - Display file contents</li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2025 Thomas A. Powell - MIT License.</span>
+    <a href="https://github.com/ProfPowell/terminal-window" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </footer>
+</body>
+</html>
