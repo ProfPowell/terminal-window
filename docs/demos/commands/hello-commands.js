@@ -117,26 +117,31 @@ Background colors:
     const seconds = parseInt(args[0]) || 5;
     if (seconds > 10) return 'Maximum countdown is 10 seconds';
 
+    terminal.print('\x1b[33mCountdown initiated...\x1b[0m');
     for (let i = seconds; i > 0; i--) {
-      terminal.print(`\x1b[33m${i}...\x1b[0m`);
       await new Promise(r => setTimeout(r, 1000));
+      const bar = '█'.repeat(seconds - i + 1) + '░'.repeat(i - 1);
+      terminal.print(`\x1b[33m  ${i}  \x1b[0m[${bar}]`);
     }
-    return '\x1b[32m🎉 Blast off!\x1b[0m';
+    await new Promise(r => setTimeout(r, 500));
+    return '\x1b[32m  🎉 Blast off! 🚀\x1b[0m';
   });
 
   // Matrix rain effect (simplified)
   terminal.registerCommand('matrix', async () => {
     const chars = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ01234567890';
-    terminal.print('\x1b[32m');
+    terminal.print('\x1b[32m>>> Entering the Matrix...\x1b[0m');
+    await new Promise(r => setTimeout(r, 500));
+
     for (let i = 0; i < 8; i++) {
       let line = '';
       for (let j = 0; j < 50; j++) {
         line += chars[Math.floor(Math.random() * chars.length)];
       }
-      terminal.print(line);
-      await new Promise(r => setTimeout(r, 100));
+      terminal.print(`\x1b[32m${line}\x1b[0m`);
+      await new Promise(r => setTimeout(r, 150));
     }
-    return '\x1b[0m[Matrix effect ended]';
+    return '\x1b[32m>>> Wake up, Neo...\x1b[0m';
   });
 
   // Banner/ASCII art
@@ -156,27 +161,38 @@ Background colors:
 ╚════════════════════════════════════════════════════════╝`;
   });
 
-  // Typing speed demo
-  terminal.registerCommand('typing', async () => {
-    const text = "This text is being typed character by character...";
-    for (const char of text) {
-      terminal.print(char, false);
-      await new Promise(r => setTimeout(r, 50));
-    }
-    return '\n\x1b[32m✓ Typing animation complete!\x1b[0m';
+  // Typing effect demo - shows the built-in typing effect
+  terminal.registerCommand('typing', () => {
+    return `\x1b[36mTerminal Window has a built-in typing effect!\x1b[0m
+
+To enable it, add the \x1b[33mtyping-effect\x1b[0m attribute:
+
+  <terminal-window \x1b[32mtyping-effect\x1b[0m typing-speed="30">
+
+Or set it via JavaScript:
+  terminal.typingEffect = true;
+  terminal.typingSpeed = 30;
+
+The output text will appear character by character,
+just like in classic terminal animations!`;
   });
 
-  // Progress bar demo
+  // Progress bar demo - shows incremental progress
   terminal.registerCommand('progress', async () => {
-    const width = 30;
-    for (let i = 0; i <= width; i++) {
-      const filled = '█'.repeat(i);
-      const empty = '░'.repeat(width - i);
-      const percent = Math.round((i / width) * 100);
-      terminal.print(`\r[${filled}${empty}] ${percent}%`, false);
-      await new Promise(r => setTimeout(r, 100));
+    const width = 20;
+    const stages = [0, 20, 45, 60, 75, 90, 100];
+
+    terminal.print('\x1b[36mDownloading update...\x1b[0m');
+
+    for (const percent of stages) {
+      await new Promise(r => setTimeout(r, 400));
+      const filled = Math.round((percent / 100) * width);
+      const bar = '\x1b[42m' + ' '.repeat(filled) + '\x1b[0m' + '\x1b[100m' + ' '.repeat(width - filled) + '\x1b[0m';
+      terminal.print(`  [${bar}] ${percent}%`);
     }
-    return '\n\x1b[32m✓ Download complete!\x1b[0m';
+
+    await new Promise(r => setTimeout(r, 300));
+    return '\x1b[32m✓ Download complete!\x1b[0m';
   });
 
   // Joke command
@@ -230,8 +246,8 @@ Background colors:
 
 \x1b[33mFeature Demos:\x1b[0m
   colors          Show ANSI color support
-  typing          Typing animation demo
-  progress        Progress bar demo
+  typing          Learn about typing effect
+  progress        Animated progress bar
   countdown [n]   Countdown timer (max 10s)
 
 \x1b[33mUtilities:\x1b[0m
