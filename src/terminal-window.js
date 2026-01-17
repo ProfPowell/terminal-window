@@ -153,6 +153,9 @@ class TerminalWindow extends HTMLElement {
     this._typingCancelled = false;
     this._typingQueue = [];
 
+    // Command execution state
+    this._isExecuting = false;
+
     // Configuration with defaults
     this.config = {
       theme: 'dark',
@@ -620,66 +623,92 @@ class TerminalWindow extends HTMLElement {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    // Add to history
-    if (addToHistory) {
-      this.historyManager.add(trimmed);
-    }
+    // Prevent concurrent command execution
+    if (this._isExecuting) return;
 
-    // Print the command line
-    this._printCommandLine(trimmed);
+    // Mark as executing and hide input line
+    this._isExecuting = true;
+    this._setInputLineVisible(false);
 
-    // Resolve alias
-    const resolved = this.commandRegistry.resolveAlias(trimmed);
+    try {
+      // Add to history
+      if (addToHistory) {
+        this.historyManager.add(trimmed);
+      }
 
-    // Parse command and arguments
-    const parts = this.commandRegistry.parse(resolved);
-    const cmdName = parts[0].toLowerCase();
-    const args = parts.slice(1);
+      // Print the command line
+      this._printCommandLine(trimmed);
 
-    // Find and execute command
-    const handler = this.commandRegistry.get(cmdName);
+      // Resolve alias
+      const resolved = this.commandRegistry.resolveAlias(trimmed);
 
-    if (handler) {
-      try {
-        const result = await handler(args, this);
-        if (result !== null && result !== undefined) {
-          await this.print(String(result));
+      // Parse command and arguments
+      const parts = this.commandRegistry.parse(resolved);
+      const cmdName = parts[0].toLowerCase();
+      const args = parts.slice(1);
+
+      // Find and execute command
+      const handler = this.commandRegistry.get(cmdName);
+
+      if (handler) {
+        try {
+          const result = await handler(args, this);
+          if (result !== null && result !== undefined) {
+            await this.print(String(result));
+          }
+
+          // Dispatch command-result event on success
+          this.dispatchEvent(new CustomEvent('command-result', {
+            detail: { command: cmdName, args, input: trimmed, result },
+            bubbles: true,
+            composed: true
+          }));
+        } catch (error) {
+          await this.print(`Error: ${error.message}`, 'error');
+
+          // Dispatch command-error event on failure
+          this.dispatchEvent(new CustomEvent('command-error', {
+            detail: { command: cmdName, args, input: trimmed, error },
+            bubbles: true,
+            composed: true
+          }));
         }
+      } else {
+        const errorMessage = `${this._t('commandNotFound')} ${cmdName}. ${this._t('typeHelpForCommands')}`;
+        await this.print(errorMessage, 'error');
 
-        // Dispatch command-result event on success
-        this.dispatchEvent(new CustomEvent('command-result', {
-          detail: { command: cmdName, args, input: trimmed, result },
-          bubbles: true,
-          composed: true
-        }));
-      } catch (error) {
-        await this.print(`Error: ${error.message}`, 'error');
-
-        // Dispatch command-error event on failure
+        // Dispatch command-error for unknown commands
         this.dispatchEvent(new CustomEvent('command-error', {
-          detail: { command: cmdName, args, input: trimmed, error },
+          detail: { command: cmdName, args, input: trimmed, error: new Error(errorMessage) },
           bubbles: true,
           composed: true
         }));
       }
-    } else {
-      const errorMessage = `${this._t('commandNotFound')} ${cmdName}. ${this._t('typeHelpForCommands')}`;
-      await this.print(errorMessage, 'error');
 
-      // Dispatch command-error for unknown commands
-      this.dispatchEvent(new CustomEvent('command-error', {
-        detail: { command: cmdName, args, input: trimmed, error: new Error(errorMessage) },
+      // Dispatch command event (fired for all commands)
+      this.dispatchEvent(new CustomEvent('command', {
+        detail: { command: cmdName, args, input: trimmed },
         bubbles: true,
         composed: true
       }));
+    } finally {
+      // Always restore input line when done
+      this._isExecuting = false;
+      this._setInputLineVisible(true);
+      this._scrollToBottom();
     }
+  }
 
-    // Dispatch command event (fired for all commands)
-    this.dispatchEvent(new CustomEvent('command', {
-      detail: { command: cmdName, args, input: trimmed },
-      bubbles: true,
-      composed: true
-    }));
+  /**
+   * Show or hide the input line.
+   * Used to hide the prompt during command execution.
+   * @private
+   */
+  _setInputLineVisible(visible) {
+    const inputLine = this.shadowRoot.querySelector('.input-line');
+    if (inputLine) {
+      inputLine.style.display = visible && !this.config.readonly ? '' : 'none';
+    }
   }
 
   /**
