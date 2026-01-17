@@ -112,19 +112,24 @@ Background colors:
     }
   });
 
-  // Countdown timer demo
+  // Countdown timer demo - updates in place using updateLastLine
   terminal.registerCommand('countdown', async (args) => {
     const seconds = parseInt(args[0]) || 5;
     if (seconds > 10) return 'Maximum countdown is 10 seconds';
 
-    terminal.print('\x1b[33mCountdown initiated...\x1b[0m');
+    const width = seconds;
+    terminal.print(`\x1b[33m  ${seconds}  \x1b[0m[${'░'.repeat(width)}]`);
+
     for (let i = seconds; i > 0; i--) {
       await new Promise(r => setTimeout(r, 1000));
-      const bar = '█'.repeat(seconds - i + 1) + '░'.repeat(i - 1);
-      terminal.print(`\x1b[33m  ${i}  \x1b[0m[${bar}]`);
+      const filled = seconds - i + 1;
+      const bar = '█'.repeat(filled) + '░'.repeat(Math.max(0, width - filled));
+      terminal.updateLastLine(`\x1b[33m  ${i}  \x1b[0m[${bar}]`);
     }
+
     await new Promise(r => setTimeout(r, 500));
-    return '\x1b[32m  🎉 Blast off! 🚀\x1b[0m';
+    terminal.updateLastLine('\x1b[32m  🎉 Blast off! 🚀\x1b[0m');
+    return '';
   });
 
   // Matrix rain effect (simplified)
@@ -179,18 +184,18 @@ Background colors:
     return '\x1b[32m✓ Typing demo complete!\x1b[0m';
   });
 
-  // Progress bar demo - shows incremental progress
+  // Progress bar demo - updates in place using updateLastLine
   terminal.registerCommand('progress', async () => {
     const width = 20;
-    const stages = [0, 20, 45, 60, 75, 90, 100];
 
     terminal.print('\x1b[36mDownloading update...\x1b[0m');
+    terminal.print(`  [\x1b[100m${' '.repeat(width)}\x1b[0m] 0%`);
 
-    for (const percent of stages) {
-      await new Promise(r => setTimeout(r, 400));
+    for (let percent = 0; percent <= 100; percent += 5) {
+      await new Promise(r => setTimeout(r, 100));
       const filled = Math.round((percent / 100) * width);
-      const bar = '\x1b[42m' + ' '.repeat(filled) + '\x1b[0m' + '\x1b[100m' + ' '.repeat(width - filled) + '\x1b[0m';
-      terminal.print(`  [${bar}] ${percent}%`);
+      const bar = '\x1b[42m' + ' '.repeat(filled) + '\x1b[0m\x1b[100m' + ' '.repeat(width - filled) + '\x1b[0m';
+      terminal.updateLastLine(`  [${bar}] ${percent}%`);
     }
 
     await new Promise(r => setTimeout(r, 300));

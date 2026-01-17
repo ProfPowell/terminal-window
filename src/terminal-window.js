@@ -795,6 +795,62 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
+   * Update the last output line in place.
+   * Useful for progress bars, countdowns, and other dynamic content that
+   * should update on a single line rather than adding new lines.
+   *
+   * @method updateLastLine
+   * @param {string} text - New text content for the last line
+   * @returns {boolean} True if a line was updated, false if no output lines exist
+   * @example
+   * // Progress bar that updates in place
+   * terminal.print('[          ] 0%');
+   * for (let i = 1; i <= 10; i++) {
+   *   await delay(200);
+   *   const bar = '█'.repeat(i) + ' '.repeat(10 - i);
+   *   terminal.updateLastLine(`[${bar}] ${i * 10}%`);
+   * }
+   *
+   * // Countdown timer
+   * terminal.print('Starting in 3...');
+   * await delay(1000);
+   * terminal.updateLastLine('Starting in 2...');
+   * await delay(1000);
+   * terminal.updateLastLine('Starting in 1...');
+   */
+  updateLastLine(text) {
+    // Find the last non-command output line
+    let lastOutputIndex = -1;
+    for (let i = this.outputLines.length - 1; i >= 0; i--) {
+      if (this.outputLines[i].type !== 'command') {
+        lastOutputIndex = i;
+        break;
+      }
+    }
+
+    if (lastOutputIndex === -1) {
+      return false; // No output lines to update
+    }
+
+    // Update the data model
+    const line = this.outputLines[lastOutputIndex];
+    line.content = text;
+
+    // Update the DOM element
+    const outputContainer = this.shadowRoot.querySelector('.output');
+    if (outputContainer) {
+      const lineElements = outputContainer.querySelectorAll('.output-line');
+      const domIndex = lastOutputIndex; // Direct mapping since we render all lines
+      if (lineElements[domIndex]) {
+        lineElements[domIndex].innerHTML = this._parseAnsi(text);
+      }
+    }
+
+    this._scrollToBottom();
+    return true;
+  }
+
+  /**
    * Check if user prefers reduced motion
    * Can be overridden with forceAnimations config for testing
    */
