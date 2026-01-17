@@ -246,8 +246,7 @@
             <li><code>name</code> <em>(string)</em> - Command name (case-insensitive)</li>
             <li><code>handler</code> <em>(Function)</em> - Function that receives (args: string[], terminal: TerminalWindow) and returns string|null|Promise</li>
           </ul>
-          <div class="code-block" data-lang="JS">
-            <code>// Simple command
+          <code-block language="js">// Simple command
 terminal.registerCommand('hello', () => 'Hello, World!');
 
 // Command with arguments
@@ -257,8 +256,7 @@ terminal.registerCommand('greet', (args) => `Hello, ${args[0] || 'stranger'}!`);
 terminal.registerCommand('fetch-data', async () => {
   const response = await fetch('/api/data');
   return await response.text();
-});</code>
-          </div>
+});</code-block>
 
           <h3 id="method-unregisterCommand">unregisterCommand()</h3>
           <div class="method-signature">unregisterCommand(name)</div>
@@ -276,10 +274,8 @@ terminal.registerCommand('fetch-data', async () => {
             <li><code>alias</code> <em>(string)</em> - Alias name</li>
             <li><code>command</code> <em>(string)</em> - Full command string to execute when alias is used</li>
           </ul>
-          <div class="code-block" data-lang="JS">
-            <code>terminal.registerAlias('ll', 'ls -la');
-terminal.registerAlias('cls', 'clear');</code>
-          </div>
+          <code-block language="js">terminal.registerAlias('ll', 'ls -la');
+terminal.registerAlias('cls', 'clear');</code-block>
 
           <h3 id="method-clear">clear()</h3>
           <div class="method-signature">clear()</div>
@@ -447,8 +443,7 @@ terminal.registerAlias('cls', 'clear');</code>
             </tbody>
           </table>
 
-          <div class="code-block" data-lang="CSS">
-            <code>/* Example: Style the terminal header */
+          <code-block language="css">/* Example: Style the terminal header */
 terminal-window::part(header) {
   background: #2d2d2d;
   border-bottom: 2px solid #50fa7b;
@@ -457,8 +452,7 @@ terminal-window::part(header) {
 /* Style the prompt */
 terminal-window::part(prompt) {
   color: #ff79c6;
-}</code>
-          </div>
+}</code-block>
         </section>
 
         <!-- Slots -->
@@ -479,15 +473,13 @@ terminal-window::part(prompt) {
             </tbody>
           </table>
 
-          <div class="code-block" data-lang="HTML">
-            <code>&lt;terminal-window&gt;
+          <code-block language="html">&lt;terminal-window&gt;
   &lt;span slot="title"&gt;My Custom Terminal&lt;/span&gt;
   &lt;button slot="actions" onclick="runScript()"&gt;Run&lt;/button&gt;
   &lt;div slot="before-output"&gt;
     &lt;p&gt;Welcome to the interactive tutorial!&lt;/p&gt;
   &lt;/div&gt;
-&lt;/terminal-window&gt;</code>
-          </div>
+&lt;/terminal-window&gt;</code-block>
         </section>
 
         <!-- CSS Custom Properties -->
@@ -560,5 +552,7 @@ terminal-window::part(prompt) {
       GitHub
     </a>
   </footer>
+
+  <script type="module" src="https://cdn.jsdelivr.net/gh/ProfPowell/code-block@v2.0.1/dist/code-block.min.js"></script>
 </body>
 </html>
