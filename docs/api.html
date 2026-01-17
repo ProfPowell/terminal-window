@@ -299,6 +299,12 @@
             <td>Print text to the terminal. Type: "output", "error", "info", "success"</td>
           </tr>
           <tr>
+            <td><code>updateLastLine(text)</code></td>
+            <td><code>text: string</code></td>
+            <td><code>boolean</code></td>
+            <td>Update the last output line in place. Useful for progress bars and countdowns. Returns true if updated.</td>
+          </tr>
+          <tr>
             <td><code>clear()</code></td>
             <td>—</td>
             <td><code>void</code></td>
@@ -339,6 +345,24 @@
             <td><code>enabled: boolean, speed?: number</code></td>
             <td><code>void</code></td>
             <td>Enable or disable typing effect. Speed in ms per character.</td>
+          </tr>
+          <tr>
+            <td><code>skipTypingEffect()</code></td>
+            <td>—</td>
+            <td><code>void</code></td>
+            <td>Skip the current typing animation and show all remaining output immediately</td>
+          </tr>
+          <tr>
+            <td><code>setForceAnimations(force)</code></td>
+            <td><code>force: boolean</code></td>
+            <td><code>void</code></td>
+            <td>Force animations to run even when user has prefers-reduced-motion enabled</td>
+          </tr>
+          <tr>
+            <td><code>hasReducedMotion()</code></td>
+            <td>—</td>
+            <td><code>boolean</code></td>
+            <td>Check if user has prefers-reduced-motion enabled in system settings</td>
           </tr>
           <tr>
             <td><code>setReadonly(readonly)</code></td>
@@ -431,6 +455,21 @@ terminal.registerCommand('fetch-data', async () => {
       <h3>registerAlias() Example</h3>
       <code-block language="js">terminal.registerAlias('ll', 'ls -la');
 terminal.registerAlias('cls', 'clear');</code-block>
+
+      <h3>updateLastLine() Example</h3>
+      <code-block language="js">// Progress bar that updates in place
+terminal.registerCommand('download', async () => {
+  terminal.print('[                    ] 0%');
+
+  for (let i = 0; i <= 100; i += 5) {
+    await new Promise(r => setTimeout(r, 100));
+    const filled = Math.round(i / 5);
+    const bar = '█'.repeat(filled) + ' '.repeat(20 - filled);
+    terminal.updateLastLine(`[${bar}] ${i}%`);
+  }
+
+  return 'Download complete!';
+});</code-block>
     </section>
 
     <section>
