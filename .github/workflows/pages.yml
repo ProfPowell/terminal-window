@@ -33,9 +33,11 @@ jobs:
       - name: Build docs site
         run: |
           mkdir -p _site
+          # Remove symlink so we can copy real src
+          rm -f docs/src
           cp -r docs/* _site/
-          cp -r dist _site/
           cp -r src _site/
+          cp -r dist _site/
           cp README.md _site/
           cp custom-elements.json _site/
 
