@@ -1682,19 +1682,30 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Toggle between light and dark theme.
-   * Announces the theme change to screen readers and fires no events (use attribute observation for reactivity).
+   * Toggle the resolved color mode (dark ↔ light). Writes the result to
+   * the `mode` attribute so explicit toggling overrides page and OS
+   * detection. Use this rather than setting attributes directly when
+   * implementing a theme-toggle UI.
    *
-   * @method toggleTheme
+   * @method toggleMode
    * @returns {void}
    * @example
-   * terminal.toggleTheme(); // Switches from dark to light or vice versa
+   * terminal.toggleMode();
+   */
+  toggleMode() {
+    const next = this._resolveMode() === 'dark' ? 'light' : 'dark';
+    this.setAttribute('mode', next);
+    this._announce(`${this._t('themeChangedTo')} ${next}`);
+  }
+
+  /**
+   * @deprecated Use {@link toggleMode} instead. Retained as an alias for
+   * backwards compatibility with 2.0.x consumers.
+   * @method toggleTheme
+   * @returns {void}
    */
   toggleTheme() {
-    this.config.theme = this.config.theme === 'dark' ? 'light' : 'dark';
-    this.setAttribute('theme', this.config.theme);
-    this._updateStyles();
-    this._announce(`${this._t('themeChangedTo')} ${this.config.theme}`);
+    this.toggleMode();
   }
 
   /**

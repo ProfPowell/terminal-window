@@ -168,14 +168,14 @@ test.describe('Terminal Window Component', () => {
     test('should toggle theme when clicking theme button', async ({ page }) => {
       const terminal = page.locator('terminal-window#terminal');
 
-      const initialTheme = await terminal.evaluate(el => el.getAttribute('theme'));
+      const initialTheme = await terminal.evaluate(el => el.getAttribute('mode'));
 
       await terminal.evaluate(el => {
         el.shadowRoot?.querySelector('.theme-btn')?.click();
       });
       await page.waitForTimeout(100);
 
-      const newTheme = await terminal.evaluate(el => el.getAttribute('theme'));
+      const newTheme = await terminal.evaluate(el => el.getAttribute('mode'));
       expect(newTheme).not.toBe(initialTheme);
     });
 
@@ -765,5 +765,43 @@ test.describe('vb token integration: public overrides for terminal slots', () =>
       return computed;
     });
     expect(color).toBe('rgb(11, 22, 33)');
+  });
+});
+
+test.describe('vb token integration: toggle behavior', () => {
+  test('toggleTheme() writes to mode attribute, not theme', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const result = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'dark');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      tw.toggleTheme();
+      await new Promise(r => setTimeout(r, 20));
+      const out = {
+        mode: tw.getAttribute('mode'),
+        theme: tw.getAttribute('theme'),
+      };
+      tw.remove();
+      return out;
+    });
+    expect(result.mode).toBe('light');
+    expect(result.theme).toBeNull();
+  });
+
+  test('toggleMode() is the canonical method', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const result = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'light');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      tw.toggleMode();
+      await new Promise(r => setTimeout(r, 20));
+      const out = tw.getAttribute('mode');
+      tw.remove();
+      return out;
+    });
+    expect(result).toBe('dark');
   });
 });
