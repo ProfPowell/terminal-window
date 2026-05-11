@@ -3,6 +3,7 @@ import { CommandRegistry } from './internals/command-registry.js';
 import { HistoryManager } from './internals/history-manager.js';
 import { VirtualFileSystem } from './internals/file-system.js';
 import { styles } from './styles.js';
+import { registerInstance, unregisterInstance } from './internals/page-mode-detect.js';
 
 /**
  * A vanilla JavaScript web component that simulates a terminal console with
@@ -254,9 +255,13 @@ class TerminalWindow extends HTMLElement {
 
     // Announce to screen readers
     this._announce(this._t('terminalReady'));
+
+    registerInstance(this);
   }
 
   disconnectedCallback() {
+    unregisterInstance(this);
+
     // Remove document-level event listeners
     if (this._fullscreenEscHandler) {
       document.removeEventListener('keydown', this._fullscreenEscHandler);
@@ -434,6 +439,25 @@ class TerminalWindow extends HTMLElement {
       return 'dark';
     }
     return 'light';
+  }
+
+  /**
+   * Called by the page-mode observer when the page's resolved dark/light
+   * signal changes. Reflects the state to `data-page-mode` on the host so
+   * the :host([data-page-mode=…]) CSS selector applies, then triggers a
+   * style refresh so the inner .terminal[data-theme] mirror updates.
+   * @param {boolean|null} isDark — true=dark, false=light, null=no signal
+   */
+  _onPageModeChange(isDark) {
+    this._pageMode = isDark;
+    if (isDark === true) {
+      this.setAttribute('data-page-mode', 'dark');
+    } else if (isDark === false) {
+      this.setAttribute('data-page-mode', 'light');
+    } else {
+      this.removeAttribute('data-page-mode');
+    }
+    if (this.shadowRoot) this._updateStyles();
   }
 
   /**

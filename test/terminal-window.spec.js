@@ -607,3 +607,72 @@ test.describe('vb token integration: mode attribute', () => {
     expect(innerTheme).toBe('light');
   });
 });
+
+test.describe('vb token integration: page-mode detection', () => {
+  test('document-level data-theme="dark" makes a no-attribute terminal render dark', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    });
+    const innerTheme = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 50));
+      const result = tw.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme');
+      tw.remove();
+      document.documentElement.removeAttribute('data-theme');
+      return result;
+    });
+    expect(innerTheme).toBe('dark');
+  });
+
+  test('explicit mode overrides page signal', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const innerTheme = await page.evaluate(async () => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'light');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 50));
+      const result = tw.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme');
+      tw.remove();
+      document.documentElement.removeAttribute('data-theme');
+      return result;
+    });
+    expect(innerTheme).toBe('light');
+  });
+
+  test('page-mode change is reactive', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const result = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      await new Promise(r => setTimeout(r, 50));
+      const after = tw.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme');
+      tw.remove();
+      document.documentElement.removeAttribute('data-theme');
+      return after;
+    });
+    expect(result).toBe('dark');
+  });
+
+  test('disconnect cleanup: no error when page mode flips after element removed', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const errors = [];
+    page.on('pageerror', e => errors.push(String(e)));
+    await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      tw.remove();
+      document.documentElement.setAttribute('data-theme', 'dark');
+      await new Promise(r => setTimeout(r, 50));
+      document.documentElement.removeAttribute('data-theme');
+    });
+    expect(errors).toEqual([]);
+  });
+});
