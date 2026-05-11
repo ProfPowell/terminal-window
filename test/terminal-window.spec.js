@@ -805,3 +805,39 @@ test.describe('vb token integration: toggle behavior', () => {
     expect(result).toBe('dark');
   });
 });
+
+test.describe('vb token integration: prefers-color-scheme fallback', () => {
+  test('no-signal terminal follows prefers-color-scheme dark', async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: 'dark' });
+    const p = await context.newPage();
+    await p.goto('/test/test-page.html');
+    const innerTheme = await p.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const result = tw.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme');
+      tw.remove();
+      return result;
+    });
+    await context.close();
+    expect(innerTheme).toBe('dark');
+  });
+
+  test('no-signal terminal follows prefers-color-scheme light', async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: 'light' });
+    const p = await context.newPage();
+    await p.goto('/test/test-page.html');
+    const innerTheme = await p.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const result = tw.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme');
+      tw.remove();
+      return result;
+    });
+    await context.close();
+    expect(innerTheme).toBe('light');
+  });
+});
