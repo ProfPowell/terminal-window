@@ -3,6 +3,7 @@ import { CommandRegistry } from './internals/command-registry.js';
 import { HistoryManager } from './internals/history-manager.js';
 import { VirtualFileSystem } from './internals/file-system.js';
 import { styles } from './styles.js';
+import { registerInstance, unregisterInstance } from './internals/page-mode-detect.js';
 
 /**
  * A vanilla JavaScript web component that simulates a terminal console with
@@ -11,7 +12,8 @@ import { styles } from './styles.js';
  * @element terminal-window
  * @tagname terminal-window
  *
- * @attr {string} [theme=dark] - Color theme: "dark" or "light"
+ * @attr {string} [theme] - Color theme alias for `mode` (backwards-compatible). Values: "dark" or "light"
+ * @attr {'dark'|'light'} [mode] - Color mode (canonical). When omitted, resolves through `theme` → page signal → prefers-color-scheme → 'light'.
  * @attr {string} [prompt="$ "] - The command prompt text
  * @attr {string} [title=Terminal] - Title displayed in the header bar
  * @attr {string} [cursor-style=block] - Cursor shape: "block", "underline", or "bar"
@@ -107,6 +109,7 @@ class TerminalWindow extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this._pageMode = null;
 
     // Adopt styles
     const sheet = new CSSStyleSheet();
@@ -253,9 +256,13 @@ class TerminalWindow extends HTMLElement {
 
     // Announce to screen readers
     this._announce(this._t('terminalReady'));
+
+    registerInstance(this);
   }
 
   disconnectedCallback() {
+    unregisterInstance(this);
+
     // Remove document-level event listeners
     if (this._fullscreenEscHandler) {
       document.removeEventListener('keydown', this._fullscreenEscHandler);
@@ -281,7 +288,7 @@ class TerminalWindow extends HTMLElement {
 
   static get observedAttributes() {
     return [
-      'theme', 'prompt', 'cursor-style', 'cursor-blink',
+      'mode', 'theme', 'prompt', 'cursor-style', 'cursor-blink',
       'font-family', 'font-size', 'line-height',
       'typing-effect', 'typing-speed',
       'show-header', 'title', 'show-controls', 'show-copy', 'show-theme-toggle',
@@ -293,8 +300,13 @@ class TerminalWindow extends HTMLElement {
     if (oldValue === newValue) return;
 
     switch (name) {
+      case 'mode':
+        this.config.mode = newValue || null;
+        this._updateStyles();
+        break;
       case 'theme':
         this.config.theme = newValue || 'dark';
+        this._updateStyles();
         break;
       case 'prompt':
         this.config.prompt = newValue || '$ ';
@@ -382,12 +394,16 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Update dynamic styles
+   * Update dynamic styles. The inner element's `data-theme` is always set
+   * to the *resolved* mode from `_resolveMode()` (never the raw `mode` or
+   * `theme` attribute value), so CSS selectors like `.terminal[data-theme]`
+   * see a consistent `'dark'` or `'light'` regardless of which input
+   * channel (attribute / page signal / OS preference) determined it.
    */
   _updateStyles() {
     const terminal = this.shadowRoot.querySelector('.terminal');
     if (terminal) {
-      terminal.dataset.theme = this.config.theme;
+      terminal.dataset.theme = this._resolveMode();
       terminal.dataset.cursorStyle = this.config.cursorStyle;
       terminal.dataset.cursorBlink = this.config.cursorBlink;
       terminal.dataset.readonly = this.config.readonly;
@@ -402,6 +418,62 @@ class TerminalWindow extends HTMLElement {
     if (promptEl) {
       promptEl.textContent = this.config.prompt;
     }
+
+    this._updateThemeButtonTooltip();
+  }
+
+  /**
+   * Refresh the theme-toggle button tooltip after a mode change so it
+   * reflects the new resolved state (e.g. "switch to light" → "switch to
+   * dark"). The tooltip text is otherwise baked in at render time.
+   */
+  _updateThemeButtonTooltip() {
+    const themeBtn = this.shadowRoot?.querySelector('.theme-btn');
+    if (!themeBtn) return;
+    const resolved = this._resolveMode();
+    const hint = resolved === 'dark' ? this._t('switchToLight') : this._t('switchToDark');
+    themeBtn.setAttribute('title', `${this._t('toggleTheme')} (${hint})`);
+  }
+
+  /**
+   * Resolve the active color mode using priority:
+   *   1. explicit `mode` attribute
+   *   2. legacy `theme` attribute (alias)
+   *   3. page-level signal (set by page-mode-detect)
+   *   4. OS prefers-color-scheme
+   *   5. 'light' as final fallback (matches family pattern)
+   * @returns {'dark'|'light'}
+   */
+  _resolveMode() {
+    const modeAttr = this.getAttribute('mode');
+    if (modeAttr === 'dark' || modeAttr === 'light') return modeAttr;
+    const themeAttr = this.getAttribute('theme');
+    if (themeAttr === 'dark' || themeAttr === 'light') return themeAttr;
+    if (this._pageMode === true) return 'dark';
+    if (this._pageMode === false) return 'light';
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  }
+
+  /**
+   * Called by the page-mode observer when the page's resolved dark/light
+   * signal changes. Reflects the state to `data-page-mode` on the host so
+   * the :host([data-page-mode=…]) CSS selector applies, then triggers a
+   * style refresh so the inner .terminal[data-theme] mirror updates.
+   * @param {boolean|null} isDark — true=dark, false=light, null=no signal
+   */
+  _onPageModeChange(isDark) {
+    this._pageMode = isDark;
+    if (isDark === true) {
+      this.setAttribute('data-page-mode', 'dark');
+    } else if (isDark === false) {
+      this.setAttribute('data-page-mode', 'light');
+    } else {
+      this.removeAttribute('data-page-mode');
+    }
+    if (this.shadowRoot) this._updateStyles();
   }
 
   /**
@@ -1626,19 +1698,31 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Toggle between light and dark theme.
-   * Announces the theme change to screen readers and fires no events (use attribute observation for reactivity).
+   * Toggle the resolved color mode (dark ↔ light). Writes the result to
+   * the `mode` attribute so explicit toggling overrides page and OS
+   * detection. Use this rather than setting attributes directly when
+   * implementing a theme-toggle UI.
    *
-   * @method toggleTheme
+   * @method toggleMode
    * @returns {void}
    * @example
-   * terminal.toggleTheme(); // Switches from dark to light or vice versa
+   * terminal.toggleMode();
+   */
+  toggleMode() {
+    const next = this._resolveMode() === 'dark' ? 'light' : 'dark';
+    this.setAttribute('mode', next);
+    this._announce(`${this._t('themeChangedTo')} ${next}`);
+    this._updateThemeButtonTooltip();
+  }
+
+  /**
+   * @deprecated Use {@link toggleMode} instead. Retained as an alias for
+   * backwards compatibility with 2.0.x consumers.
+   * @method toggleTheme
+   * @returns {void}
    */
   toggleTheme() {
-    this.config.theme = this.config.theme === 'dark' ? 'light' : 'dark';
-    this.setAttribute('theme', this.config.theme);
-    this._updateStyles();
-    this._announce(`${this._t('themeChangedTo')} ${this.config.theme}`);
+    this.toggleMode();
   }
 
   /**
@@ -2060,7 +2144,7 @@ class TerminalWindow extends HTMLElement {
           <div class="terminal-actions">
             <slot name="actions"></slot>
             <button class="theme-btn"
-                    title="${this._t('toggleTheme')} (${this.config.theme === 'dark' ? this._t('switchToLight') : this._t('switchToDark')})"
+                    title="${this._t('toggleTheme')} (${this._resolveMode() === 'dark' ? this._t('switchToLight') : this._t('switchToDark')})"
                     aria-label="${this._t('toggleTheme')}"
                     style="${this.config.showThemeToggle ? '' : 'display: none'}">
               <span class="theme-icon"></span>

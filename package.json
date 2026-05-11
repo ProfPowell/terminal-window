@@ -1,6 +1,6 @@
 {
   "name": "@profpowell/terminal-window",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A vanilla JavaScript web component for simulating terminal consoles with customizable commands, themes, and typing effects. Perfect for tutorials, documentation, and interactive demos.",
   "type": "module",
   "main": "dist/terminal-window.js",

@@ -650,6 +650,16 @@
             },
             {
               "kind": "method",
+              "name": "toggleMode",
+              "description": "Toggle the resolved color mode (dark ↔ light). Writes to the `mode` attribute, so explicit toggling overrides page and OS detection.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "toggleTheme",
               "description": "Toggle between light and dark theme.\nAnnounces the theme change to screen readers and fires no events (use attribute observation for reactivity).",
               "return": {
@@ -1196,8 +1206,14 @@
               "type": {
                 "text": "string"
               },
-              "description": "Color theme: \"dark\" or \"light\"",
-              "default": "dark"
+              "description": "Color theme alias for `mode` (backwards-compatible). Values: \"dark\" or \"light\""
+            },
+            {
+              "name": "mode",
+              "type": {
+                "text": "'dark'|'light'"
+              },
+              "description": "Color mode (canonical). When omitted, resolves through `theme` → page signal → prefers-color-scheme → 'light'."
             },
             {
               "name": "prompt",

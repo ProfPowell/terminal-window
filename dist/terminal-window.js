@@ -1,4 +1,4 @@
-class m {
+class b {
   constructor() {
     this.ansiColors = {
       30: "ansi-black",
@@ -36,25 +36,25 @@ class m {
    */
   parse(t, e) {
     const i = /\x1b\[([0-9;]+)m/g;
-    let s = "", r = 0, n = [], a;
+    let o = "", s = 0, r = [], a;
     for (; (a = i.exec(t)) !== null; ) {
-      if (a.index > r) {
-        const l = e(t.slice(r, a.index));
-        n.length > 0 ? s += `<span class="${n.join(" ")}">${l}</span>` : s += l;
+      if (a.index > s) {
+        const l = e(t.slice(s, a.index));
+        r.length > 0 ? o += `<span class="${r.join(" ")}">${l}</span>` : o += l;
       }
-      const c = a[1].split(";");
-      for (const l of c)
-        l === "0" ? n = [] : l === "1" ? n.push("ansi-bold") : l === "3" ? n.push("ansi-italic") : l === "4" ? n.push("ansi-underline") : this.ansiColors[l] ? (n = n.filter((o) => !o.startsWith("ansi-") || o.startsWith("ansi-bg-") || o.startsWith("ansi-bold") || o.startsWith("ansi-italic") || o.startsWith("ansi-underline")), n.push(this.ansiColors[l])) : this.ansiBgColors[l] && (n = n.filter((o) => !o.startsWith("ansi-bg-")), n.push(this.ansiBgColors[l]));
-      r = a.index + a[0].length;
+      const h = a[1].split(";");
+      for (const l of h)
+        l === "0" ? r = [] : l === "1" ? r.push("ansi-bold") : l === "3" ? r.push("ansi-italic") : l === "4" ? r.push("ansi-underline") : this.ansiColors[l] ? (r = r.filter((n) => !n.startsWith("ansi-") || n.startsWith("ansi-bg-") || n.startsWith("ansi-bold") || n.startsWith("ansi-italic") || n.startsWith("ansi-underline")), r.push(this.ansiColors[l])) : this.ansiBgColors[l] && (r = r.filter((n) => !n.startsWith("ansi-bg-")), r.push(this.ansiBgColors[l]));
+      s = a.index + a[0].length;
     }
-    if (r < t.length) {
-      const c = e(t.slice(r));
-      n.length > 0 ? s += `<span class="${n.join(" ")}">${c}</span>` : s += c;
+    if (s < t.length) {
+      const h = e(t.slice(s));
+      r.length > 0 ? o += `<span class="${r.join(" ")}">${h}</span>` : o += h;
     }
-    return s || e(t);
+    return o || e(t);
   }
 }
-class f {
+class w {
   constructor() {
     this.commands = /* @__PURE__ */ new Map(), this.aliases = /* @__PURE__ */ new Map();
   }
@@ -120,15 +120,15 @@ class f {
    */
   parse(t) {
     const e = [];
-    let i = "", s = !1, r = "";
-    for (let n = 0; n < t.length; n++) {
-      const a = t[n];
-      !s && (a === '"' || a === "'") ? (s = !0, r = a) : s && a === r ? (s = !1, r = "") : !s && a === " " ? i && (e.push(i), i = "") : i += a;
+    let i = "", o = !1, s = "";
+    for (let r = 0; r < t.length; r++) {
+      const a = t[r];
+      !o && (a === '"' || a === "'") ? (o = !0, s = a) : o && a === s ? (o = !1, s = "") : !o && a === " " ? i && (e.push(i), i = "") : i += a;
     }
     return i && e.push(i), e;
   }
 }
-class y {
+class v {
   constructor() {
     this.history = [], this.index = -1, this.storageKey = "terminal-history";
   }
@@ -211,7 +211,7 @@ class y {
     }
   }
 }
-class g {
+class _ {
   constructor() {
     this.root = {
       type: "dir",
@@ -261,28 +261,28 @@ This is a virtual file system.`);
    * @returns {string|null} Error message or null if success
    */
   mkdir(t) {
-    const e = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), i = t.split("/").pop(), s = this.resolvePathObject(e);
-    if (!s)
+    const e = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), i = t.split("/").pop(), o = this.resolvePathObject(e);
+    if (!o)
       return `mkdir: cannot create directory '${t}': No such file or directory`;
-    if (s.type !== "dir")
+    if (o.type !== "dir")
       return `mkdir: cannot create directory '${t}': Not a directory`;
-    if (s.children.has(i))
+    if (o.children.has(i))
       return `mkdir: cannot create directory '${t}': File exists`;
-    const r = {
+    const s = {
       type: "dir",
       name: i,
       children: /* @__PURE__ */ new Map(),
-      parent: s
+      parent: o
     };
-    return s.children.set(i, r), null;
+    return o.children.set(i, s), null;
   }
   /**
    * Create an empty file or update timestamp
    * @param {string} path 
    */
   touch(t) {
-    const e = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), i = t.split("/").pop(), s = this.resolvePathObject(e);
-    return !s || s.type !== "dir" ? `touch: cannot touch '${t}': No such file or directory` : (s.children.has(i) || this.writeFile(t, ""), null);
+    const e = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), i = t.split("/").pop(), o = this.resolvePathObject(e);
+    return !o || o.type !== "dir" ? `touch: cannot touch '${t}': No such file or directory` : (o.children.has(i) || this.writeFile(t, ""), null);
   }
   /**
    * Write content to a file
@@ -290,17 +290,17 @@ This is a virtual file system.`);
    * @param {string} content 
    */
   writeFile(t, e) {
-    const i = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), s = t.split("/").pop(), r = this.resolvePathObject(i);
-    if (!r || r.type !== "dir") return !1;
-    const n = {
+    const i = t.substring(0, t.lastIndexOf("/")) || (t.startsWith("/") ? "/" : "."), o = t.split("/").pop(), s = this.resolvePathObject(i);
+    if (!s || s.type !== "dir") return !1;
+    const r = {
       type: "file",
-      name: s,
+      name: o,
       content: e,
-      parent: r,
+      parent: s,
       size: e.length,
       lastModified: /* @__PURE__ */ new Date()
     };
-    return r.children.set(s, n), !0;
+    return s.children.set(o, r), !0;
   }
   /**
    * Read file content
@@ -323,8 +323,8 @@ This is a virtual file system.`);
       return `rm: cannot remove '${t}': Is a directory`;
     if (i === this.root)
       return "rm: it is dangerous to operate recursively on /";
-    const s = i.parent;
-    return s && s.children.delete(i.name), null;
+    const o = i.parent;
+    return o && o.children.delete(i.name), null;
   }
   /**
    * Helper: Resolve path string to object
@@ -335,12 +335,12 @@ This is a virtual file system.`);
     if (t === "/") return this.root;
     if (t === "~") return this.resolvePathObject("/home/user");
     let e = t.startsWith("/") ? this.root : this.cwd;
-    const i = t.split("/").filter((s) => s && s !== ".");
-    for (const s of i)
-      if (s === "..")
+    const i = t.split("/").filter((o) => o && o !== ".");
+    for (const o of i)
+      if (o === "..")
         e = e.parent || this.root;
-      else if (e.type === "dir" && e.children.has(s))
-        e = e.children.get(s);
+      else if (e.type === "dir" && e.children.has(o))
+        e = e.children.get(o);
       else
         return null;
     return e;
@@ -357,10 +357,48 @@ This is a virtual file system.`);
     return "/" + e.join("/");
   }
 }
-const b = `
+const x = `
   :host {
     display: block;
     height: 100%;
+
+    /* Non-color public overrides (vb-token-aware) */
+    --terminal-window-border-radius: var(--radius-m, 8px);
+    --terminal-window-inner-radius:  var(--radius-s, 6px);
+    --terminal-window-font-family:   var(--font-mono, 'Consolas', 'Monaco', 'Courier New', monospace);
+
+    /* Default to light palette; overridden by mode/page/OS selectors below */
+    --_tw-bg:           var(--color-surface,         #fafafa);
+    --_tw-header-bg:    var(--color-surface-raised,  #e8e8e8);
+    --_tw-secondary-bg: var(--color-surface-raised,  #f0f0f0);
+    --_tw-border-color: var(--color-border,          #d0d0d0);
+    --_tw-text-color:   var(--color-text,            #333);
+    --_tw-text-muted:   var(--color-text-muted,      #666);
+    color-scheme: light;
+  }
+
+  :host([mode="dark"]),
+  :host([theme="dark"]),
+  :host([data-page-mode="dark"]:not([mode]):not([theme])) {
+    --_tw-bg:           var(--color-surface,         #1a1a2e);
+    --_tw-header-bg:    var(--color-surface-raised,  #0f0f23);
+    --_tw-secondary-bg: var(--color-surface-raised,  #16213e);
+    --_tw-border-color: var(--color-border,          #2a2a4a);
+    --_tw-text-color:   var(--color-text,            #e0e0e0);
+    --_tw-text-muted:   var(--color-text-muted,      #888);
+    color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :host(:not([mode]):not([theme]):not([data-page-mode])) {
+      --_tw-bg:           var(--color-surface,         #1a1a2e);
+      --_tw-header-bg:    var(--color-surface-raised,  #0f0f23);
+      --_tw-secondary-bg: var(--color-surface-raised,  #16213e);
+      --_tw-border-color: var(--color-border,          #2a2a4a);
+      --_tw-text-color:   var(--color-text,            #e0e0e0);
+      --_tw-text-muted:   var(--color-text-muted,      #888);
+      color-scheme: dark;
+    }
   }
 
   * {
@@ -395,108 +433,108 @@ const b = `
 
   /* ===== DARK THEME ===== */
   .terminal[data-theme="dark"] {
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-header: #0f0f23;
-    --border-color: #2a2a4a;
-    --text-primary: #e0e0e0;
-    --text-secondary: #888;
-    --text-muted: #666;
+    --bg-primary:   var(--terminal-window-bg,           var(--_tw-bg,           #1a1a2e));
+    --bg-secondary: var(--terminal-window-secondary-bg, var(--_tw-secondary-bg, #16213e));
+    --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #0f0f23));
+    --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #2a2a4a));
+    --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #e0e0e0));
+    --text-secondary: var(--terminal-window-text-secondary, #888);
+    --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #666));
 
-    --prompt-color: #50fa7b;
-    --cursor-color: #50fa7b;
-    --command-color: #f8f8f2;
-    --output-color: #e0e0e0;
-    --error-color: #ff5555;
-    --info-color: #8be9fd;
-    --success-color: #50fa7b;
+    --prompt-color:   var(--terminal-window-prompt-color,   #50fa7b);
+    --cursor-color:   var(--terminal-window-cursor-color,   #50fa7b);
+    --command-color:  var(--terminal-window-command-color,  #f8f8f2);
+    --output-color:   var(--terminal-window-output-color,   #e0e0e0);
+    --error-color:    var(--terminal-window-error-color,    #ff5555);
+    --info-color:     var(--terminal-window-info-color,     #8be9fd);
+    --success-color:  var(--terminal-window-success-color,  #50fa7b);
 
-    --selection-bg: rgba(80, 250, 123, 0.3);
+    --selection-bg:   var(--terminal-window-selection-bg,   rgba(80, 250, 123, 0.3));
 
-    --btn-bg: #2a2a4a;
-    --btn-hover: #3a3a5a;
-    --btn-text: #e0e0e0;
+    --btn-bg:         var(--terminal-window-btn-bg,         #2a2a4a);
+    --btn-hover:      var(--terminal-window-btn-hover-bg,   #3a3a5a);
+    --btn-text:       var(--terminal-window-btn-text,       #e0e0e0);
 
-    --scrollbar-track: #1a1a2e;
-    --scrollbar-thumb: #3a3a5a;
-    --scrollbar-thumb-hover: #4a4a6a;
+    --scrollbar-track:        var(--terminal-window-scrollbar-track,        #1a1a2e);
+    --scrollbar-thumb:        var(--terminal-window-scrollbar-thumb,        #3a3a5a);
+    --scrollbar-thumb-hover:  var(--terminal-window-scrollbar-thumb-hover,  #4a4a6a);
 
-    --control-close: #ff5f56;
-    --control-minimize: #ffbd2e;
-    --control-maximize: #27c93f;
+    --control-close:    var(--terminal-window-control-close,    #ff5f56);
+    --control-minimize: var(--terminal-window-control-minimize, #ffbd2e);
+    --control-maximize: var(--terminal-window-control-maximize, #27c93f);
 
     --theme-icon: "\\263E"; /* Moon */
 
     /* ANSI colors */
-    --ansi-black: #21222c;
-    --ansi-red: #ff5555;
-    --ansi-green: #50fa7b;
-    --ansi-yellow: #f1fa8c;
-    --ansi-blue: #bd93f9;
-    --ansi-magenta: #ff79c6;
-    --ansi-cyan: #8be9fd;
-    --ansi-white: #f8f8f2;
-    --ansi-bright-black: #6272a4;
-    --ansi-bright-red: #ff6e6e;
-    --ansi-bright-green: #69ff94;
-    --ansi-bright-yellow: #ffffa5;
-    --ansi-bright-blue: #d6acff;
-    --ansi-bright-magenta: #ff92df;
-    --ansi-bright-cyan: #a4ffff;
-    --ansi-bright-white: #ffffff;
+    --ansi-black:          var(--terminal-window-ansi-black,          #21222c);
+    --ansi-red:            var(--terminal-window-ansi-red,            #ff5555);
+    --ansi-green:          var(--terminal-window-ansi-green,          #50fa7b);
+    --ansi-yellow:         var(--terminal-window-ansi-yellow,         #f1fa8c);
+    --ansi-blue:           var(--terminal-window-ansi-blue,           #bd93f9);
+    --ansi-magenta:        var(--terminal-window-ansi-magenta,        #ff79c6);
+    --ansi-cyan:           var(--terminal-window-ansi-cyan,           #8be9fd);
+    --ansi-white:          var(--terminal-window-ansi-white,          #f8f8f2);
+    --ansi-bright-black:   var(--terminal-window-ansi-bright-black,   #6272a4);
+    --ansi-bright-red:     var(--terminal-window-ansi-bright-red,     #ff6e6e);
+    --ansi-bright-green:   var(--terminal-window-ansi-bright-green,   #69ff94);
+    --ansi-bright-yellow:  var(--terminal-window-ansi-bright-yellow,  #ffffa5);
+    --ansi-bright-blue:    var(--terminal-window-ansi-bright-blue,    #d6acff);
+    --ansi-bright-magenta: var(--terminal-window-ansi-bright-magenta, #ff92df);
+    --ansi-bright-cyan:    var(--terminal-window-ansi-bright-cyan,    #a4ffff);
+    --ansi-bright-white:   var(--terminal-window-ansi-bright-white,   #ffffff);
   }
 
   /* ===== LIGHT THEME ===== */
   .terminal[data-theme="light"] {
-    --bg-primary: #fafafa;
-    --bg-secondary: #f0f0f0;
-    --bg-header: #e8e8e8;
-    --border-color: #d0d0d0;
-    --text-primary: #333;
-    --text-secondary: #666;
-    --text-muted: #999;
+    --bg-primary:   var(--terminal-window-bg,           var(--_tw-bg,           #fafafa));
+    --bg-secondary: var(--terminal-window-secondary-bg, var(--_tw-secondary-bg, #f0f0f0));
+    --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #e8e8e8));
+    --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #d0d0d0));
+    --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #333));
+    --text-secondary: var(--terminal-window-text-secondary, #666);
+    --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #999));
 
-    --prompt-color: #16a34a;
-    --cursor-color: #16a34a;
-    --command-color: #1a1a1a;
-    --output-color: #333;
-    --error-color: #dc2626;
-    --info-color: #0284c7;
-    --success-color: #16a34a;
+    --prompt-color:   var(--terminal-window-prompt-color,   #16a34a);
+    --cursor-color:   var(--terminal-window-cursor-color,   #16a34a);
+    --command-color:  var(--terminal-window-command-color,  #1a1a1a);
+    --output-color:   var(--terminal-window-output-color,   #333);
+    --error-color:    var(--terminal-window-error-color,    #dc2626);
+    --info-color:     var(--terminal-window-info-color,     #0284c7);
+    --success-color:  var(--terminal-window-success-color,  #16a34a);
 
-    --selection-bg: rgba(22, 163, 74, 0.2);
+    --selection-bg:   var(--terminal-window-selection-bg,   rgba(22, 163, 74, 0.2));
 
-    --btn-bg: #e0e0e0;
-    --btn-hover: #d0d0d0;
-    --btn-text: #333;
+    --btn-bg:         var(--terminal-window-btn-bg,         #e0e0e0);
+    --btn-hover:      var(--terminal-window-btn-hover-bg,   #d0d0d0);
+    --btn-text:       var(--terminal-window-btn-text,       #333);
 
-    --scrollbar-track: #f0f0f0;
-    --scrollbar-thumb: #c0c0c0;
-    --scrollbar-thumb-hover: #a0a0a0;
+    --scrollbar-track:        var(--terminal-window-scrollbar-track,        #f0f0f0);
+    --scrollbar-thumb:        var(--terminal-window-scrollbar-thumb,        #c0c0c0);
+    --scrollbar-thumb-hover:  var(--terminal-window-scrollbar-thumb-hover,  #a0a0a0);
 
-    --control-close: #ff5f56;
-    --control-minimize: #ffbd2e;
-    --control-maximize: #27c93f;
+    --control-close:    var(--terminal-window-control-close,    #ff5f56);
+    --control-minimize: var(--terminal-window-control-minimize, #ffbd2e);
+    --control-maximize: var(--terminal-window-control-maximize, #27c93f);
 
     --theme-icon: "\\2600"; /* Sun */
 
     /* ANSI colors (adjusted for light theme) */
-    --ansi-black: #000000;
-    --ansi-red: #c41a16;
-    --ansi-green: #007400;
-    --ansi-yellow: #826b28;
-    --ansi-blue: #0000ff;
-    --ansi-magenta: #a90d91;
-    --ansi-cyan: #318495;
-    --ansi-white: #666666;
-    --ansi-bright-black: #666666;
-    --ansi-bright-red: #eb3223;
-    --ansi-bright-green: #1cdc23;
-    --ansi-bright-yellow: #cdcd00;
-    --ansi-bright-blue: #5c5cff;
-    --ansi-bright-magenta: #eb3eb3;
-    --ansi-bright-cyan: #23cece;
-    --ansi-bright-white: #c7c7c7;
+    --ansi-black:          var(--terminal-window-ansi-black,          #000000);
+    --ansi-red:            var(--terminal-window-ansi-red,            #c41a16);
+    --ansi-green:          var(--terminal-window-ansi-green,          #007400);
+    --ansi-yellow:         var(--terminal-window-ansi-yellow,         #826b28);
+    --ansi-blue:           var(--terminal-window-ansi-blue,           #0000ff);
+    --ansi-magenta:        var(--terminal-window-ansi-magenta,        #a90d91);
+    --ansi-cyan:           var(--terminal-window-ansi-cyan,           #318495);
+    --ansi-white:          var(--terminal-window-ansi-white,          #666666);
+    --ansi-bright-black:   var(--terminal-window-ansi-bright-black,   #666666);
+    --ansi-bright-red:     var(--terminal-window-ansi-bright-red,     #eb3223);
+    --ansi-bright-green:   var(--terminal-window-ansi-bright-green,   #1cdc23);
+    --ansi-bright-yellow:  var(--terminal-window-ansi-bright-yellow,  #cdcd00);
+    --ansi-bright-blue:    var(--terminal-window-ansi-bright-blue,    #5c5cff);
+    --ansi-bright-magenta: var(--terminal-window-ansi-bright-magenta, #eb3eb3);
+    --ansi-bright-cyan:    var(--terminal-window-ansi-bright-cyan,    #23cece);
+    --ansi-bright-white:   var(--terminal-window-ansi-bright-white,   #c7c7c7);
   }
 
   /* ANSI color classes */
@@ -873,15 +911,15 @@ const b = `
     }
   }
 
-  /* Reduced motion support */
+  /* Reduced motion support (skip if force-animations is set) */
   @media (prefers-reduced-motion: reduce) {
-    .terminal[data-cursor-blink="true"] .cursor {
+    .terminal[data-cursor-blink="true"]:not([data-force-animations="true"]) .cursor {
       animation: none;
       opacity: 1;
     }
-    .theme-btn,
-    .copy-btn,
-    .control {
+    .terminal:not([data-force-animations="true"]) .theme-btn,
+    .terminal:not([data-force-animations="true"]) .copy-btn,
+    .terminal:not([data-force-animations="true"]) .control {
       transition: none;
     }
   }
@@ -903,12 +941,57 @@ const b = `
   .terminal.fullscreen .terminal-header {
     border-radius: 0;
   }
-`;
-class p extends HTMLElement {
+`, m = /* @__PURE__ */ new Set();
+let u = null, p = null;
+function y() {
+  const c = document.documentElement, t = document.body;
+  if (!c || !t) return null;
+  if (c.classList.contains("dark") || t.classList.contains("dark") || c.getAttribute("data-theme") === "dark" || t.getAttribute("data-theme") === "dark")
+    return !0;
+  if (c.getAttribute("data-theme") === "light" || t.getAttribute("data-theme") === "light")
+    return !1;
+  if (c.getAttribute("data-bs-theme") === "dark" || t.getAttribute("data-bs-theme") === "dark")
+    return !0;
+  if (c.getAttribute("data-bs-theme") === "light" || t.getAttribute("data-bs-theme") === "light")
+    return !1;
+  if (c.getAttribute("data-mode") === "dark") return !0;
+  if (c.getAttribute("data-mode") === "light") return !1;
+  const e = getComputedStyle(c).colorScheme;
+  return e === "dark" ? !0 : e === "light" ? !1 : null;
+}
+function k() {
+  const c = y();
+  if (c !== p) {
+    p = c;
+    for (const t of m)
+      t._onPageModeChange(c);
+  }
+}
+function C() {
+  if (u) return;
+  u = new MutationObserver(k);
+  const c = {
+    attributes: !0,
+    attributeFilter: ["class", "data-theme", "data-bs-theme", "data-mode", "style"]
+  };
+  u.observe(document.documentElement, c), document.body && u.observe(document.body, c);
+}
+function S() {
+  u && (u.disconnect(), u = null);
+}
+function T(c) {
+  m.add(c), m.size === 1 && C();
+  const t = y();
+  p = t, c._onPageModeChange(t);
+}
+function M(c) {
+  m.delete(c), m.size === 0 && (S(), p = null);
+}
+class g extends HTMLElement {
   constructor() {
-    super(), this.attachShadow({ mode: "open" });
+    super(), this.attachShadow({ mode: "open" }), this._pageMode = null;
     const t = new CSSStyleSheet();
-    t.replaceSync(b), this.shadowRoot.adoptedStyleSheets = [t], this.ansiParser = new m(), this.commandRegistry = new f(), this.historyManager = new y(), this.fileSystem = new g(), this.outputLines = [], this.currentInput = "", this.inputMasked = !1, this.isFullscreen = !1, this.isMinimized = !1, this._fullscreenEscHandler = null, this._copyMenuCloseHandler = null, this._copyFeedbackTimeout = null, this._announceTimeout = null, this._copyMenuOpen = !1, this._copyMenuFocusIndex = -1, this._autoScroll = !0, this._scrollThreshold = 50, this._typingInProgress = !1, this._typingCancelled = !1, this._typingQueue = [], this.config = {
+    t.replaceSync(x), this.shadowRoot.adoptedStyleSheets = [t], this.ansiParser = new b(), this.commandRegistry = new w(), this.historyManager = new v(), this.fileSystem = new _(), this.outputLines = [], this.currentInput = "", this.inputMasked = !1, this.isFullscreen = !1, this.isMinimized = !1, this._fullscreenEscHandler = null, this._copyMenuCloseHandler = null, this._copyFeedbackTimeout = null, this._announceTimeout = null, this._copyMenuOpen = !1, this._copyMenuFocusIndex = -1, this._autoScroll = !0, this._scrollThreshold = 50, this._typingInProgress = !1, this._typingCancelled = !1, this._typingQueue = [], this._isExecuting = !1, this.config = {
       theme: "dark",
       prompt: "$ ",
       cursorStyle: "block",
@@ -978,13 +1061,14 @@ class p extends HTMLElement {
   connectedCallback() {
     this._applyAttributes(), this._setupEventListeners(), this.config.enableVfs && this._registerVfsCommands(), !this.config.readonly && this.hasAttribute("autofocus") && this._focusInput();
     const t = this.getAttribute("welcome");
-    t && this.print(t), this._announce(this._t("terminalReady"));
+    t && this.print(t), this._announce(this._t("terminalReady")), T(this);
   }
   disconnectedCallback() {
-    this._fullscreenEscHandler && (document.removeEventListener("keydown", this._fullscreenEscHandler), this._fullscreenEscHandler = null), this._copyMenuCloseHandler && (document.removeEventListener("click", this._copyMenuCloseHandler), this._copyMenuCloseHandler = null), this._copyFeedbackTimeout && (clearTimeout(this._copyFeedbackTimeout), this._copyFeedbackTimeout = null), this._announceTimeout && (clearTimeout(this._announceTimeout), this._announceTimeout = null);
+    M(this), this._fullscreenEscHandler && (document.removeEventListener("keydown", this._fullscreenEscHandler), this._fullscreenEscHandler = null), this._copyMenuCloseHandler && (document.removeEventListener("click", this._copyMenuCloseHandler), this._copyMenuCloseHandler = null), this._copyFeedbackTimeout && (clearTimeout(this._copyFeedbackTimeout), this._copyFeedbackTimeout = null), this._announceTimeout && (clearTimeout(this._announceTimeout), this._announceTimeout = null);
   }
   static get observedAttributes() {
     return [
+      "mode",
       "theme",
       "prompt",
       "cursor-style",
@@ -1009,8 +1093,11 @@ class p extends HTMLElement {
   attributeChangedCallback(t, e, i) {
     if (e !== i) {
       switch (t) {
+        case "mode":
+          this.config.mode = i || null, this._updateStyles();
+          break;
         case "theme":
-          this.config.theme = i || "dark";
+          this.config.theme = i || "dark", this._updateStyles();
           break;
         case "prompt":
           this.config.prompt = i || "$ ";
@@ -1074,19 +1161,48 @@ class p extends HTMLElement {
    * Apply initial attributes
    */
   _applyAttributes() {
-    p.observedAttributes.forEach((e) => {
+    g.observedAttributes.forEach((e) => {
       const i = this.getAttribute(e);
       i !== null && this.attributeChangedCallback(e, null, i);
     }), this._updateStyles();
   }
   /**
-   * Update dynamic styles
+   * Update dynamic styles. The inner element's `data-theme` is always set
+   * to the *resolved* mode from `_resolveMode()` (never the raw `mode` or
+   * `theme` attribute value), so CSS selectors like `.terminal[data-theme]`
+   * see a consistent `'dark'` or `'light'` regardless of which input
+   * channel (attribute / page signal / OS preference) determined it.
    */
   _updateStyles() {
     const t = this.shadowRoot.querySelector(".terminal");
-    t && (t.dataset.theme = this.config.theme, t.dataset.cursorStyle = this.config.cursorStyle, t.dataset.cursorBlink = this.config.cursorBlink, t.dataset.readonly = this.config.readonly, t.style.setProperty("--font-family", this.config.fontFamily), t.style.setProperty("--font-size", this.config.fontSize), t.style.setProperty("--line-height", this.config.lineHeight));
+    t && (t.dataset.theme = this._resolveMode(), t.dataset.cursorStyle = this.config.cursorStyle, t.dataset.cursorBlink = this.config.cursorBlink, t.dataset.readonly = this.config.readonly, t.dataset.forceAnimations = this.config.forceAnimations, t.style.setProperty("--font-family", this.config.fontFamily), t.style.setProperty("--font-size", this.config.fontSize), t.style.setProperty("--line-height", this.config.lineHeight));
     const e = this.shadowRoot.querySelector(".input-prompt");
     e && (e.textContent = this.config.prompt);
+  }
+  /**
+   * Resolve the active color mode using priority:
+   *   1. explicit `mode` attribute
+   *   2. legacy `theme` attribute (alias)
+   *   3. page-level signal (set by page-mode-detect)
+   *   4. OS prefers-color-scheme
+   *   5. 'light' as final fallback (matches family pattern)
+   * @returns {'dark'|'light'}
+   */
+  _resolveMode() {
+    const t = this.getAttribute("mode");
+    if (t === "dark" || t === "light") return t;
+    const e = this.getAttribute("theme");
+    return e === "dark" || e === "light" ? e : this._pageMode === !0 ? "dark" : this._pageMode === !1 ? "light" : typeof window < "u" && window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  /**
+   * Called by the page-mode observer when the page's resolved dark/light
+   * signal changes. Reflects the state to `data-page-mode` on the host so
+   * the :host([data-page-mode=…]) CSS selector applies, then triggers a
+   * style refresh so the inner .terminal[data-theme] mirror updates.
+   * @param {boolean|null} isDark — true=dark, false=light, null=no signal
+   */
+  _onPageModeChange(t) {
+    this._pageMode = t, t === !0 ? this.setAttribute("data-page-mode", "dark") : t === !1 ? this.setAttribute("data-page-mode", "light") : this.removeAttribute("data-page-mode"), this.shadowRoot && this._updateStyles();
   }
   /**
    * Update header visibility
@@ -1136,13 +1252,13 @@ class p extends HTMLElement {
   _registerVfsCommands() {
     this.registerCommand("ls", (t) => {
       const e = this.fileSystem.ls(t[0]);
-      return typeof e == "string" ? e : e.map((s) => s.type === "dir" ? `\x1B[1;34m${s.name}/\x1B[0m` : s.name).join("  ");
+      return typeof e == "string" ? e : e.map((o) => o.type === "dir" ? `\x1B[1;34m${o.name}/\x1B[0m` : o.name).join("  ");
     }), this.registerCommand("cd", (t) => {
       const e = this.fileSystem.cd(t[0]);
       return e || (this.setPrompt(`user@host:${this.fileSystem.getcwd()}$ `), null);
     }), this.registerCommand("pwd", () => this.fileSystem.getcwd()), this.registerCommand("mkdir", (t) => t[0] ? this.fileSystem.mkdir(t[0]) : "mkdir: missing operand"), this.registerCommand("touch", (t) => t[0] ? this.fileSystem.touch(t[0]) : "touch: missing operand"), this.registerCommand("rm", (t) => {
       if (!t[0]) return "rm: missing operand";
-      const e = t.includes("-r") || t.includes("-rf"), i = t.find((s) => !s.startsWith("-"));
+      const e = t.includes("-r") || t.includes("-rf"), i = t.find((o) => !o.startsWith("-"));
       return i ? this.fileSystem.rm(i, e) : "rm: missing operand";
     }), this.registerCommand("cat", (t) => t[0] ? this.fileSystem.readFile(t[0]) : "cat: missing operand");
   }
@@ -1228,37 +1344,52 @@ ${t.map((e) => `  ${e}`).join(`
    */
   async executeCommand(t, e = !0) {
     const i = t.trim();
-    if (!i) return;
-    e && this.historyManager.add(i), this._printCommandLine(i);
-    const s = this.commandRegistry.resolveAlias(i), r = this.commandRegistry.parse(s), n = r[0].toLowerCase(), a = r.slice(1), c = this.commandRegistry.get(n);
-    if (c)
+    if (i && !this._isExecuting) {
+      this._isExecuting = !0, this._setInputLineVisible(!1);
       try {
-        const l = await c(a, this);
-        l != null && await this.print(String(l)), this.dispatchEvent(new CustomEvent("command-result", {
-          detail: { command: n, args: a, input: i, result: l },
+        e && this.historyManager.add(i), this._printCommandLine(i);
+        const o = this.commandRegistry.resolveAlias(i), s = this.commandRegistry.parse(o), r = s[0].toLowerCase(), a = s.slice(1), h = this.commandRegistry.get(r);
+        if (h)
+          try {
+            const l = await h(a, this);
+            l != null && await this.print(String(l)), this.dispatchEvent(new CustomEvent("command-result", {
+              detail: { command: r, args: a, input: i, result: l },
+              bubbles: !0,
+              composed: !0
+            }));
+          } catch (l) {
+            await this.print(`Error: ${l.message}`, "error"), this.dispatchEvent(new CustomEvent("command-error", {
+              detail: { command: r, args: a, input: i, error: l },
+              bubbles: !0,
+              composed: !0
+            }));
+          }
+        else {
+          const l = `${this._t("commandNotFound")} ${r}. ${this._t("typeHelpForCommands")}`;
+          await this.print(l, "error"), this.dispatchEvent(new CustomEvent("command-error", {
+            detail: { command: r, args: a, input: i, error: new Error(l) },
+            bubbles: !0,
+            composed: !0
+          }));
+        }
+        this.dispatchEvent(new CustomEvent("command", {
+          detail: { command: r, args: a, input: i },
           bubbles: !0,
           composed: !0
         }));
-      } catch (l) {
-        await this.print(`Error: ${l.message}`, "error"), this.dispatchEvent(new CustomEvent("command-error", {
-          detail: { command: n, args: a, input: i, error: l },
-          bubbles: !0,
-          composed: !0
-        }));
+      } finally {
+        this._isExecuting = !1, this._setInputLineVisible(!0), this._scrollToBottom();
       }
-    else {
-      const l = `${this._t("commandNotFound")} ${n}. ${this._t("typeHelpForCommands")}`;
-      await this.print(l, "error"), this.dispatchEvent(new CustomEvent("command-error", {
-        detail: { command: n, args: a, input: i, error: new Error(l) },
-        bubbles: !0,
-        composed: !0
-      }));
     }
-    this.dispatchEvent(new CustomEvent("command", {
-      detail: { command: n, args: a, input: i },
-      bubbles: !0,
-      composed: !0
-    }));
+  }
+  /**
+   * Show or hide the input line.
+   * Used to hide the prompt during command execution.
+   * @private
+   */
+  _setInputLineVisible(t) {
+    const e = this.shadowRoot.querySelector(".input-line");
+    e && (e.style.display = t && !this.config.readonly ? "" : "none");
   }
   /**
    * Execute multiple commands with delays between them.
@@ -1281,8 +1412,8 @@ ${t.map((e) => `  ${e}`).join(`
    */
   async executeSequence(t, e = 1e3) {
     for (const i of t) {
-      const s = typeof i == "string" ? i : i.command, r = typeof i == "string" ? e : i.delay ?? e;
-      await this.executeCommand(s, !1), await this._delay(r);
+      const o = typeof i == "string" ? i : i.command, s = typeof i == "string" ? e : i.delay ?? e;
+      await this.executeCommand(o, !1), await this._delay(s);
     }
   }
   /**
@@ -1315,20 +1446,62 @@ ${t.map((e) => `  ${e}`).join(`
   async print(t, e = "output") {
     const i = t.split(`
 `);
-    for (const r of i) {
-      const n = {
+    for (const s of i) {
+      const r = {
         type: e,
-        content: r
+        content: s
       };
-      this.outputLines.push(n), this.dispatchEvent(new CustomEvent("output", {
-        detail: { type: e, content: r },
+      this.outputLines.push(r), this.dispatchEvent(new CustomEvent("output", {
+        detail: { type: e, content: s },
         bubbles: !0,
         composed: !0
-      })), (!this.config.typingEffect || e === "command" || this._prefersReducedMotion()) && this._appendLineToDom(n);
+      })), (!this.config.typingEffect || e === "command" || this._prefersReducedMotion()) && this._appendLineToDom(r);
     }
-    this.config.typingEffect && e !== "command" && !this._prefersReducedMotion() && (this._typingInProgress ? await new Promise((r) => {
-      this._typingQueue.push({ lines: i, type: e, resolve: r });
+    this.config.typingEffect && e !== "command" && !this._prefersReducedMotion() && (this._typingInProgress ? await new Promise((s) => {
+      this._typingQueue.push({ lines: i, type: e, resolve: s });
     }) : (await this._renderWithTypingEffect(i, e), await this._processTypingQueue())), this._trimOutputIfNeeded(), this._scrollToBottom(), e === "error" && this._announce(`Error: ${t}`);
+  }
+  /**
+   * Update the last output line in place.
+   * Useful for progress bars, countdowns, and other dynamic content that
+   * should update on a single line rather than adding new lines.
+   *
+   * @method updateLastLine
+   * @param {string} text - New text content for the last line
+   * @returns {boolean} True if a line was updated, false if no output lines exist
+   * @example
+   * // Progress bar that updates in place
+   * terminal.print('[          ] 0%');
+   * for (let i = 1; i <= 10; i++) {
+   *   await delay(200);
+   *   const bar = '█'.repeat(i) + ' '.repeat(10 - i);
+   *   terminal.updateLastLine(`[${bar}] ${i * 10}%`);
+   * }
+   *
+   * // Countdown timer
+   * terminal.print('Starting in 3...');
+   * await delay(1000);
+   * terminal.updateLastLine('Starting in 2...');
+   * await delay(1000);
+   * terminal.updateLastLine('Starting in 1...');
+   */
+  updateLastLine(t) {
+    let e = -1;
+    for (let s = this.outputLines.length - 1; s >= 0; s--)
+      if (this.outputLines[s].type !== "command") {
+        e = s;
+        break;
+      }
+    if (e === -1)
+      return !1;
+    const i = this.outputLines[e];
+    i.content = t;
+    const o = this.shadowRoot.querySelector(".output");
+    if (o) {
+      const s = o.querySelectorAll(".output-line"), r = e;
+      s[r] && (s[r].innerHTML = this._parseAnsi(t));
+    }
+    return this._scrollToBottom(), !0;
   }
   /**
    * Check if user prefers reduced motion
@@ -1359,30 +1532,30 @@ ${t.map((e) => `  ${e}`).join(`
    */
   async _renderWithTypingEffect(t, e) {
     this._typingInProgress = !0, this._typingCancelled = !1;
-    const i = this.shadowRoot.querySelector(".output"), s = this.shadowRoot.querySelector(".input-line .cursor");
-    s && (s.style.visibility = "hidden");
-    const r = document.createElement("span");
-    r.className = "typing-cursor";
-    for (const n of t) {
+    const i = this.shadowRoot.querySelector(".output"), o = this.shadowRoot.querySelector(".input-line .cursor");
+    o && (o.style.visibility = "hidden");
+    const s = document.createElement("span");
+    s.className = "typing-cursor";
+    for (const r of t) {
       if (this._typingCancelled) {
-        const l = t.indexOf(n);
-        for (let o = l; o < t.length; o++)
-          this._appendLineToDom({ type: e, content: t[o] });
+        const l = t.indexOf(r);
+        for (let n = l; n < t.length; n++)
+          this._appendLineToDom({ type: e, content: t[n] });
         break;
       }
       const a = document.createElement("div");
       a.className = `output-line line-${e}`, a.setAttribute("role", "listitem"), i.appendChild(a);
-      let c = "";
-      for (let l = 0; l < n.length; l++) {
+      let h = "";
+      for (let l = 0; l < r.length; l++) {
         if (this._typingCancelled) {
-          a.innerHTML = this._parseAnsi(n);
+          a.innerHTML = this._parseAnsi(r);
           break;
         }
-        c += n[l], a.innerHTML = this._parseAnsi(c), a.appendChild(r), this._scrollToBottom(), await this._delay(this.config.typingSpeed);
+        h += r[l], a.innerHTML = this._parseAnsi(h), a.appendChild(s), this._scrollToBottom(), await this._delay(this.config.typingSpeed);
       }
-      r.parentNode === a && a.removeChild(r);
+      s.parentNode === a && a.removeChild(s);
     }
-    s && (s.style.visibility = "visible"), this._typingInProgress = !1, this._typingCancelled = !1;
+    o && (o.style.visibility = "visible"), this._typingInProgress = !1, this._typingCancelled = !1;
   }
   /**
    * Skip the current typing animation and show all remaining output immediately.
@@ -1499,66 +1672,66 @@ ${t.map((e) => `  ${e}`).join(`
     const t = this.shadowRoot.querySelector(".hidden-input"), e = this.shadowRoot.querySelector(".terminal"), i = this.shadowRoot.querySelector(".terminal-body");
     i && i.addEventListener("scroll", () => this._handleScroll()), e.addEventListener("click", () => {
       if (this._typingInProgress && this.skipTypingEffect(), !this.config.readonly) {
-        const o = this.shadowRoot.getSelection ? this.shadowRoot.getSelection() : window.getSelection();
-        o && o.toString().length > 0 || this._focusInput();
+        const n = this.shadowRoot.getSelection ? this.shadowRoot.getSelection() : window.getSelection();
+        n && n.toString().length > 0 || this._focusInput();
       }
-    }), t.addEventListener("input", (o) => {
-      this.currentInput = o.target.value, this._updateInputDisplay();
-    }), t.addEventListener("keydown", (o) => {
+    }), t.addEventListener("input", (n) => {
+      this.currentInput = n.target.value, this._updateInputDisplay();
+    }), t.addEventListener("keydown", (n) => {
       if (!this.config.readonly)
-        switch (o.key) {
+        switch (n.key) {
           case "Enter":
-            o.preventDefault();
-            const h = this.currentInput;
-            this.currentInput = "", t.value = "", this._updateInputDisplay(), this.executeCommand(h);
+            n.preventDefault();
+            const d = this.currentInput;
+            this.currentInput = "", t.value = "", this._updateInputDisplay(), this.executeCommand(d);
             break;
           case "ArrowUp":
-            o.preventDefault(), this._navigateHistory(-1);
+            n.preventDefault(), this._navigateHistory(-1);
             break;
           case "ArrowDown":
-            o.preventDefault(), this._navigateHistory(1);
+            n.preventDefault(), this._navigateHistory(1);
             break;
           case "Tab":
-            o.preventDefault(), this._autocomplete();
+            n.preventDefault(), this._autocomplete();
             break;
           case "c":
-            o.ctrlKey && (o.preventDefault(), this._typingInProgress ? this.skipTypingEffect() : (this._printCommandLine(this.currentInput + "^C"), this.currentInput = "", t.value = "", this._updateInputDisplay()), this.dispatchEvent(new CustomEvent("interrupt", { bubbles: !0, composed: !0 })));
+            n.ctrlKey && (n.preventDefault(), this._typingInProgress ? this.skipTypingEffect() : (this._printCommandLine(this.currentInput + "^C"), this.currentInput = "", t.value = "", this._updateInputDisplay()), this.dispatchEvent(new CustomEvent("interrupt", { bubbles: !0, composed: !0 })));
             break;
           case "l":
-            o.ctrlKey && (o.preventDefault(), this.clear());
+            n.ctrlKey && (n.preventDefault(), this.clear());
             break;
         }
     });
-    const s = this.shadowRoot.querySelector(".copy-btn"), r = this.shadowRoot.querySelector(".copy-menu");
-    s && r && (s.addEventListener("click", (o) => {
-      o.detail === 1 && this.copyContent("all");
-    }), s.addEventListener("contextmenu", (o) => {
-      o.preventDefault(), this._toggleCopyMenu();
-    }), s.addEventListener("keydown", (o) => {
-      o.key === "Enter" || o.key === " " || o.key === "ArrowDown" && (o.preventDefault(), this._openCopyMenu());
-    }), r.querySelectorAll(".copy-menu-item").forEach((o) => {
-      o.addEventListener("click", (h) => {
-        h.stopPropagation();
-        const d = o.dataset.copyMode;
-        this.copyContent(d), this._closeCopyMenu();
-      }), o.addEventListener("keydown", (h) => {
-        if (h.key === "Enter" || h.key === " ") {
-          h.preventDefault();
-          const d = o.dataset.copyMode;
-          this.copyContent(d), this._closeCopyMenu();
+    const o = this.shadowRoot.querySelector(".copy-btn"), s = this.shadowRoot.querySelector(".copy-menu");
+    o && s && (o.addEventListener("click", (n) => {
+      n.detail === 1 && this.copyContent("all");
+    }), o.addEventListener("contextmenu", (n) => {
+      n.preventDefault(), this._toggleCopyMenu();
+    }), o.addEventListener("keydown", (n) => {
+      n.key === "Enter" || n.key === " " || n.key === "ArrowDown" && (n.preventDefault(), this._openCopyMenu());
+    }), s.querySelectorAll(".copy-menu-item").forEach((n) => {
+      n.addEventListener("click", (d) => {
+        d.stopPropagation();
+        const f = n.dataset.copyMode;
+        this.copyContent(f), this._closeCopyMenu();
+      }), n.addEventListener("keydown", (d) => {
+        if (d.key === "Enter" || d.key === " ") {
+          d.preventDefault();
+          const f = n.dataset.copyMode;
+          this.copyContent(f), this._closeCopyMenu();
         } else
-          this._handleCopyMenuKeydown(h);
+          this._handleCopyMenuKeydown(d);
       });
     }));
-    const n = this.shadowRoot.querySelector(".theme-btn");
-    n && n.addEventListener("click", () => this.toggleTheme());
-    const a = this.shadowRoot.querySelector(".control.close"), c = this.shadowRoot.querySelector(".control.minimize"), l = this.shadowRoot.querySelector(".control.maximize");
-    a && a.addEventListener("click", (o) => {
-      o.stopPropagation(), this.close();
-    }), c && c.addEventListener("click", (o) => {
-      o.stopPropagation(), this.minimize();
-    }), l && l.addEventListener("click", (o) => {
-      o.stopPropagation(), this.toggleFullscreen();
+    const r = this.shadowRoot.querySelector(".theme-btn");
+    r && r.addEventListener("click", () => this.toggleTheme());
+    const a = this.shadowRoot.querySelector(".control.close"), h = this.shadowRoot.querySelector(".control.minimize"), l = this.shadowRoot.querySelector(".control.maximize");
+    a && a.addEventListener("click", (n) => {
+      n.stopPropagation(), this.close();
+    }), h && h.addEventListener("click", (n) => {
+      n.stopPropagation(), this.minimize();
+    }), l && l.addEventListener("click", (n) => {
+      n.stopPropagation(), this.toggleFullscreen();
     });
   }
   /**
@@ -1578,11 +1751,11 @@ ${t.map((e) => `  ${e}`).join(`
   _autocomplete() {
     const t = this.currentInput.split(" "), e = t[0].toLowerCase();
     if (t.length === 1 && e) {
-      const i = this.commandRegistry.getNames().filter((s) => s.startsWith(e));
+      const i = this.commandRegistry.getNames().filter((o) => o.startsWith(e));
       if (i.length === 1) {
         this.currentInput = i[0];
-        const s = this.shadowRoot.querySelector(".hidden-input");
-        s.value = this.currentInput, this._updateInputDisplay();
+        const o = this.shadowRoot.querySelector(".hidden-input");
+        o.value = this.currentInput, this._updateInputDisplay();
       } else i.length > 1 && this.print(i.join("  "), "info");
     }
   }
@@ -1628,11 +1801,11 @@ ${t.map((e) => `  ${e}`).join(`
     let e;
     switch (t) {
       case "commands":
-        e = this.outputLines.filter((s) => s.type === "command").map((s) => s.content).join(`
+        e = this.outputLines.filter((o) => o.type === "command").map((o) => o.content).join(`
 `);
         break;
       case "output":
-        e = this.outputLines.filter((s) => s.type !== "command").map((s) => s.content).join(`
+        e = this.outputLines.filter((o) => o.type !== "command").map((o) => o.content).join(`
 `);
         break;
       case "selection":
@@ -1643,7 +1816,7 @@ ${t.map((e) => `  ${e}`).join(`
         }
         break;
       default:
-        e = this.outputLines.map((s) => s.type === "command" ? `${s.prompt}${s.content}` : s.content).join(`
+        e = this.outputLines.map((o) => o.type === "command" ? `${o.prompt}${o.content}` : o.content).join(`
 `);
     }
     if (!e) {
@@ -1656,12 +1829,12 @@ ${t.map((e) => `  ${e}`).join(`
    * Internal method to copy text to clipboard
    */
   async _copyToClipboard(t, e = "all") {
-    const s = `${e === "all" ? this._t("content") : e.charAt(0).toUpperCase() + e.slice(1)} ${this._t("copiedToClipboard")}`;
+    const o = `${e === "all" ? this._t("content") : e.charAt(0).toUpperCase() + e.slice(1)} ${this._t("copiedToClipboard")}`;
     try {
-      await navigator.clipboard.writeText(t), this._showCopyFeedback(this._t("copied")), this._announce(s);
+      await navigator.clipboard.writeText(t), this._showCopyFeedback(this._t("copied")), this._announce(o);
     } catch {
-      const n = document.createElement("textarea");
-      n.value = t, n.style.position = "fixed", n.style.opacity = "0", document.body.appendChild(n), n.select(), document.execCommand("copy"), document.body.removeChild(n), this._showCopyFeedback(this._t("copied")), this._announce(s);
+      const r = document.createElement("textarea");
+      r.value = t, r.style.position = "fixed", r.style.opacity = "0", document.body.appendChild(r), r.select(), document.execCommand("copy"), document.body.removeChild(r), this._showCopyFeedback(this._t("copied")), this._announce(o);
     }
     this.dispatchEvent(new CustomEvent("copy", {
       detail: { text: t, mode: e },
@@ -1683,8 +1856,8 @@ ${t.map((e) => `  ${e}`).join(`
     if (!t) return;
     t.style.display = "block", this._copyMenuOpen = !0, this._copyMenuFocusIndex = 0, e && e.setAttribute("aria-expanded", "true");
     const i = t.querySelectorAll(".copy-menu-item");
-    i.length > 0 && i[0].focus(), this._copyMenuCloseHandler = (s) => {
-      !s.composedPath().includes(t) && !s.composedPath().includes(e) && this._closeCopyMenu();
+    i.length > 0 && i[0].focus(), this._copyMenuCloseHandler = (o) => {
+      !o.composedPath().includes(t) && !o.composedPath().includes(e) && this._closeCopyMenu();
     }, setTimeout(() => document.addEventListener("click", this._copyMenuCloseHandler), 0);
   }
   /**
@@ -1735,16 +1908,28 @@ ${t.map((e) => `  ${e}`).join(`
     }, 1500);
   }
   /**
-   * Toggle between light and dark theme.
-   * Announces the theme change to screen readers and fires no events (use attribute observation for reactivity).
+   * Toggle the resolved color mode (dark ↔ light). Writes the result to
+   * the `mode` attribute so explicit toggling overrides page and OS
+   * detection. Use this rather than setting attributes directly when
+   * implementing a theme-toggle UI.
    *
-   * @method toggleTheme
+   * @method toggleMode
    * @returns {void}
    * @example
-   * terminal.toggleTheme(); // Switches from dark to light or vice versa
+   * terminal.toggleMode();
+   */
+  toggleMode() {
+    const t = this._resolveMode() === "dark" ? "light" : "dark";
+    this.setAttribute("mode", t), this._announce(`${this._t("themeChangedTo")} ${t}`);
+  }
+  /**
+   * @deprecated Use {@link toggleMode} instead. Retained as an alias for
+   * backwards compatibility with 2.0.x consumers.
+   * @method toggleTheme
+   * @returns {void}
    */
   toggleTheme() {
-    this.config.theme = this.config.theme === "dark" ? "light" : "dark", this.setAttribute("theme", this.config.theme), this._updateStyles(), this._announce(`${this._t("themeChangedTo")} ${this.config.theme}`);
+    this.toggleMode();
   }
   /**
    * Close the terminal by hiding it.
@@ -2122,8 +2307,8 @@ ${t.map((e) => `  ${e}`).join(`
     `;
   }
 }
-customElements.get("terminal-window") || customElements.define("terminal-window", p);
+customElements.get("terminal-window") || customElements.define("terminal-window", g);
 export {
-  p as default
+  g as default
 };
 //# sourceMappingURL=terminal-window.js.map

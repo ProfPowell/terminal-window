@@ -254,6 +254,63 @@ terminal-window::part(cursor) {
 
 Available parts: `terminal`, `header`, `controls`, `title`, `body`, `output`, `input-line`, `prompt`, `cursor`
 
+## Vanilla Breeze integration
+
+`<terminal-window>` is design-token-aware. When a parent page sets vanilla-breeze tokens, the terminal picks them up automatically; explicit `--terminal-window-*` overrides always win.
+
+### Theme resolution
+
+The color mode is resolved in priority order:
+
+1. `mode="dark"` or `mode="light"` attribute (canonical)
+2. `theme="dark"` or `theme="light"` attribute (backwards-compatible alias)
+3. Page-level signal on `<html>` or `<body>`: `class="dark"`, `data-theme`, `data-bs-theme`, `data-mode`, computed `color-scheme`
+4. OS `@media (prefers-color-scheme: dark)`
+5. `light` as final fallback
+
+A built-in `MutationObserver` updates the terminal reactively when any page-level signal changes.
+
+### Tokens consumed
+
+Set these on a parent element (e.g. `:root` or a vanilla-breeze theme scope) and the terminal picks them up:
+
+| vb token | Used for |
+|---|---|
+| `--color-surface` | Terminal body background |
+| `--color-surface-raised` | Header and section backgrounds |
+| `--color-border` | Borders |
+| `--color-text` | Primary text |
+| `--color-text-muted` | Muted text (timestamps, labels) |
+| `--radius-m` | Outer border radius |
+| `--radius-s` | Inner element radius |
+| `--font-mono` | Default monospace font family |
+
+### Public override surface
+
+43 CSS custom properties prefixed `--terminal-window-*` let you override any slot directly. The override always wins over the vb token. Groups:
+
+- **Chrome:** `--terminal-window-bg`, `--terminal-window-header-bg`, `--terminal-window-secondary-bg`, `--terminal-window-border-color`, `--terminal-window-text-color`, `--terminal-window-text-muted`, `--terminal-window-text-secondary`, `--terminal-window-border-radius`, `--terminal-window-inner-radius`, `--terminal-window-font-family`
+- **Terminal text:** `--terminal-window-prompt-color`, `--terminal-window-cursor-color`, `--terminal-window-command-color`, `--terminal-window-output-color`, `--terminal-window-error-color`, `--terminal-window-info-color`, `--terminal-window-success-color`, `--terminal-window-selection-bg`
+- **Scrollbar:** `--terminal-window-scrollbar-{track,thumb,thumb-hover}`
+- **Buttons:** `--terminal-window-btn-{bg,hover-bg,text}`
+- **Window controls (theme-invariant):** `--terminal-window-control-{close,minimize,maximize}`
+- **ANSI 16:** `--terminal-window-ansi-{black,red,green,yellow,blue,magenta,cyan,white}` plus `--terminal-window-ansi-bright-*`
+
+### Example
+
+```html
+<style>
+  :root {
+    --color-surface: #0d1117;
+    --color-text: #c9d1d9;
+    --color-border: #30363d;
+  }
+</style>
+<terminal-window mode="dark">
+  $ npm test
+</terminal-window>
+```
+
 ## Built-in Commands
 
 - `help` - Display available commands
