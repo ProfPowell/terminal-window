@@ -26,6 +26,7 @@ export default [
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
         matchMedia: 'readonly',
+        getComputedStyle: 'readonly',
         CSSStyleSheet: 'readonly',
       },
     },
