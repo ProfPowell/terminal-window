@@ -5,6 +5,44 @@ export const styles = `
   :host {
     display: block;
     height: 100%;
+
+    /* Non-color public overrides (vb-token-aware) */
+    --terminal-window-border-radius: var(--radius-m, 8px);
+    --terminal-window-inner-radius:  var(--radius-s, 6px);
+    --terminal-window-font-family:   var(--font-mono, 'Consolas', 'Monaco', 'Courier New', monospace);
+
+    /* Default to light palette; overridden by mode/page/OS selectors below */
+    --_tw-bg:           var(--color-surface,         #fafafa);
+    --_tw-header-bg:    var(--color-surface-raised,  #e8e8e8);
+    --_tw-secondary-bg: var(--color-surface-raised,  #f0f0f0);
+    --_tw-border-color: var(--color-border,          #d0d0d0);
+    --_tw-text-color:   var(--color-text,            #333);
+    --_tw-text-muted:   var(--color-text-muted,      #666);
+    color-scheme: light;
+  }
+
+  :host([mode="dark"]),
+  :host([theme="dark"]),
+  :host([data-page-mode="dark"]:not([mode]):not([theme])) {
+    --_tw-bg:           var(--color-surface,         #1a1a2e);
+    --_tw-header-bg:    var(--color-surface-raised,  #0f0f23);
+    --_tw-secondary-bg: var(--color-surface-raised,  #16213e);
+    --_tw-border-color: var(--color-border,          #2a2a4a);
+    --_tw-text-color:   var(--color-text,            #e0e0e0);
+    --_tw-text-muted:   var(--color-text-muted,      #888);
+    color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :host(:not([mode]):not([theme]):not([data-page-mode])) {
+      --_tw-bg:           var(--color-surface,         #1a1a2e);
+      --_tw-header-bg:    var(--color-surface-raised,  #0f0f23);
+      --_tw-secondary-bg: var(--color-surface-raised,  #16213e);
+      --_tw-border-color: var(--color-border,          #2a2a4a);
+      --_tw-text-color:   var(--color-text,            #e0e0e0);
+      --_tw-text-muted:   var(--color-text-muted,      #888);
+      color-scheme: dark;
+    }
   }
 
   * {
@@ -39,13 +77,13 @@ export const styles = `
 
   /* ===== DARK THEME ===== */
   .terminal[data-theme="dark"] {
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-header: #0f0f23;
-    --border-color: #2a2a4a;
-    --text-primary: #e0e0e0;
+    --bg-primary:   var(--terminal-window-bg,           var(--_tw-bg,           #1a1a2e));
+    --bg-secondary: var(--terminal-window-secondary-bg, var(--_tw-secondary-bg, #16213e));
+    --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #0f0f23));
+    --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #2a2a4a));
+    --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #e0e0e0));
     --text-secondary: #888;
-    --text-muted: #666;
+    --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #666));
 
     --prompt-color: #50fa7b;
     --cursor-color: #50fa7b;
@@ -92,13 +130,13 @@ export const styles = `
 
   /* ===== LIGHT THEME ===== */
   .terminal[data-theme="light"] {
-    --bg-primary: #fafafa;
-    --bg-secondary: #f0f0f0;
-    --bg-header: #e8e8e8;
-    --border-color: #d0d0d0;
-    --text-primary: #333;
+    --bg-primary:   var(--terminal-window-bg,           var(--_tw-bg,           #fafafa));
+    --bg-secondary: var(--terminal-window-secondary-bg, var(--_tw-secondary-bg, #f0f0f0));
+    --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #e8e8e8));
+    --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #d0d0d0));
+    --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #333));
     --text-secondary: #666;
-    --text-muted: #999;
+    --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #999));
 
     --prompt-color: #16a34a;
     --cursor-color: #16a34a;

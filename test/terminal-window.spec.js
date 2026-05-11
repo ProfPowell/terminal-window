@@ -676,3 +676,57 @@ test.describe('vb token integration: page-mode detection', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test.describe('vb token integration: vb token consumption', () => {
+  test('--color-surface flows through to terminal background', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const bg = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'dark');
+      tw.style.setProperty('--color-surface', 'rgb(10, 20, 30)');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const inner = tw.shadowRoot.querySelector('.terminal');
+      const computed = getComputedStyle(inner).backgroundColor;
+      tw.remove();
+      return computed;
+    });
+    expect(bg).toBe('rgb(10, 20, 30)');
+  });
+
+  test('--color-border flows through to terminal border', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const border = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'dark');
+      tw.style.setProperty('--color-border', 'rgb(99, 88, 77)');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const inner = tw.shadowRoot.querySelector('.terminal');
+      const computed = getComputedStyle(inner).borderColor;
+      tw.remove();
+      return computed;
+    });
+    expect(border).toBe('rgb(99, 88, 77)');
+  });
+
+  test('--terminal-window-bg public override beats vb token', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const bg = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'dark');
+      tw.style.setProperty('--color-surface', 'rgb(255, 0, 0)');
+      tw.style.setProperty('--terminal-window-bg', 'rgb(0, 255, 0)');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const inner = tw.shadowRoot.querySelector('.terminal');
+      const computed = getComputedStyle(inner).backgroundColor;
+      tw.remove();
+      return computed;
+    });
+    expect(bg).toBe('rgb(0, 255, 0)');
+  });
+});
