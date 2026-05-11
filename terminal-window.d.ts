@@ -240,7 +240,13 @@ export default class TerminalWindow extends HTMLElement {
   setInputMask(masked: boolean): void;
 
   /**
-   * Toggle between light and dark theme
+   * Toggle the resolved color mode (dark ↔ light). Writes to the `mode`
+   * attribute, so explicit toggling overrides page and OS detection.
+   */
+  toggleMode(): void;
+  /**
+   * @deprecated Use `toggleMode()` instead. Retained as an alias for
+   * backwards compatibility with 2.0.x consumers.
    */
   toggleTheme(): void;
 

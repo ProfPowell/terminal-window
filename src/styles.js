@@ -65,7 +65,7 @@ export const styles = `
   /* ===== CSS Custom Properties (User Customizable) ===== */
   .terminal {
     /* Font settings */
-    --font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    --font-family: var(--terminal-window-font-family);
     --font-size: 14px;
     --line-height: 1.4;
 
@@ -217,7 +217,7 @@ export const styles = `
     height: 100%;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--terminal-window-border-radius);
     overflow: hidden;
     font-family: var(--font-family);
     font-size: var(--font-size);
@@ -314,7 +314,7 @@ export const styles = `
     background: var(--btn-bg);
     color: var(--btn-text);
     border: none;
-    border-radius: 4px;
+    border-radius: var(--terminal-window-inner-radius);
     cursor: pointer;
     font-size: 12px;
     font-family: inherit;
@@ -360,7 +360,7 @@ export const styles = `
     margin-top: 4px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: var(--terminal-window-inner-radius);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     min-width: 160px;
@@ -409,7 +409,7 @@ export const styles = `
 
   .terminal-body::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
-    border-radius: 4px;
+    border-radius: var(--terminal-window-inner-radius);
   }
 
   .terminal-body::-webkit-scrollbar-thumb:hover {

@@ -418,6 +418,21 @@ class TerminalWindow extends HTMLElement {
     if (promptEl) {
       promptEl.textContent = this.config.prompt;
     }
+
+    this._updateThemeButtonTooltip();
+  }
+
+  /**
+   * Refresh the theme-toggle button tooltip after a mode change so it
+   * reflects the new resolved state (e.g. "switch to light" → "switch to
+   * dark"). The tooltip text is otherwise baked in at render time.
+   */
+  _updateThemeButtonTooltip() {
+    const themeBtn = this.shadowRoot?.querySelector('.theme-btn');
+    if (!themeBtn) return;
+    const resolved = this._resolveMode();
+    const hint = resolved === 'dark' ? this._t('switchToLight') : this._t('switchToDark');
+    themeBtn.setAttribute('title', `${this._t('toggleTheme')} (${hint})`);
   }
 
   /**
@@ -1697,6 +1712,7 @@ class TerminalWindow extends HTMLElement {
     const next = this._resolveMode() === 'dark' ? 'light' : 'dark';
     this.setAttribute('mode', next);
     this._announce(`${this._t('themeChangedTo')} ${next}`);
+    this._updateThemeButtonTooltip();
   }
 
   /**
@@ -2128,7 +2144,7 @@ class TerminalWindow extends HTMLElement {
           <div class="terminal-actions">
             <slot name="actions"></slot>
             <button class="theme-btn"
-                    title="${this._t('toggleTheme')} (${this.config.theme === 'dark' ? this._t('switchToLight') : this._t('switchToDark')})"
+                    title="${this._t('toggleTheme')} (${this._resolveMode() === 'dark' ? this._t('switchToLight') : this._t('switchToDark')})"
                     aria-label="${this._t('toggleTheme')}"
                     style="${this.config.showThemeToggle ? '' : 'display: none'}">
               <span class="theme-icon"></span>

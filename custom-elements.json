@@ -650,6 +650,16 @@
             },
             {
               "kind": "method",
+              "name": "toggleMode",
+              "description": "Toggle the resolved color mode (dark ↔ light). Writes to the `mode` attribute, so explicit toggling overrides page and OS detection.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "toggleTheme",
               "description": "Toggle between light and dark theme.\nAnnounces the theme change to screen readers and fires no events (use attribute observation for reactivity).",
               "return": {
