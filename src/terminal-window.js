@@ -12,7 +12,8 @@ import { registerInstance, unregisterInstance } from './internals/page-mode-dete
  * @element terminal-window
  * @tagname terminal-window
  *
- * @attr {string} [theme=dark] - Color theme: "dark" or "light"
+ * @attr {string} [theme] - Color theme alias for `mode` (backwards-compatible). Values: "dark" or "light"
+ * @attr {'dark'|'light'} [mode] - Color mode (canonical). When omitted, resolves through `theme` → page signal → prefers-color-scheme → 'light'.
  * @attr {string} [prompt="$ "] - The command prompt text
  * @attr {string} [title=Terminal] - Title displayed in the header bar
  * @attr {string} [cursor-style=block] - Cursor shape: "block", "underline", or "bar"

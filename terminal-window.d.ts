@@ -5,7 +5,9 @@
  */
 
 export interface TerminalConfig {
-  /** Color theme: "dark" or "light" */
+  /** Color mode (canonical). Resolves through `mode` attribute → `theme` → page signal → prefers-color-scheme → 'light'. */
+  mode: 'dark' | 'light' | null;
+  /** Color theme alias for `mode`. Retained for backwards compatibility. */
   theme: 'dark' | 'light';
   /** Cursor shape */
   cursorStyle: 'block' | 'underline' | 'bar';

@@ -1196,8 +1196,14 @@
               "type": {
                 "text": "string"
               },
-              "description": "Color theme: \"dark\" or \"light\"",
-              "default": "dark"
+              "description": "Color theme alias for `mode` (backwards-compatible). Values: \"dark\" or \"light\""
+            },
+            {
+              "name": "mode",
+              "type": {
+                "text": "'dark'|'light'"
+              },
+              "description": "Color mode (canonical). When omitted, resolves through `theme` → page signal → prefers-color-scheme → 'light'."
             },
             {
               "name": "prompt",
