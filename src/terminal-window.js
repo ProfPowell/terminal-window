@@ -107,6 +107,7 @@ class TerminalWindow extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this._pageMode = null;
 
     // Adopt styles
     const sheet = new CSSStyleSheet();
@@ -281,7 +282,7 @@ class TerminalWindow extends HTMLElement {
 
   static get observedAttributes() {
     return [
-      'theme', 'prompt', 'cursor-style', 'cursor-blink',
+      'mode', 'theme', 'prompt', 'cursor-style', 'cursor-blink',
       'font-family', 'font-size', 'line-height',
       'typing-effect', 'typing-speed',
       'show-header', 'title', 'show-controls', 'show-copy', 'show-theme-toggle',
@@ -293,8 +294,13 @@ class TerminalWindow extends HTMLElement {
     if (oldValue === newValue) return;
 
     switch (name) {
+      case 'mode':
+        this.config.mode = newValue || null;
+        this._updateStyles();
+        break;
       case 'theme':
         this.config.theme = newValue || 'dark';
+        this._updateStyles();
         break;
       case 'prompt':
         this.config.prompt = newValue || '$ ';
@@ -387,7 +393,7 @@ class TerminalWindow extends HTMLElement {
   _updateStyles() {
     const terminal = this.shadowRoot.querySelector('.terminal');
     if (terminal) {
-      terminal.dataset.theme = this.config.theme;
+      terminal.dataset.theme = this._resolveMode();
       terminal.dataset.cursorStyle = this.config.cursorStyle;
       terminal.dataset.cursorBlink = this.config.cursorBlink;
       terminal.dataset.readonly = this.config.readonly;
@@ -402,6 +408,28 @@ class TerminalWindow extends HTMLElement {
     if (promptEl) {
       promptEl.textContent = this.config.prompt;
     }
+  }
+
+  /**
+   * Resolve the active color mode using priority:
+   *   1. explicit `mode` attribute
+   *   2. legacy `theme` attribute (alias)
+   *   3. page-level signal (set by page-mode-detect)
+   *   4. OS prefers-color-scheme
+   *   5. 'light' as final fallback (matches family pattern)
+   * @returns {'dark'|'light'}
+   */
+  _resolveMode() {
+    const modeAttr = this.getAttribute('mode');
+    if (modeAttr === 'dark' || modeAttr === 'light') return modeAttr;
+    const themeAttr = this.getAttribute('theme');
+    if (themeAttr === 'dark' || themeAttr === 'light') return themeAttr;
+    if (this._pageMode === true) return 'dark';
+    if (this._pageMode === false) return 'light';
+    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
   }
 
   /**

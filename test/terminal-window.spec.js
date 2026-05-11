@@ -575,3 +575,35 @@ test.describe('Terminal Window Component', () => {
     });
   });
 });
+
+test.describe('vb token integration: mode attribute', () => {
+  test('setting mode="dark" reflects to inner .terminal[data-theme]', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const terminal = page.locator('terminal-window').first();
+    await terminal.evaluate(el => el.setAttribute('mode', 'dark'));
+    const innerTheme = await terminal.evaluate(el =>
+      el.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme'));
+    expect(innerTheme).toBe('dark');
+  });
+
+  test('setting mode="light" reflects to inner .terminal[data-theme]', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const terminal = page.locator('terminal-window').first();
+    await terminal.evaluate(el => el.setAttribute('mode', 'light'));
+    const innerTheme = await terminal.evaluate(el =>
+      el.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme'));
+    expect(innerTheme).toBe('light');
+  });
+
+  test('mode wins over theme when both set', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const terminal = page.locator('terminal-window').first();
+    await terminal.evaluate(el => {
+      el.setAttribute('theme', 'dark');
+      el.setAttribute('mode', 'light');
+    });
+    const innerTheme = await terminal.evaluate(el =>
+      el.shadowRoot.querySelector('.terminal')?.getAttribute('data-theme'));
+    expect(innerTheme).toBe('light');
+  });
+});
