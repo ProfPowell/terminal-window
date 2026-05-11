@@ -730,3 +730,40 @@ test.describe('vb token integration: vb token consumption', () => {
     expect(bg).toBe('rgb(0, 255, 0)');
   });
 });
+
+test.describe('vb token integration: public overrides for terminal slots', () => {
+  test('--terminal-window-prompt-color overrides default', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const color = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.setAttribute('mode', 'dark');
+      tw.style.setProperty('--terminal-window-prompt-color', 'rgb(123, 45, 67)');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const prompt = tw.shadowRoot.querySelector('.input-prompt');
+      if (!prompt) { tw.remove(); return null; }
+      const computed = getComputedStyle(prompt).color;
+      tw.remove();
+      return computed;
+    });
+    expect(color).toBe('rgb(123, 45, 67)');
+  });
+
+  test('--terminal-window-control-close overrides traffic light', async ({ page }) => {
+    await page.goto('/test/test-page.html');
+    const color = await page.evaluate(async () => {
+      const tw = document.createElement('terminal-window');
+      tw.style.setProperty('--terminal-window-control-close', 'rgb(11, 22, 33)');
+      document.body.appendChild(tw);
+      await customElements.whenDefined('terminal-window');
+      await new Promise(r => setTimeout(r, 30));
+      const dot = tw.shadowRoot.querySelector('.control.close');
+      if (!dot) { tw.remove(); return null; }
+      const computed = getComputedStyle(dot).backgroundColor;
+      tw.remove();
+      return computed;
+    });
+    expect(color).toBe('rgb(11, 22, 33)');
+  });
+});

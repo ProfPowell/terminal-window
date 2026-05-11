@@ -82,50 +82,50 @@ export const styles = `
     --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #0f0f23));
     --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #2a2a4a));
     --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #e0e0e0));
-    --text-secondary: #888;
+    --text-secondary: var(--terminal-window-text-secondary, #888);
     --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #666));
 
-    --prompt-color: #50fa7b;
-    --cursor-color: #50fa7b;
-    --command-color: #f8f8f2;
-    --output-color: #e0e0e0;
-    --error-color: #ff5555;
-    --info-color: #8be9fd;
-    --success-color: #50fa7b;
+    --prompt-color:   var(--terminal-window-prompt-color,   #50fa7b);
+    --cursor-color:   var(--terminal-window-cursor-color,   #50fa7b);
+    --command-color:  var(--terminal-window-command-color,  #f8f8f2);
+    --output-color:   var(--terminal-window-output-color,   #e0e0e0);
+    --error-color:    var(--terminal-window-error-color,    #ff5555);
+    --info-color:     var(--terminal-window-info-color,     #8be9fd);
+    --success-color:  var(--terminal-window-success-color,  #50fa7b);
 
-    --selection-bg: rgba(80, 250, 123, 0.3);
+    --selection-bg:   var(--terminal-window-selection-bg,   rgba(80, 250, 123, 0.3));
 
-    --btn-bg: #2a2a4a;
-    --btn-hover: #3a3a5a;
-    --btn-text: #e0e0e0;
+    --btn-bg:         var(--terminal-window-btn-bg,         #2a2a4a);
+    --btn-hover:      var(--terminal-window-btn-hover-bg,   #3a3a5a);
+    --btn-text:       var(--terminal-window-btn-text,       #e0e0e0);
 
-    --scrollbar-track: #1a1a2e;
-    --scrollbar-thumb: #3a3a5a;
-    --scrollbar-thumb-hover: #4a4a6a;
+    --scrollbar-track:        var(--terminal-window-scrollbar-track,        #1a1a2e);
+    --scrollbar-thumb:        var(--terminal-window-scrollbar-thumb,        #3a3a5a);
+    --scrollbar-thumb-hover:  var(--terminal-window-scrollbar-thumb-hover,  #4a4a6a);
 
-    --control-close: #ff5f56;
-    --control-minimize: #ffbd2e;
-    --control-maximize: #27c93f;
+    --control-close:    var(--terminal-window-control-close,    #ff5f56);
+    --control-minimize: var(--terminal-window-control-minimize, #ffbd2e);
+    --control-maximize: var(--terminal-window-control-maximize, #27c93f);
 
     --theme-icon: "\\263E"; /* Moon */
 
     /* ANSI colors */
-    --ansi-black: #21222c;
-    --ansi-red: #ff5555;
-    --ansi-green: #50fa7b;
-    --ansi-yellow: #f1fa8c;
-    --ansi-blue: #bd93f9;
-    --ansi-magenta: #ff79c6;
-    --ansi-cyan: #8be9fd;
-    --ansi-white: #f8f8f2;
-    --ansi-bright-black: #6272a4;
-    --ansi-bright-red: #ff6e6e;
-    --ansi-bright-green: #69ff94;
-    --ansi-bright-yellow: #ffffa5;
-    --ansi-bright-blue: #d6acff;
-    --ansi-bright-magenta: #ff92df;
-    --ansi-bright-cyan: #a4ffff;
-    --ansi-bright-white: #ffffff;
+    --ansi-black:          var(--terminal-window-ansi-black,          #21222c);
+    --ansi-red:            var(--terminal-window-ansi-red,            #ff5555);
+    --ansi-green:          var(--terminal-window-ansi-green,          #50fa7b);
+    --ansi-yellow:         var(--terminal-window-ansi-yellow,         #f1fa8c);
+    --ansi-blue:           var(--terminal-window-ansi-blue,           #bd93f9);
+    --ansi-magenta:        var(--terminal-window-ansi-magenta,        #ff79c6);
+    --ansi-cyan:           var(--terminal-window-ansi-cyan,           #8be9fd);
+    --ansi-white:          var(--terminal-window-ansi-white,          #f8f8f2);
+    --ansi-bright-black:   var(--terminal-window-ansi-bright-black,   #6272a4);
+    --ansi-bright-red:     var(--terminal-window-ansi-bright-red,     #ff6e6e);
+    --ansi-bright-green:   var(--terminal-window-ansi-bright-green,   #69ff94);
+    --ansi-bright-yellow:  var(--terminal-window-ansi-bright-yellow,  #ffffa5);
+    --ansi-bright-blue:    var(--terminal-window-ansi-bright-blue,    #d6acff);
+    --ansi-bright-magenta: var(--terminal-window-ansi-bright-magenta, #ff92df);
+    --ansi-bright-cyan:    var(--terminal-window-ansi-bright-cyan,    #a4ffff);
+    --ansi-bright-white:   var(--terminal-window-ansi-bright-white,   #ffffff);
   }
 
   /* ===== LIGHT THEME ===== */
@@ -135,50 +135,50 @@ export const styles = `
     --bg-header:    var(--terminal-window-header-bg,    var(--_tw-header-bg,    #e8e8e8));
     --border-color: var(--terminal-window-border-color, var(--_tw-border-color, #d0d0d0));
     --text-primary: var(--terminal-window-text-color,   var(--_tw-text-color,   #333));
-    --text-secondary: #666;
+    --text-secondary: var(--terminal-window-text-secondary, #666);
     --text-muted:   var(--terminal-window-text-muted,   var(--_tw-text-muted,   #999));
 
-    --prompt-color: #16a34a;
-    --cursor-color: #16a34a;
-    --command-color: #1a1a1a;
-    --output-color: #333;
-    --error-color: #dc2626;
-    --info-color: #0284c7;
-    --success-color: #16a34a;
+    --prompt-color:   var(--terminal-window-prompt-color,   #16a34a);
+    --cursor-color:   var(--terminal-window-cursor-color,   #16a34a);
+    --command-color:  var(--terminal-window-command-color,  #1a1a1a);
+    --output-color:   var(--terminal-window-output-color,   #333);
+    --error-color:    var(--terminal-window-error-color,    #dc2626);
+    --info-color:     var(--terminal-window-info-color,     #0284c7);
+    --success-color:  var(--terminal-window-success-color,  #16a34a);
 
-    --selection-bg: rgba(22, 163, 74, 0.2);
+    --selection-bg:   var(--terminal-window-selection-bg,   rgba(22, 163, 74, 0.2));
 
-    --btn-bg: #e0e0e0;
-    --btn-hover: #d0d0d0;
-    --btn-text: #333;
+    --btn-bg:         var(--terminal-window-btn-bg,         #e0e0e0);
+    --btn-hover:      var(--terminal-window-btn-hover-bg,   #d0d0d0);
+    --btn-text:       var(--terminal-window-btn-text,       #333);
 
-    --scrollbar-track: #f0f0f0;
-    --scrollbar-thumb: #c0c0c0;
-    --scrollbar-thumb-hover: #a0a0a0;
+    --scrollbar-track:        var(--terminal-window-scrollbar-track,        #f0f0f0);
+    --scrollbar-thumb:        var(--terminal-window-scrollbar-thumb,        #c0c0c0);
+    --scrollbar-thumb-hover:  var(--terminal-window-scrollbar-thumb-hover,  #a0a0a0);
 
-    --control-close: #ff5f56;
-    --control-minimize: #ffbd2e;
-    --control-maximize: #27c93f;
+    --control-close:    var(--terminal-window-control-close,    #ff5f56);
+    --control-minimize: var(--terminal-window-control-minimize, #ffbd2e);
+    --control-maximize: var(--terminal-window-control-maximize, #27c93f);
 
     --theme-icon: "\\2600"; /* Sun */
 
     /* ANSI colors (adjusted for light theme) */
-    --ansi-black: #000000;
-    --ansi-red: #c41a16;
-    --ansi-green: #007400;
-    --ansi-yellow: #826b28;
-    --ansi-blue: #0000ff;
-    --ansi-magenta: #a90d91;
-    --ansi-cyan: #318495;
-    --ansi-white: #666666;
-    --ansi-bright-black: #666666;
-    --ansi-bright-red: #eb3223;
-    --ansi-bright-green: #1cdc23;
-    --ansi-bright-yellow: #cdcd00;
-    --ansi-bright-blue: #5c5cff;
-    --ansi-bright-magenta: #eb3eb3;
-    --ansi-bright-cyan: #23cece;
-    --ansi-bright-white: #c7c7c7;
+    --ansi-black:          var(--terminal-window-ansi-black,          #000000);
+    --ansi-red:            var(--terminal-window-ansi-red,            #c41a16);
+    --ansi-green:          var(--terminal-window-ansi-green,          #007400);
+    --ansi-yellow:         var(--terminal-window-ansi-yellow,         #826b28);
+    --ansi-blue:           var(--terminal-window-ansi-blue,           #0000ff);
+    --ansi-magenta:        var(--terminal-window-ansi-magenta,        #a90d91);
+    --ansi-cyan:           var(--terminal-window-ansi-cyan,           #318495);
+    --ansi-white:          var(--terminal-window-ansi-white,          #666666);
+    --ansi-bright-black:   var(--terminal-window-ansi-bright-black,   #666666);
+    --ansi-bright-red:     var(--terminal-window-ansi-bright-red,     #eb3223);
+    --ansi-bright-green:   var(--terminal-window-ansi-bright-green,   #1cdc23);
+    --ansi-bright-yellow:  var(--terminal-window-ansi-bright-yellow,  #cdcd00);
+    --ansi-bright-blue:    var(--terminal-window-ansi-bright-blue,    #5c5cff);
+    --ansi-bright-magenta: var(--terminal-window-ansi-bright-magenta, #eb3eb3);
+    --ansi-bright-cyan:    var(--terminal-window-ansi-bright-cyan,    #23cece);
+    --ansi-bright-white:   var(--terminal-window-ansi-bright-white,   #c7c7c7);
   }
 
   /* ANSI color classes */
