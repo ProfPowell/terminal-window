@@ -388,7 +388,11 @@ class TerminalWindow extends HTMLElement {
   }
 
   /**
-   * Update dynamic styles
+   * Update dynamic styles. The inner element's `data-theme` is always set
+   * to the *resolved* mode from `_resolveMode()` (never the raw `mode` or
+   * `theme` attribute value), so CSS selectors like `.terminal[data-theme]`
+   * see a consistent `'dark'` or `'light'` regardless of which input
+   * channel (attribute / page signal / OS preference) determined it.
    */
   _updateStyles() {
     const terminal = this.shadowRoot.querySelector('.terminal');
