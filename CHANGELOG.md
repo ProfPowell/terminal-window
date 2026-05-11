@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-05-11
+
+### Added
+
+- **Vanilla Breeze integration.** `<terminal-window>` now consumes vb design tokens (`--color-surface`, `--color-surface-raised`, `--color-border`, `--color-text`, `--color-text-muted`, `--radius-m`, `--radius-s`, `--font-mono`) with the existing hardcoded palette as fallback.
+- **`mode` attribute** as the canonical way to set color mode (`mode="dark"` / `mode="light"`). The existing `theme` attribute continues to work as a backwards-compatible alias.
+- **Page-level theme detection.** A built-in `MutationObserver` watches `<html>` and `<body>` for `class="dark"`, `data-theme`, `data-bs-theme`, `data-mode`, and computed `color-scheme`. Terminals without an explicit `mode`/`theme` attribute follow the page signal automatically.
+- **`prefers-color-scheme` fallback.** When no attribute or page signal is set, the OS preference is used.
+- **`toggleMode()`** method. `toggleTheme()` is preserved as a deprecated alias.
+- **43 public CSS custom properties** prefixed `--terminal-window-*` for fine-grained styling. See README "Vanilla Breeze integration" section.
+
+### Changed
+
+- **Default color mode behavior.** Previously, a `<terminal-window>` with no explicit `theme` attribute defaulted to `dark` unconditionally. It now resolves through page signal → `prefers-color-scheme` → `light`. To preserve the old behavior, set `mode="dark"` (or `theme="dark"`) explicitly.
+- **Theme-toggle button** now writes to the `mode` attribute (was `theme`). Both attributes continue to work.
+
+### Compatibility
+
+- The `theme` attribute, `toggleTheme()` method, and `data-theme` reflection on the inner element are all preserved.
+
 ## [2.0.0] - 2024-12-07
 
 ### Added
